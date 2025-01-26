@@ -2,16 +2,7 @@
 # ADS Project - Lane Keeping Assist - Level 1 Autonomy ADAS Feature
 ## Your lane, your pace!
 
-- [ADS Project - Lane Keeping Assist - Level 1 Autonomy ADAS Feature](#ads-project---lane-keeping-assist---level-1-autonomy-adas-feature)
-  - [Introduction](#introduction)
-  - [Background Information](#background-information)
-  - [Objectives](#objectives)
-  - [Mandatory Part](#mandatory-part)
-  - [Common Instructions](#common-instructions)
-  - [Skills](#skills)
-  - [Evaluation](#evaluation)
-  - [Submission](#submission)
-  - [References](#references)
+
 
 ## Introduction
 
