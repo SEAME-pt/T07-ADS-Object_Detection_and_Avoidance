@@ -1,19 +1,29 @@
 #include "JetCar.hpp"
 #include <unistd.h>
-#include <cmath>         // For std::abs, std::floor, etc.
-#include <stdexcept>     // For std::runtime_error
-#include <algorithm>     // For std::max, std::min>
-#include <gpiod.h>       // Biblioteca GPIOD para GPIO
+#include <cmath>
+#include <stdexcept>
+#include <algorithm>
+#include <fstream>
+#include <gpiod.h>
 
-#define CHIP_NAME "/dev/gpiochip0"  // Defina o nome correto do chip GPIO
+#define PWM_CHIP "/sys/class/pwm/pwmchip0"  // Ajuste conforme necessário
+#define PWM_PERIOD "20000000"  // 20ms (frequência de 50Hz)
 
-// Ponteiros para as linhas GPIO
-// gpiod_chip *chip;
-gpiod_line *line_pwm, *line_in1, *line_in2, *line_in3, *line_in4;
+#define CHIP_NAME "/dev/gpiochip0"
+
+gpiod_line *line_in1, *line_in2, *line_in3, *line_in4;
+
+void writeToFile(const std::string &path, const std::string &value) {
+    std::ofstream file(path);
+    if (!file) {
+        throw std::runtime_error("Erro ao acessar " + path);
+    }
+    file << value;
+}
 
 void JetCar::setPWM(int channel, int value) {
-    if (!line_pwm) return;
-    gpiod_line_set_value(line_pwm, value);
+    std::string pwm_path = std::string(PWM_CHIP) + "/pwm0/";
+    writeToFile(pwm_path + "duty_cycle", std::to_string(value));
 }
 
 void JetCar::setServoAngle(int angle) {
@@ -32,17 +42,17 @@ void JetCar::setServoAngle(int angle) {
 void JetCar::setMotorSpeed(int speed) {
     speed = std::max(-100, std::min(100, speed));
 
-    if (speed > 0) { // Forward
+    if (speed > 0) {
         gpiod_line_set_value(line_in1, 1);
         gpiod_line_set_value(line_in2, 0);
         gpiod_line_set_value(line_in3, 1);
         gpiod_line_set_value(line_in4, 0);
-    } else if (speed < 0) { // Backward
+    } else if (speed < 0) {
         gpiod_line_set_value(line_in1, 0);
         gpiod_line_set_value(line_in2, 1);
         gpiod_line_set_value(line_in3, 0);
         gpiod_line_set_value(line_in4, 1);
-    } else { // Stop
+    } else {
         gpiod_line_set_value(line_in1, 0);
         gpiod_line_set_value(line_in2, 0);
         gpiod_line_set_value(line_in3, 0);
@@ -51,26 +61,29 @@ void JetCar::setMotorSpeed(int speed) {
 }
 
 JetCar::JetCar() {
-    chip = gpiod_chip_open(CHIP_NAME);
+    gpiod_chip *chip = gpiod_chip_open(CHIP_NAME);
     if (!chip) {
-        throw std::runtime_error("Failed to open GPIO chip");
+        throw std::runtime_error("Erro ao abrir GPIO chip");
     }
 
-    line_pwm = gpiod_chip_get_line(chip, 18); // Exemplo: GPIO18 para PWM
     line_in1 = gpiod_chip_get_line(chip, 23);
     line_in2 = gpiod_chip_get_line(chip, 24);
     line_in3 = gpiod_chip_get_line(chip, 25);
     line_in4 = gpiod_chip_get_line(chip, 12);
 
-    gpiod_line_request_output(line_pwm, "JetCar", 0);
     gpiod_line_request_output(line_in1, "JetCar", 0);
     gpiod_line_request_output(line_in2, "JetCar", 0);
     gpiod_line_request_output(line_in3, "JetCar", 0);
     gpiod_line_request_output(line_in4, "JetCar", 0);
+
+    // Configuração do PWM
+    writeToFile(std::string(PWM_CHIP) + "/export", "0");  // Ativar PWM0
+    writeToFile(std::string(PWM_CHIP) + "/pwm0/period", PWM_PERIOD);
+    writeToFile(std::string(PWM_CHIP) + "/pwm0/enable", "1");
 }
 
 JetCar::~JetCar() {
-    gpiod_chip_close(chip);
+    writeToFile(std::string(PWM_CHIP) + "/pwm0/enable", "0");  // Desativar PWM
 }
 
 void JetCar::sequence() {

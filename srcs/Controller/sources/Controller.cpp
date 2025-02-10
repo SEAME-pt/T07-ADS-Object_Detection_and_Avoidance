@@ -1,13 +1,15 @@
 #include "Controller.hpp"
 
 Controller::Controller() : gameController(nullptr) {
-    if (SDL_Init(SDL_INIT_GAMECONTROLLER) < 0) {
+    if (SDL_Init(SDL_INIT_JOYSTICK) < 0) {
         throw std::runtime_error("Failed to initialize SDL2 GameController: " + std::string(SDL_GetError()));
     }
 
-    // Abrir o primeiro controlador de jogo disponível
+    std::cout << "Number of game controllers: " << SDL_NumJoysticks() << std::endl;
+
     for (int i = 0; i < SDL_NumJoysticks(); ++i) {
         if (SDL_IsGameController(i)) {
+            std::cout << "GameController found at index " << i << std::endl;
             gameController = SDL_GameControllerOpen(i);
             if (gameController) {
                 std::cout << "GameController connected: " << SDL_GameControllerName(gameController) << std::endl;
@@ -86,7 +88,7 @@ void Controller::listen() {
         if (buttonStates[4] && buttonStates[6]) {
             break;
         }
-        // If no controller is connected, break the loop or handle accordingly
+        // If no controller is connected, break the loop or handle accordinglyls /dev/input 
         if (!gameController) {
             std::cout << "No controller connected, stopping listen." << std::endl;
             break;
