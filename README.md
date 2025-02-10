@@ -1,105 +1,192 @@
-# ADS Project - Lane Keeping Assist - Level 1 Autonomy ADAS feature  
-## Your lane, your pace!
-</br>
 
 
-- [ADS Project - Lane Keeping Assist - Level 1 Autonomy ADAS feature](#ads-project---lane-keeping-assist---level-1-autonomy-adas-feature)
-  - [Introduction](#introduction)
-  - [Background Information](#background-information)
-  - [Objectives](#objectives)
-  - [Mandatory Part](#mandatory-part)
-  - [Common Instructions](#common-instructions)
-  - [Skills](#skills)
-  - [Evaluation](#evaluation)
-  - [Submission](#submission)
+# Setting Up a Cross-Compilation Environment with Docker Compose
 
-</br>
+This guide provides step-by-step instructions to create a Docker container for cross-compiling a project for a Raspberry Pi, setting up directory bindings for real-time updates, and deploying compiled binaries.
 
+---
 
-## Introduction
+## Prerequisites
 
-In this project, you will be exposed to the intersection of virtual simulations and real-world applications. You will delve deep into the mechanisms of the Lane Keeping Assist System (LKA), a pivotal Level 1 autonomous driving feature. Using advanced simulation platforms and actual hardware, you will design, test, and implement an LKAS that can operate both virtually and in the real world. 
-</br>
+1. A Raspberry Pi with SSH enabled.
+2. Docker and Docker Compose installed on your host machine.
+3. Basic knowledge of SSH and Docker commands.
+4. The IP address and username for your Raspberry Pi.
 
+---
 
-## Background Information
+## Step 1: Creating the Docker Compose Configuration
 
-The dream of self-driving cars has been around for decades, long before they became a technical reality. From the early radio-controlled cars showcased in the 1930s World's Fair to the futuristic vehicles in science fiction, autonomous driving has always captured human imagination. The Lane Keeping Assist System is one of the first steps in making this dream come true. It's not just a technical marvel; LKAS plays a crucial role in ensuring safer roads by reducing lane departure incidents.  
-</br>
+### Docker Compose Configuration File
 
+Create a `docker-compose.yml` file to define services for the cross-compilation environment:
 
-## Objectives
+```yaml
+dervices:
+  main-car:
+    build:
+      context: ./srcs/MainCar
+    command: /bin/bash
+    stdin_open: true
+    tty: true
+    volumes:
+      - type: bind
+        source: ./srcs/MainCar
+        target: /workspace
 
-1. Design a virtual LKAS capable of detecting and tracking lane markings using simulated sensors.
-2. Implement feedback mechanisms to alert virtual drivers of unintentional lane departures.
-3. Simulate corrective interventions, such as steering or braking adjustments, to ensure the virtual vehicle remains in its lane.
-4. Translate the virtual LKAS system to a real-world application using the PiRacer, ensuring it operates effectively with real sensors and environments.
+  controller:
+    build:
+      context: ./srcs/Controller
+    command: /bin/bash
+    stdin_open: true
+    tty: true
+    volumes:
+      - type: bind
+        source: ./srcs/Controller
+        target: /workspace
+    depends_on:
+      - main-car
+```
 
-</br>
+### Explanation:
 
+- \`\`: Points to the directory containing the `Dockerfile` for each service.
+- \`\`: Uses `bind` mounts to sync files between the host and the container.
+- \`\`: Ensures `controller` starts after `main-car`.
 
-## Mandatory Part
+---
 
-1. Establish a comprehensive simulation environment using platforms like CARLA or Gazebo. This setup should include a detailed test track and a vehicle embedded with all necessary simulated sensors.
-2. Develop algorithms to identify lane markings and determine the vehicle's position relative to them.
-3. Implement a feedback system to alert the driver if the vehicle drifts from its lane, using both visual and auditory signals.
-4. Create interventions in the simulation to redirect the vehicle back to its lane.
-5. Transition from simulation to real-world application by setting up the LKAS on the PiRacer. Integrate necessary sensors and calibrate them to function in real environments.
+## Step 2: Creating the Dockerfile for Cross-Compilation
 
-</br>
+Create a `Dockerfile` inside each service directory (e.g., `srcs/MainCar` or `srcs/Controller`):
 
-## Common Instructions
+```dockerfile
+# Use an ARM64 Debian image
+FROM arm64v8/debian:buster
 
-- Always backup your data and code before making major changes.
-- When transitioning to real-world testing, always test in controlled environments, ensuring all interventions are gradual and predictable to prevent abrupt movements or potential damage.
-- Wear appropriate safety gear when working with hardware components.
+# Install dependencies
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    gcc-aarch64-linux-gnu \
+    g++-aarch64-linux-gnu \
+    cmake \
+    rsync \
+    make \
+    git \
+    tzdata \
+    libsdl2-dev \
+    libgtest-dev \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-</br>
+# Install pigpio from source
+RUN git clone https://github.com/joan2937/pigpio.git /tmp/pigpio \
+    && cd /tmp/pigpio \
+    && make \
+    && make install \
+    && rm -rf /tmp/pigpio
 
-## Skills
+# Set the default working directory
+WORKDIR /workspace
 
-- Proficiency in simulation platforms such as CARLA or Gazebo.
-- Understanding of sensor data processing and algorithmic design for lane detection.
-- Integration skills, transitioning from a virtual to a real-world system.
-- Calibration and testing skills for real-world hardware systems.
-- Proficiency in ML and DL algorithms
-- Proficiency in Linear Algebra
+CMD ["/bin/bash"]
+```
 
-</br>
+### Explanation:
 
+- **Base Image**: Uses `arm64v8/debian:buster` to simulate the Raspberry Pi environment.
+- **Dependencies**: Installs necessary tools and libraries, including `pigpio` from the source.
+- **Working Directory**: Sets `/workspace` as the default directory for project files.
 
-## Evaluation
-In this project, every team must host ONE final submission demo & presentation (max. 30 mins) in front of all the other teams. Each team must find a way to organize this presentation making sure that all the other teams can be present and participate actively (Please work out what date/time works the best for every team). The date and time of each team's presentation must be communicated to staff well in advance (at least a week in advance). It is presenting team's responsibility to make sure that all the forms are filled in **immediately** after the presentation.
+---
 
-This project has two evaluation forms:
-1. For evaluators (the audience) - Fill in [this form](https://docs.google.com/forms/d/e/1FAIpQLSe7AKrza228fzdDNgevTw4Gsz-ARlWcbtQmXn8JAEYaj24mzw/viewform?usp=sf_link) to evaluate the presenting team's final project submission
-2. For evaluatee (the presentor) - Fill in [this form](https://docs.google.com/forms/d/e/1FAIpQLSfYipLAaXFaAm23ZdW8ruXCfQDOXikLYwhxXwpve9C5kZoZvw/viewform?usp=sf_link) for general feedback on your workings on this project.
+## Step 3: Building and Running the Containers
 
-</br>
+### Step 3.1: Enable QEMU for ARM
 
-## Submission
+Run the following command to enable QEMU for ARM emulation:
 
-1. Code: The source code of the project, including all necessary files and libraries. The code should be well-documented, readable, and organized in a logical manner.
-2. Technical documentation: Detailed technical documentation that provides an overview of the project, including the background information, goals, objectives, technical requirements, software architecture, and design.
-3. Test results: Detailed test results that demonstrate the performance and accuracy of the autonomous lane detection system. This should include test data and results, as well as any graphs or visualizations that help to show the performance of the system.
-4. User manual: A comprehensive user manual that provides instructions on how to use the autonomous vehicle, including how to set up the sensors and other components, how to control the vehicle, and how to monitor its performance.
-5. Presentation: A presentation that summarizes the project and highlights the key results and contributions of the students. This presentation can be in the form of a slide deck, video, or other format as appropriate.
-6. Final report: A final report that summarizes the project and provides a detailed overview of the work that was completed, the results achieved, and the challenges encountered. The report should also include a discussion of future work that could be done to extend or improve the autonomous lane detection system.
+```bash
+docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+```
 
-</br>
+### Step 3.2: Build and Start the Containers
 
+Build and start the containers using Docker Compose:
 
-# References
+```bash
+sudo docker compose up --build
+```
 
-Here are some open source references and descriptions that could be used in the Road Surface Segmentation using PiRacer project:
+### Step 3.3: Verify Directory Bindings
 
-1. OpenCV: OpenCV is a popular open-source computer vision library that provides a wide range of tools and algorithms for image and video processing. Participants could use OpenCV for pre-processing the video footage, extracting features, and identifying the lane markings.
-    Link: [https://opencv.org/](https://opencv.org/)
+Check if the `/workspace` directory inside the container reflects the files from the host:
 
-2. TensorFlow: TensorFlow is an open-source machine learning framework that provides a wide range of tools for training deep neural networks. Participants could use TensorFlow for training a deep neural network for identifying extracted lane markings.
-    Link: https://www.tensorflow.org/
+```bash
+docker exec -it <container_name> ls -la /workspace
+```
 
+Replace `<container_name>` with the name of the container (e.g., `maincar_main-car_1`).
 
+---
 
+## Step 4: Cross-Compiling the Project
 
-These references are just examples and participants are encouraged to explore other open-source tools and resources that may be more suitable for their specific needs and requirements. Participants should be prepared to research and evaluate different open-source tools and resources, and to make informed decisions about which tools and resources to use for their projects.
+1. Access the container:
+
+   ```bash
+   docker exec -it <container_name> /bin/bash
+   ```
+
+2. Inside the container, use the appropriate build commands, such as `make` or `cmake`, to compile the project:
+
+   ```bash
+   cd /workspace
+   make
+   ```
+
+3. Locate the compiled binaries in the `/workspace` directory.
+
+---
+
+## Step 5: Deploying to Raspberry Pi
+
+### Copy the Compiled Binary
+
+Use `scp` to transfer the compiled binary to the Raspberry Pi:
+
+```bash
+scp /path/to/binary user@ip:/location-in-rasp
+```
+
+Replace:
+
+- `/path/to/binary`: Path to the compiled binary on your host machine.
+- `user`: Raspberry Pi username.
+- `ip`: Raspberry Pi IP address.
+- `/location-in-rasp`: Destination path in rasp
+
+### Run the Binary on Raspberry Pi
+
+SSH into the Raspberry Pi and execute the binary:
+
+```bash
+ssh team07@192.168.1.186
+chmod +x /home/team07/binary
+/home/team07/binary
+```
+
+---
+
+## Notes and Troubleshooting
+
+1. **Missing Volumes:** If `/workspace` is empty, ensure the paths in `volumes` use absolute paths on the host machine.
+2. **QEMU Issues:** If ARM emulation doesn’t work, rerun:
+   ```bash
+   docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+   ```
+3. **Package Availability:** For missing packages (e.g., `pigpio`), build them from source as shown in the Dockerfile.
+4. **File Permissions:** Ensure that the user running Docker has the necessary permissions for the directories being bound.
+
+---
+
+With this setup, you can easily cross-compile projects for your Raspberry Pi while leveraging Docker for consistency and portability.
+
