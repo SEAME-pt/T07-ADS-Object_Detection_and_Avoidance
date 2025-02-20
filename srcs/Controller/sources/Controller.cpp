@@ -1,31 +1,30 @@
 #include "Controller.hpp"
 
-Controller::Controller() : gameController(nullptr) {
+Controller::Controller(JetCar* jetCar) : joystick(nullptr), jetCar(jetCar) {
     if (SDL_Init(SDL_INIT_JOYSTICK) < 0) {
-        throw std::runtime_error("Failed to initialize SDL2 GameController: " + std::string(SDL_GetError()));
+        throw std::runtime_error("Failed to initialize SDL2 Joystick: " + std::string(SDL_GetError()));
     }
 
-    std::cout << "Number of game controllers: " << SDL_NumJoysticks() << std::endl;
+    int joystickCount = SDL_NumJoysticks();
+    std::cout << "Número de joysticks conectados: " << joystickCount << std::endl;
 
-    for (int i = 0; i < SDL_NumJoysticks(); ++i) {
-        if (SDL_IsGameController(i)) {
-            std::cout << "GameController found at index " << i << std::endl;
-            gameController = SDL_GameControllerOpen(i);
-            if (gameController) {
-                std::cout << "GameController connected: " << SDL_GameControllerName(gameController) << std::endl;
-                break;
-            }
+    _currentMode = MODE_JOYSTICK;
+
+    if (joystickCount > 0) {
+        joystick = SDL_JoystickOpen(0);
+        if (joystick) {
+            std::cout << "Joystick 0 conectado!" << std::endl;
+        } else {
+            throw std::runtime_error("Falha ao abrir o joystick: " + std::string(SDL_GetError()));
         }
-    }
-
-    if (!gameController) {
-        throw std::runtime_error("No compatible game controller found.");
+    } else {
+        throw std::runtime_error("Nenhum joystick detectado.");
     }
 }
 
 Controller::~Controller() {
-    if (gameController) {
-        SDL_GameControllerClose(gameController);
+    if (joystick) {
+        SDL_JoystickClose(joystick);
     }
     SDL_Quit();
 }
@@ -39,44 +38,48 @@ void Controller::setAxisAction(int axis, std::function<void(int)> action) {
 }
 
 void Controller::processEvent(const SDL_Event& event) {
-    if (event.type == SDL_CONTROLLERBUTTONDOWN || event.type == SDL_CONTROLLERBUTTONUP) {
-        bool isPressed = (event.type == SDL_CONTROLLERBUTTONDOWN);
-        int button = event.cbutton.button;
+    if (event.type == SDL_JOYBUTTONDOWN || event.type == SDL_JOYBUTTONUP) { // Joypad button
+        bool isPressed = (event.type == SDL_JOYBUTTONDOWN);
+        int button = event.jbutton.button;
 
         if (button < buttonStates.size()) {
+            std::cout << "Button " << button << " " << (isPressed ? "pressed" : "released") << std::endl;
             buttonStates[button] = isPressed;
-            std::cout << "button " << button << std::endl;
             if (buttonActions.find(button) != buttonActions.end()) {
                 if (isPressed) {
-                    if(buttonActions[button].onPress)
+                    if (buttonActions[button].onPress)
                         buttonActions[button].onPress();
                 } else {
-                    if(buttonActions[button].onRelease)
+                    if (buttonActions[button].onRelease)
                         buttonActions[button].onRelease();
                 }
             }
         }
-    } else if (event.type == SDL_CONTROLLERAXISMOTION) {
-        int axis = event.caxis.axis;
-        int value = event.caxis.value;
+    } else if (event.type == SDL_JOYAXISMOTION && _currentMode != MODE_AUTONOMOUS) { // Joypad axis motion
+        int axis = event.jaxis.axis;
+        int value = event.jaxis.value;
 
-        // std::cout << "Axis " << axis << " moved to " << value << "." << std::endl;
+        std::cout << "Axis " << axis << " moved to " << value << std::endl;
         if (axisActions.find(axis) != axisActions.end()) {
             axisActions[axis](value);
         }
-    } else if (event.type == SDL_CONTROLLERDEVICEREMOVED) {
-        // Handle the disconnection of the game controller
-        std::cout << "Game controller disconnected." << std::endl;
+    } else if (event.type == SDL_JOYDEVICEREMOVED) { // Joypad removed
+        std::cout << "Joystick off!" << std::endl;
 
-        // Close the controller and set to nullptr
-        if (gameController) {
-            SDL_GameControllerClose(gameController);
-            gameController = nullptr;
+        if (joystick) {
+            SDL_JoystickClose(joystick);
+            joystick = nullptr;
         }
-
-        std::cout << "Exiting the program due to controller disconnection." << std::endl;
         exit(1);
     }
+}
+
+void Controller::setMode(int const &mode) {
+    _currentMode = mode;
+}
+
+int Controller::getMode() {
+    return _currentMode;
 }
 
 void Controller::listen() {
@@ -85,19 +88,33 @@ void Controller::listen() {
         while (SDL_PollEvent(&event)) {
             processEvent(event);
         }
-        if (buttonStates[4] && buttonStates[6]) {
-            break;
+
+        if (_currentMode == MODE_AUTONOMOUS) {
+           dummieAutonomous();
         }
-        // If no controller is connected, break the loop or handle accordinglyls /dev/input 
-        if (!gameController) {
-            std::cout << "No controller connected, stopping listen." << std::endl;
+
+        if (buttonStates[10] && buttonStates[11]) { // Start + Select exit program
             break;
         }
 
-        if (!gameController) {
-            std::cout << "No controller connected, stopping listen." << std::endl;
+        if (!joystick) {
+            std::cout << "No joystick conected, quiting..." << std::endl;
             break;
         }
+
         SDL_Delay(10);
     }
+}
+
+
+void Controller::dummieAutonomous() {
+
+    jetCar->set_servo_angle(0);
+    jetCar->set_motor_speed(30);
+    SDL_Delay(2000);
+    jetCar->set_servo_angle(90);
+    jetCar->set_motor_speed(20);
+    SDL_Delay(2000);
+    
+    
 }

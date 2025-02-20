@@ -9,6 +9,8 @@ RUN git clone https://github.com/zeromq/cppzmq.git /tmp/cppzmq && \
     cp /tmp/cppzmq/zmq.hpp /usr/include/ && \
     rm -rf /tmp/cppzmq
 
+COPY tools/*.so /usr/lib/
+
 WORKDIR /workspace
 
 CMD ["/bin/bash"]

@@ -31,8 +31,7 @@ int SpeedSensor::readData() {
                 return -1;  // Indicar falha
             }
         } else {
-            // Ignorar mensagens com IDs inesperados (sem imprimir, apenas retornar falha)
-            return -1;  // Indicar falha
+            return -1;
         }
     } else {
         // Nenhuma mensagem disponível no barramento CAN (sem imprimir)

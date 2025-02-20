@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -72,8 +71,8 @@
         h1 {
 	    color: #2c3e50;
 	    }
-	
-	    h2 {
+
+        h2 {
             color: #ffffff;
         }
 
@@ -81,7 +80,6 @@
             width: 100%;
             margin-top: 20px;
             border-collapse: collapse;
-            /* table-layout: fixed; */
         }
 
         th, td {
@@ -99,13 +97,10 @@
         td {
             background-color: #ecf0f1;
         }
+
         .sensor-name {
             font-weight: bold;
         }
-
-            /* .sensor-value {
-                color: #27ae60;
-            } */
 
         .info-name {
             font-weight: bold;
@@ -121,6 +116,19 @@
             margin-top: 20px;
             color: #2c3e50;
         }
+
+        /* Estilo para a seção de vídeo */
+        .video-section {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .video-section img {
+            width: 100%;
+            height: auto;
+            max-width: 1280px;
+            border: 2px solid #34495e;
+        }
     </style>
 </head>
 <body>
@@ -131,6 +139,7 @@
             <li><a href="#" id="info-link">Info</a></li>
             <li><a href="#" id="sensors-link">Sensors</a></li>
             <li><a href="#" id="control-link">Control</a></li>
+            <li><a href="#" id="video-link">Realtime Video</a></li> <!-- Nova seção para vídeo -->
         </ul>
     </div>
     <div class="container" id="main-content">
@@ -315,18 +324,29 @@
                             if (element) {
                                 element.innerText = data[key]; // Atualiza o texto
                                 if (data[key] === "true")
-                                element.classList = "true";
+                                    element.classList = "true";
                                 else
                                     element.classList = "false";
-                                }
+                            }
                         }
                     }
                 });
             };
+
+            const loadVideo = () => {
+                mainContent.innerHTML = `
+                    <h1>Realtime Video Feed</h1>
+                    <div class="video-section">
+                        <img src="/video_feed" alt="Vehicle Video Feed">
+                    </div>
+                `;
+            };
+
             // Event listeners for links
             document.getElementById('info-link').addEventListener('click', loadInfo);
             document.getElementById('sensors-link').addEventListener('click', loadSensors);
             document.getElementById('control-link').addEventListener('click', loadControl);
+            document.getElementById('video-link').addEventListener('click', loadVideo);  // Link para o vídeo
 
             // Load default content
             loadInfo();
@@ -334,3 +354,4 @@
 
     </script>
 </body>
+</html>

@@ -6,7 +6,8 @@ RUN apt update && apt-get install -y \
     libzmq3-dev \
     build-essential \
     python3-pip \
-    libgpiod-dev
+    libgpiod-dev \
+    libi2c-dev
 
 RUN pip3 install Jetson.GPIO
 # Instala o cabeçalho do ZeroMQ

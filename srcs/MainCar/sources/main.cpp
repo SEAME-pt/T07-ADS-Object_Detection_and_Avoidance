@@ -82,8 +82,7 @@ void readAndPublishSensorData(SpeedSensor& speedSensor, Odometer& odometer, JetS
     }
 }
 
-
-int main() {
+int main(int argc, char *argv[]) {
     zmq::context_t context(1);
     zmq::socket_t publisher_sensors(context, zmq::socket_type::pub);
     publisher_sensors.bind("tcp://*:5555");
@@ -91,7 +90,12 @@ int main() {
     ControllerSubscriber controllerSubscriber("tcp://localhost:5556");
     controllerSubscriber.startListening();
 
-    CANBus canBus("can0", 500000);
+    std::string can_device = "can0";
+    if (argc > 1) {
+        can_device = argv[1];
+    }
+
+    CANBus canBus(can_device, 500000);
     JetSnailsCar delorean;
 
     SpeedSensor speedSensor(canBus, 0x100); // Speed

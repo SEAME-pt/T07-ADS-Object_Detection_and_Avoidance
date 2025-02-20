@@ -1,103 +1,60 @@
-#include "Controller.hpp"
-#include "JetCar.hpp"
-#include "devices.hpp"
 #include <iostream>
-#include <pigpio.h>
-#include <zmq.h>
+#include "JetCar.hpp"
+#include "Controller.hpp"
 
-JetCar car;
+JetCar jetCar(0x60, 0x40);
 
-void moveLeftandRight(int value) {
-     
-    float fvalue = value * 1.0;// + 6900;
-  //  fvalue -= -129.0;
-    std::cout << "Before: " << fvalue << std::endl;
-    fvalue = fvalue / 32000.0 * 45;
-    std::cout << "Axis moved to " << fvalue << std::endl;
-    car.setServoAngle(fvalue);
+void handleSteering(int value) {
+    int servoAngle = static_cast<int>((value / 32768.0) * 90);
+    servoAngle = std::max(-90, std::min(90, servoAngle));
+    jetCar.set_servo_angle(servoAngle);
 }
 
-void moveForwardandBackward(int value) {
-    
-    value -= 16319;
+void handleMotors(int value) {
+    value *= -1;
+    int motorSpeed = static_cast<int>((value / 32768.0) * 100);
+    if (motorSpeed >= 30)
+        motorSpeed = 30;
+    motorSpeed = std::max(-100, std::min(100, motorSpeed));
+    std::cout << "Velocidade do motor: " << motorSpeed << std::endl;
+    jetCar.set_motor_speed(motorSpeed);
+}
 
-    value = (value / 165) * -1;
-    
-    std::cout << "Axis moved to " << value << std::endl;
-    car.setMotorSpeed(value);
+int changeMode(int mode, Controller &controller, JetCar &jetCar) {
+    controller.setMode(mode == MODE_JOYSTICK ? MODE_AUTONOMOUS : MODE_JOYSTICK);
+    jetCar.set_servo_angle(0);
+    jetCar.set_motor_speed(0);
 }
 
 int main() {
-    std::cout << "Team07 Controller App" << std::endl;
-    zmq::context_t context(1);
-    zmq::socket_t publisher_controls(context, zmq::socket_type::pub);
-    publisher_controls.bind("tcp://*:5556");
 
-    // Actions horn;
-    // horn.onPress = [&publisher_controls]() {
-    //     hornOnPressed(publisher_controls);
-    // };
-    // horn.onRelease = [&publisher_controls]() {
-    //     hornOnReleased(publisher_controls);
-    // };
-
-    Actions car_break;
-    car_break.onPress = [&publisher_controls]() {
-        breakOnPressed(publisher_controls);
-    };
-    car_break.onRelease = [&publisher_controls]() {
-        breakOnReleased(publisher_controls);
-    };
-
-    // For toggle actions just use the onPress
-    Actions lowLights;
-    lowLights.onPress = [&publisher_controls]() {
-        lightsLowToggle(publisher_controls);
-    };
-
-    Actions highLights;
-    highLights.onPress = [&publisher_controls]() {
-        lightsHighToggle(publisher_controls);
-    };
-
-    Actions leftLights;
-    leftLights.onPress = [&publisher_controls]() {
-        indicationLightsLeft(publisher_controls);
-    };
-
-    Actions rightLights;
-    rightLights.onPress = [&publisher_controls]() {
-        indicationLightsRight(publisher_controls);
-    };
-
-    Actions emergencyLights;
-    emergencyLights.onPress = [&publisher_controls]() {
-        emergencyOnLights(publisher_controls);
-    };
-
+    Actions changeModeActions;
 
     try {
-        Controller controller;
-        // Start listening for gamepad events
-
-        controller.setButtonAction(BTN_A, car_break);
-        controller.setButtonAction(BTN_X, emergencyLights);
-
-        controller.setButtonAction(BTN_L, rightLights);
-        controller.setButtonAction(BTN_R, leftLights);
+        Controller controller(&jetCar);
         
-        controller.setButtonAction(BTN_B, lowLights);
-        controller.setButtonAction(BTN_Y, highLights);
+        changeModeActions.onPress = nullptr;
+        changeModeActions.onRelease = [&](){
+            changeMode(controller.getMode(), controller, jetCar);
+        };
 
 
-        controller.setAxisAction(SDL_CONTROLLER_AXIS_LEFTX, moveLeftandRight);
-        controller.setAxisAction(5, moveForwardandBackward);
+        jetCar.set_servo_angle(0);
+        jetCar.set_motor_speed(0); 
+
+        controller.setAxisAction(0, handleSteering);
+        controller.setAxisAction(3, handleMotors);
+        controller.setButtonAction(BTN_HOME, changeModeActions);
 
         controller.listen();
-
-    } catch (const std::runtime_error &e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+    } catch (const std::exception& e) {
+        jetCar.set_servo_angle(0);
+        jetCar.set_motor_speed(0); 
+        std::cerr << "Erro: " << e.what() << std::endl;
+        return 1;
     }
+    jetCar.set_servo_angle(0);
+    jetCar.set_motor_speed(0); 
 
     return 0;
 }

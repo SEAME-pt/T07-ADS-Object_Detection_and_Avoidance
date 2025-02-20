@@ -1,106 +1,182 @@
 #include "JetCar.hpp"
-#include <unistd.h>
-#include <cmath>
-#include <stdexcept>
-#include <algorithm>
-#include <fstream>
-#include <gpiod.h>
 
-#define PWM_CHIP "/sys/class/pwm/pwmchip0"  // Ajuste conforme necessário
-#define PWM_PERIOD "20000000"  // 20ms (frequência de 50Hz)
+// Implementação da classe JetCar
 
-#define CHIP_NAME "/dev/gpiochip0"
+JetCar::JetCar(int motorAddr, int servoAddr)
+    : _motorAddr(motorAddr), _servoAddr(servoAddr), _fdMotor(-1), _fdServo(-1),
+      _maxAngle(90), _servoLeftPwm(170), _servoRightPwm(430), _servoCenterPwm(300),
+      _steeringChannel(0), _currentAngle(0) {
 
-gpiod_line *line_in1, *line_in2, *line_in3, *line_in4;
-
-void writeToFile(const std::string &path, const std::string &value) {
-    std::ofstream file(path);
-    if (!file) {
-        throw std::runtime_error("Erro ao acessar " + path);
-    }
-    file << value;
-}
-
-void JetCar::setPWM(int channel, int value) {
-    std::string pwm_path = std::string(PWM_CHIP) + "/pwm0/";
-    writeToFile(pwm_path + "duty_cycle", std::to_string(value));
-}
-
-void JetCar::setServoAngle(int angle) {
-    angle = std::max(-MAX_ANGLE, std::min(45, angle));
-    int pwm;
-    if (angle < 0) {
-        pwm = SERVO_CENTER_PWM + (angle / (float)MAX_ANGLE) * (SERVO_CENTER_PWM - SERVO_LEFT_PWM);
-    } else if (angle > 0) {
-        pwm = SERVO_CENTER_PWM + (angle / (float)MAX_ANGLE) * (SERVO_RIGHT_PWM - SERVO_CENTER_PWM);
-    } else {
-        pwm = SERVO_CENTER_PWM;
-    }
-    setPWM(STEERING_CHANNEL, pwm);
-}
-
-void JetCar::setMotorSpeed(int speed) {
-    speed = std::max(-100, std::min(100, speed));
-
-    if (speed > 0) {
-        gpiod_line_set_value(line_in1, 1);
-        gpiod_line_set_value(line_in2, 0);
-        gpiod_line_set_value(line_in3, 1);
-        gpiod_line_set_value(line_in4, 0);
-    } else if (speed < 0) {
-        gpiod_line_set_value(line_in1, 0);
-        gpiod_line_set_value(line_in2, 1);
-        gpiod_line_set_value(line_in3, 0);
-        gpiod_line_set_value(line_in4, 1);
-    } else {
-        gpiod_line_set_value(line_in1, 0);
-        gpiod_line_set_value(line_in2, 0);
-        gpiod_line_set_value(line_in3, 0);
-        gpiod_line_set_value(line_in4, 0);
-    }
-}
-
-JetCar::JetCar() {
-    gpiod_chip *chip = gpiod_chip_open(CHIP_NAME);
-    if (!chip) {
-        throw std::runtime_error("Erro ao abrir GPIO chip");
+    // Inicializar servo e motores
+    open_servo_i2c_bus();
+    if (!init_servo()) {
+        throw std::runtime_error("Erro ao inicializar o servo.");
     }
 
-    line_in1 = gpiod_chip_get_line(chip, 23);
-    line_in2 = gpiod_chip_get_line(chip, 24);
-    line_in3 = gpiod_chip_get_line(chip, 25);
-    line_in4 = gpiod_chip_get_line(chip, 12);
+    open_motor_i2c_bus();
+    if (!init_motors()) {
+        throw std::runtime_error("Erro ao inicializar os motores.");
+    }
 
-    gpiod_line_request_output(line_in1, "JetCar", 0);
-    gpiod_line_request_output(line_in2, "JetCar", 0);
-    gpiod_line_request_output(line_in3, "JetCar", 0);
-    gpiod_line_request_output(line_in4, "JetCar", 0);
-
-    // Configuração do PWM
-    writeToFile(std::string(PWM_CHIP) + "/export", "0");  // Ativar PWM0
-    writeToFile(std::string(PWM_CHIP) + "/pwm0/period", PWM_PERIOD);
-    writeToFile(std::string(PWM_CHIP) + "/pwm0/enable", "1");
+    std::cout << "JetCar inicializado com sucesso!" << std::endl;
 }
 
 JetCar::~JetCar() {
-    writeToFile(std::string(PWM_CHIP) + "/pwm0/enable", "0");  // Desativar PWM
+    set_motor_speed(0);
+    close(_fdMotor);
+    close(_fdServo);
+    std::cout << "Destruindo o JetCar..." << std::endl;
 }
 
-void JetCar::sequence() {
-    setMotorSpeed(100);
-    sleep(2);
+void JetCar::set_servo_angle(int angle) {
+    std::cout << "Ângulo do servo antes: " << angle << std::endl;
+    angle = std::max(-_maxAngle, std::min(_maxAngle, angle));
+    std::cout << "Ângulo do servo depois " << angle << std::endl;
 
-    setMotorSpeed(-100);
-    sleep(2);
+    int pwm;
+    if (angle < 0) {
+        pwm = static_cast<int>(_servoCenterPwm + (static_cast<float>(angle) / _maxAngle) * (_servoCenterPwm - _servoLeftPwm));
+    } else if (angle > 0) {
+        pwm = static_cast<int>(_servoCenterPwm + (static_cast<float>(angle) / _maxAngle) * (_servoRightPwm - _servoCenterPwm));
+    } else {
+        pwm = _servoCenterPwm;
+    }
 
-    setMotorSpeed(0);
+    writeByteData(_fdServo, 0x06 + 4 * _steeringChannel, 0);
+    writeByteData(_fdServo, 0x07 + 4 * _steeringChannel, 0);
+    writeByteData(_fdServo, 0x08 + 4 * _steeringChannel, pwm & 0xFF);
+    writeByteData(_fdServo, 0x09 + 4 * _steeringChannel, pwm >> 8);
+    _currentAngle = angle;
+}
 
-    setServoAngle(-45);
-    sleep(1);
+void JetCar::set_motor_speed(int speed) {
+    int pwmValue;
+    speed = std::max(-100, std::min(100, speed));
+    pwmValue = static_cast<int>(std::abs(speed) / 100.0 * 4095);
 
-    setServoAngle(45);
-    sleep(1);
+    if (speed > 0) {
+        // Movendo para frente
+        setMotorPwm(0, pwmValue);  // IN1
+        setMotorPwm(1, 0);         // IN2
+        setMotorPwm(2, pwmValue);  // ENA
 
-    setServoAngle(0);
-    setMotorSpeed(0);
+        setMotorPwm(5, pwmValue);  // IN3
+        setMotorPwm(6, 0);         // IN4
+        setMotorPwm(7, pwmValue);  // ENB
+    } else if (speed < 0) {
+        // Movendo para trás
+        setMotorPwm(0, pwmValue);  // IN1
+        setMotorPwm(1, pwmValue);  // IN2
+        setMotorPwm(2, 0);         // ENA
+
+        setMotorPwm(5, 0);         // IN3
+        setMotorPwm(6, pwmValue);  // IN4
+        setMotorPwm(7, pwmValue);  // ENB
+    } else {
+        // Parando
+        for (int channel = 0; channel < 9; ++channel) {
+            setMotorPwm(channel, 0);
+        }
+    }
+}
+
+// Métodos privados para controle de I2C
+
+void JetCar::open_motor_i2c_bus() {
+    std::string i2cDevice = "/dev/i2c-1";
+    _fdMotor = open(i2cDevice.c_str(), O_RDWR);
+    if (_fdMotor < 0) throw std::runtime_error("Erro ao abrir o barramento I2C para o motor");
+
+    if (ioctl(_fdMotor, I2C_SLAVE, _motorAddr) < 0) {
+        close(_fdMotor);
+        throw std::runtime_error("Erro ao configurar o endereço I2C do motor");
+    }
+}
+
+void JetCar::open_servo_i2c_bus() {
+    std::string i2cDevice = "/dev/i2c-1";
+    _fdServo = open(i2cDevice.c_str(), O_RDWR);
+    if (_fdServo < 0) throw std::runtime_error("Erro ao abrir o barramento I2C para o servo");
+
+    if (ioctl(_fdServo, I2C_SLAVE, _servoAddr) < 0) {
+        close(_fdServo);
+        throw std::runtime_error("Erro ao configurar o endereço I2C do servo");
+    }
+}
+
+bool JetCar::init_motors() {
+    try {
+        writeByteData(_fdMotor, 0x00, 0x20);
+        usleep(1000);
+
+        int preScale;
+        uint8_t oldMode, newMode;
+
+        oldMode = readByteData(_fdMotor, 0x00);
+        preScale = static_cast<int>(std::floor(25000000.0 / 4096.0 / 60 - 1));
+        newMode = (oldMode & 0x7F) | 0x10;
+
+        writeByteData(_fdMotor, 0x00, newMode);
+        writeByteData(_fdMotor, 0xFE, preScale);
+        writeByteData(_fdMotor, 0x00, oldMode);
+        
+        usleep(5000);
+
+        writeByteData(_fdMotor, 0x00, oldMode | 0xa1);
+        return true;
+    } catch (const std::exception& e) {
+        std::cerr << "Erro na inicialização dos motores: " << e.what() << std::endl;
+        return false;
+    }
+}
+
+bool JetCar::init_servo() {
+    try {
+        writeByteData(_fdServo, 0x00, 0x06);  // Reset do servo
+        usleep(100000);
+
+        writeByteData(_fdServo, 0x00, 0x10);  // Configura o controle
+        usleep(100000);
+
+        writeByteData(_fdServo, 0xFE, 0x79);  // Frequência do PWM
+        usleep(100000);
+
+        writeByteData(_fdServo, 0x01, 0x04);  // Configura o MODE2
+        usleep(100000);
+
+        writeByteData(_fdServo, 0x00, 0x20);  // Habilita o auto-incremento
+        usleep(100000);
+
+        return true;
+    } catch (const std::exception& e) {
+        std::cerr << "Erro na inicialização do servo: " << e.what() << std::endl;
+        return false;
+    }
+}
+
+void JetCar::writeByteData(int fd, uint8_t reg, uint8_t value) {
+    uint8_t buffer[2] = {reg, value};
+    if (write(fd, buffer, 2) != 2) {
+        throw std::runtime_error("Erro ao escrever no dispositivo I2C.");
+    }
+}
+
+uint8_t JetCar::readByteData(int fd, uint8_t reg) {
+    if (write(fd, &reg, 1) != 1)
+        throw std::runtime_error("Erro ao enviar o registrador ao dispositivo I2C.");
+    
+    uint8_t value;
+    if (read(fd, &value, 1) != 1)
+        throw std::runtime_error("Erro ao ler o registrador ao dispositivo I2C.");
+    
+    return value;
+}
+
+bool JetCar::setMotorPwm(const int channel, int value) {
+    value = std::max(0, std::min(4095, value));
+    writeByteData(_fdMotor, 0x06 + 4 * channel, 0);
+    writeByteData(_fdMotor, 0x07 + 4 * channel, 0);
+    writeByteData(_fdMotor, 0x08 + 4 * channel, value & 0xFF);
+    writeByteData(_fdMotor, 0x09 + 4 * channel, value >> 8);
+    return true;
 }

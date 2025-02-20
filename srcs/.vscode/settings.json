@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "*.vspec": "python",
-        "string": "cpp"
+        "string": "cpp",
+        "iostream": "cpp",
+        "stdexcept": "cpp"
     }
 }

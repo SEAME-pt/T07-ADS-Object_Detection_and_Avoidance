@@ -1,9 +1,12 @@
 import zmq
 import threading
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, Response
 from flask_socketio import SocketIO, emit
 import json
 import os
+import subprocess
+import time
+import cv2
 
 app = Flask(__name__, template_folder='../frontend/')
 socketio = SocketIO(app)
@@ -71,6 +74,37 @@ def listen_for_full_data():
 sensor_thread = threading.Thread(target=listen_for_full_data, daemon=True)
 sensor_thread.start()
 
+# OpenCV video capture
+
+def generate_stream():
+    gst_pipeline = (
+        "nvarguscamerasrc ! video/x-raw(memory:NVMM), width=1280, height=720, "
+        "format=(string)NV12, framerate=30/1 ! nvvidconv ! video/x-raw, format=BGRx ! "
+        "videoconvert ! video/x-raw, format=BGR ! appsink"
+    )
+
+    cap = cv2.VideoCapture(gst_pipeline, cv2.CAP_GSTREAMER)
+
+    if not cap.isOpened():
+        print("Erro ao abrir a câmera!")
+        return
+
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        # Codifica o frame em JPEG para streaming
+        _, buffer = cv2.imencode(".jpg", frame)
+        frame_bytes = buffer.tobytes()
+
+        # Envia o frame no formato de imagem para o navegador
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n\r\n')
+
+    cap.release()
+
+
 @app.route('/')
 def index():
     return render_template('index.html')  # index HTML template
@@ -85,6 +119,11 @@ def get_vehicle_info():
         return jsonify(data)
     else:
         return jsonify({"error": "Vehicle information not found"}), 404
+
+
+@app.route('/video_feed')
+def video_feed():
+    return Response(generate_stream(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=5000)  # Flask running on port 5000

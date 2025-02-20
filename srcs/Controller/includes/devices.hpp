@@ -6,30 +6,13 @@
 
 
 
-// GPIO PINS
-#define GPIO_PIN_RIGHT_LIGHTS 16
-#define GPIO_PIN_LEFT_LIGHTS 26
-#define GPIO_PIN_LOW_LIGHTS 5
-#define GPIO_PIN_HIGH_LIGHTS 6
-#define GPIO_PIN_BREAK_LIGHTS 13
-#define GPIO_PIN_HORN 16
-#define GPIO_PIN_PARK 12
+// Definir as constantes para os pinos GPIO
+#define GPIO_PIN_BREAK_LIGHTS 17  // Número de pino para luzes de freio
+#define GPIO_PIN_LOW_LIGHTS 18    // Número de pino para luzes baixas
+#define GPIO_PIN_HIGH_LIGHTS 19   // Número de pino para luzes altas
+#define GPIO_PIN_LEFT_LIGHTS 20   // Número de pino para luzes à esquerda
+#define GPIO_PIN_RIGHT_LIGHTS 21  // Número de pino para luzes à direita
 
-// KEY MAP
-#define BTN_A 0 
-#define BTN_B 1
-#define BTN_X 2
-#define BTN_Y 3
-#define BTN_L 9
-#define BTN_R 10
-#define BTN_AXIS_LEFT 7
-#define BTN_AXIS_RIGHT 8  
-#define BTN_HOME 5
-#define BTN_SELECT 4
-#define BTN_START 6
-
-void    hornOnPressed(zmq::socket_t& pub);
-void    hornOnReleased(zmq::socket_t& pub);
 
 void    breakOnReleased(zmq::socket_t& pub);
 void    breakOnPressed(zmq::socket_t& pub);
