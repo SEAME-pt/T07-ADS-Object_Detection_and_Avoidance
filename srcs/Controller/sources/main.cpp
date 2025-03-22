@@ -24,6 +24,8 @@ int changeMode(int mode, Controller &controller, JetCar &jetCar) {
     controller.setMode(mode == MODE_JOYSTICK ? MODE_AUTONOMOUS : MODE_JOYSTICK);
     jetCar.set_servo_angle(0);
     jetCar.set_motor_speed(0);
+
+    return 0;
 }
 
 int main() {
@@ -38,9 +40,8 @@ int main() {
             changeMode(controller.getMode(), controller, jetCar);
         };
 
-
         jetCar.set_servo_angle(0);
-        jetCar.set_motor_speed(0); 
+        jetCar.set_motor_speed(0);
 
         controller.setAxisAction(0, handleSteering);
         controller.setAxisAction(3, handleMotors);
@@ -54,7 +55,7 @@ int main() {
         return 1;
     }
     jetCar.set_servo_angle(0);
-    jetCar.set_motor_speed(0); 
+    jetCar.set_motor_speed(0);
 
     return 0;
 }

@@ -1,27 +1,44 @@
 cmake_minimum_required(VERSION 3.10)
 
-# Defina o nome do seu projeto
+# Nome do projeto
 project(Controller)
 
-# Defina o padrão C++ para C++17
+# Definição do padrão C++17
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Definindo diretórios de inclusão para as bibliotecas externas
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/includes)
+# Adiciona flags de otimização para a Jetson Nano
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -Wall -Wextra")
 
-# Encontrar pacotes externos
-find_package(SDL2 REQUIRED)
+# Diretórios de inclusão
+include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}/includes
+    /usr/include/aarch64-linux-gnu
+    /usr/local/cuda/include
+    /usr/include/opencv4
+    /usr/src/tensorrt/include
+)
+
+# Procurar pacotes externos
+find_package(OpenCV REQUIRED)
 find_package(PkgConfig REQUIRED)
+find_package(SDL2 REQUIRED)
 
-# Verifique se gpiod e i2c-dev estão instalados
+# Verifica se gpiod e i2c-dev estão instalados
 pkg_check_modules(GPIOD REQUIRED libgpiod)
 find_library(I2C_LIB i2c)
 
-# Adicionar as fontes do projeto
+# Adiciona TensorRT
+find_library(NVINFER nvinfer)
+find_library(NVONNXPARSER nvonnxparser)
+find_library(CUDART cudart HINTS /usr/local/cuda/lib64)
+
+# Adiciona as fontes do projeto
 set(SOURCES
     sources/Controller.cpp
     sources/JetCar.cpp
     sources/devices.cpp
+    sources/LaneDetection.cpp
     sources/main.cpp
 )
 
@@ -29,12 +46,20 @@ set(SOURCES
 add_executable(ControllerExec ${SOURCES})
 
 # Incluir diretórios das bibliotecas externas
-include_directories(${SDL2_INCLUDE_DIRS} ${GPIOD_INCLUDE_DIRS})
+include_directories(
+    ${OpenCV_INCLUDE_DIRS}
+    ${GPIOD_INCLUDE_DIRS}
+    ${SDL2_INCLUDE_DIRS}
+)
 
 # Vincular as bibliotecas necessárias
 target_link_libraries(ControllerExec
-    ${SDL2_LIBRARIES}
+    ${OpenCV_LIBS}
     ${GPIOD_LIBRARIES}
     ${I2C_LIB}
-    /usr/lib/aarch64-linux-gnu/libzmq.so  # Bibliotecas do ZeroMQ, se necessário
+    ${NVINFER}
+    ${NVONNXPARSER}
+    ${CUDART}
+    ${SDL2_LIBRARIES}
+    /usr/lib/aarch64-linux-gnu/libzmq.so  # ZeroMQ
 )
