@@ -75,7 +75,7 @@ void Controller::processEvent(const SDL_Event& event) {
         if (axisActions.find(axis) != axisActions.end()) {
             axisActions[axis](value);
         }
-    else if (event.type == SDL_JOYAXISMOTION && _currentMode == MODE_AUTONOMOUS) {
+    } else if (event.type == SDL_JOYAXISMOTION && _currentMode == MODE_AUTONOMOUS) {
         int axis = event.jaxis.axis;
         int value = event.jaxis.value;
 
@@ -93,7 +93,7 @@ void Controller::processEvent(const SDL_Event& event) {
             } else {
                 throw std::runtime_error("Falha ao abrir o joystick: " + std::string(SDL_GetError()));
             }
-        }
+        }    
     } else if (event.type == SDL_JOYDEVICEREMOVED) {
         std::cout << "Joystick off!" << std::endl;
 
