@@ -75,6 +75,25 @@ void Controller::processEvent(const SDL_Event& event) {
         if (axisActions.find(axis) != axisActions.end()) {
             axisActions[axis](value);
         }
+    else if (event.type == SDL_JOYAXISMOTION && _currentMode == MODE_AUTONOMOUS) {
+        int axis = event.jaxis.axis;
+        int value = event.jaxis.value;
+
+        std::cout << "Axis " << axis << " moved to " << value << std::endl;
+        if (axisActions.find(axis) != axisActions.end() && axis == 3) {
+            axisActions[axis](value);
+        }
+    } else if (event.type == SDL_JOYDEVICEADDED) {
+        std::cout << "Joystick on!" << std::endl;
+
+        if (!joystick) {
+            joystick = SDL_JoystickOpen(0);
+            if (joystick) {
+                std::cout << "Joystick 0 conectado!" << std::endl;
+            } else {
+                throw std::runtime_error("Falha ao abrir o joystick: " + std::string(SDL_GetError()));
+            }
+        }
     } else if (event.type == SDL_JOYDEVICEREMOVED) {
         std::cout << "Joystick off!" << std::endl;
 
@@ -141,6 +160,7 @@ void Controller::autonomous() {
     float steering = std::clamp(angle * 3, -90.0f, 90.0f);
     std::cout << "Steering: " << steering << std::endl;
     jetCar->set_servo_angle(steering);
+
 
     if (cv::waitKey(1) == 'q') {
         jetCar->set_servo_angle(0);
