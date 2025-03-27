@@ -26,7 +26,7 @@ Controller::Controller(JetCar* jetCar) : joystick(nullptr), jetCar(jetCar) {
     }
 
     std::string pipeline = "appsrc ! videoconvert ! x264enc tune=zerolatency bitrate=500 speed-preset=superfast ! "
-                          "rtph264pay ! udpsink host=0.0.0.0 port=5000";
+    "rtph264pay ! udpsink host=192.168.43.190 port=5000 sync=false";
     video_writer.open(pipeline, cv::CAP_GSTREAMER, 0, 30.0, cv::Size(640, 360), true);
     if (!video_writer.isOpened()) {
         throw std::runtime_error("Falha ao abrir o VideoWriter para streaming!");
@@ -78,14 +78,14 @@ void Controller::processEvent(const SDL_Event& event) {
     } else if (event.type == SDL_JOYAXISMOTION && _currentMode == MODE_AUTONOMOUS) {
         int axis = event.jaxis.axis;
         int value = event.jaxis.value;
-
+        
         std::cout << "Axis " << axis << " moved to " << value << std::endl;
         if (axisActions.find(axis) != axisActions.end() && axis == 3) {
             axisActions[axis](value);
         }
     } else if (event.type == SDL_JOYDEVICEADDED) {
         std::cout << "Joystick on!" << std::endl;
-
+        
         if (!joystick) {
             joystick = SDL_JoystickOpen(0);
             if (joystick) {
@@ -96,7 +96,7 @@ void Controller::processEvent(const SDL_Event& event) {
         }    
     } else if (event.type == SDL_JOYDEVICEREMOVED) {
         std::cout << "Joystick off!" << std::endl;
-
+        
         if (joystick) {
             SDL_JoystickClose(joystick);
             joystick = nullptr;
@@ -119,27 +119,28 @@ void Controller::listen() {
         while (SDL_PollEvent(&event)) {
             processEvent(event);
         }
-
+        
         if (_currentMode == MODE_AUTONOMOUS) {
             std::cout << "Modo autônomo ativado!" << std::endl;
             autonomous();
         }
-
+        
         if (buttonStates[10] && buttonStates[11]) {
             break;
         }
-
+        
         if (!joystick) {
             std::cout << "No joystick conected, quiting..." << std::endl;
             break;
         }
-
+        
+        video_writer.write(output_frame);
         SDL_Delay(10);
     }
 }
 
 void Controller::autonomous() {
-
+    
     if (!laneDetector || !laneDetector->cap_.read(frame)) {
         std::cerr << "🚨 Erro: Não foi possível capturar a imagem ou LaneDetector não inicializado!" << std::endl;
         return;
@@ -155,7 +156,6 @@ void Controller::autonomous() {
     std::cout << "Offset: " << offset << " pixels" << std::endl;
 
     // cv::imshow("Lane Detection", output_frame);
-    video_writer.write(output_frame);
 
     float steering = std::clamp(angle * 3, -90.0f, 90.0f);
     std::cout << "Steering: " << steering << std::endl;
