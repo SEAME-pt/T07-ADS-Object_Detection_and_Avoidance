@@ -2,6 +2,7 @@
 #include "JetCar.hpp"
 #include "LaneDetector.hpp"
 #include <csignal>
+#include "Controller.hpp"
 
 JetCar jetCar(0x60, 0x40);
 
@@ -36,14 +37,14 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
-    controller.setLaneDetector(laneDetector);
-
+    
     std::cout << "Sistema iniciado com sucesso! Pressione 'q' para sair." << std::endl;
     signal(SIGINT, signalHandler);
-
+    
     cv::Mat frame, output_frame;
-
+    
     Controller controller;
+    controller.setLaneDetector(laneDetector);
     controller.setAxisAction(5, moveForwardandBackward);
     controller.listen();
 
