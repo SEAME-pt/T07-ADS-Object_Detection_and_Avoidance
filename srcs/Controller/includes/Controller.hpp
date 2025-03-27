@@ -9,6 +9,19 @@
 #include "LaneDetector.hpp"
 #include "JetCar.hpp"
 
+
+#define BTN_A 0
+#define BTN_B 1
+#define BTN_X 3
+#define BTN_Y 4
+#define BTN_LB 6
+#define BTN_RB 7
+#define BTN_SELECT 10
+#define BTN_START 11
+#define BTN_HOME 12
+#define BTN_LSTICK 13
+#define BTN_RSTICK 14
+
 enum Mode {
     MODE_JOYSTICK,
     MODE_AUTONOMOUS

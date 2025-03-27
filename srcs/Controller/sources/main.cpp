@@ -13,11 +13,22 @@ void signalHandler(int signum) {
     exit(signum);
 }
 
-void moveForwardandBackward(int value) {
-    value -= 16319;
-    value = (value / 165) * -1;
-    std::cout << "Axis moved to " << value << std::endl;
-    jetCar.set_motor_speed(value); // Corrigir "car" para "jetCar"
+void handleMotors(int value) {
+    value *= -1;
+    int motorSpeed = static_cast<int>((value / 32768.0) * 100);
+    if (motorSpeed >= 30)
+        motorSpeed = 30;
+    motorSpeed = std::max(-100, std::min(100, motorSpeed));
+    std::cout << "Velocidade do motor: " << motorSpeed << std::endl;
+    jetCar.set_motor_speed(motorSpeed);
+}
+
+int changeMode(int mode, Controller &controller, JetCar &jetCar) {
+    controller.setMode(mode == MODE_JOYSTICK ? MODE_AUTONOMOUS : MODE_JOYSTICK);
+    jetCar.set_servo_angle(0);
+    jetCar.set_motor_speed(0);
+
+    return 0;
 }
 
 int main(int argc, char *argv[]) {
@@ -40,7 +51,16 @@ int main(int argc, char *argv[]) {
     try {
         Controller controller(&jetCar); // Passar ponteiro para JetCar
         controller.setLaneDetector(std::move(laneDetector)); // Transferir posse
-        controller.setAxisAction(5, moveForwardandBackward);
+        
+        changeModeActions.onPress = nullptr;
+        changeModeActions.onRelease = [&](){
+            changeMode(controller.getMode(), controller, jetCar);
+        };
+
+        controller.setAxisAction(3, handleMotors);
+        controller.setButtonAction(BTN_HOME, changeModeActions);
+
+
         controller.listen();
     } catch (const std::runtime_error& e) {
         std::cerr << "Erro: " << e.what() << std::endl;
