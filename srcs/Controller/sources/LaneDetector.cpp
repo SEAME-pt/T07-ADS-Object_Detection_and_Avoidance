@@ -18,8 +18,8 @@ LaneDetector::LaneDetector(const std::string& trt_model_path) {
     loadEngine(trt_model_path);
     offset_kalman = 0.0f;
     angle_kalman = 0.0f;
-    roi_start_y_ = 120; // Terço central: início
-    roi_end_y_ = 240;   // Terço central: fim
+    roi_start_y_ = 120; // Terço central
+    roi_end_y_ = 240;
 }
 
 LaneDetector::~LaneDetector() {
@@ -93,18 +93,16 @@ void LaneDetector::findLaneEdges(int& left_edge, int& right_edge) {
         int temp_left = center_x;
         int temp_right = center_x;
 
-        // Procurar a primeira linha à esquerda do centro
         for (int x = center_x; x >= 0; --x) {
             if (row[x] > 0) {
                 temp_left = x;
-                break; // Para na primeira linha encontrada
+                break;
             }
         }
-        // Procurar a primeira linha à direita do centro
         for (int x = center_x; x < frame_width_; ++x) {
             if (row[x] > 0) {
                 temp_right = x;
-                break; // Para na primeira linha encontrada
+                break;
             }
         }
         if (temp_left != center_x) left_edges.push_back(temp_left);
@@ -132,6 +130,7 @@ void LaneDetector::findLaneEdges(int& left_edge, int& right_edge) {
 
 void LaneDetector::calculateSteeringParams(int left_edge, int right_edge, int& lane_center, float& offset, float& angle) {
     const int lane_width = 200; // Largura estimada da faixa em pixels (ajustar conforme necessário)
+    const int desired_offset = 100; // Distância desejada da linha detectada ao centro do carro (em pixels)
     int camera_center = frame_width_ / 2;
     int roi_mid_y = (roi_start_y_ + roi_end_y_) / 2;
 
@@ -140,12 +139,14 @@ void LaneDetector::calculateSteeringParams(int left_edge, int right_edge, int& l
         std::cout << "Ambas as linhas detectadas, lane_center: " << lane_center << std::endl;
     }
     else if (left_edge != camera_center && right_edge == camera_center) {
-        lane_center = left_edge + lane_width / 2; // Curva à direita
-        std::cout << "Apenas linha esquerda detectada, estimando lane_center: " << lane_center << std::endl;
+        // Curva à direita: manter a linha esquerda a 'desired_offset' pixels à esquerda do centro
+        lane_center = left_edge + desired_offset;
+        std::cout << "Apenas linha esquerda detectada, ajustando lane_center para distância fixa: " << lane_center << std::endl;
     }
     else if (left_edge == camera_center && right_edge != camera_center) {
-        lane_center = right_edge - lane_width / 2; // Curva à esquerda
-        std::cout << "Apenas linha direita detectada, estimando lane_center: " << lane_center << std::endl;
+        // Curva à esquerda: manter a linha direita a 'desired_offset' pixels à direita do centro
+        lane_center = right_edge - desired_offset;
+        std::cout << "Apenas linha direita detectada, ajustando lane_center para distância fixa: " << lane_center << std::endl;
     }
     else {
         lane_center = camera_center + static_cast<int>(offset_kalman);
