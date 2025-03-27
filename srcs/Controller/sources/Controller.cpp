@@ -102,6 +102,7 @@ void Controller::listen() {
         }
 
         if (_currentMode == MODE_AUTONOMOUS) {
+            std::cout << "Modo autônomo ativado!" << std::endl;
             autonomous();
         }
 
@@ -119,6 +120,7 @@ void Controller::listen() {
 }
 
 void Controller::autonomous() {
+
     if (!laneDetector || !laneDetector->cap_.read(frame)) {
         std::cerr << "🚨 Erro: Não foi possível capturar a imagem ou LaneDetector não inicializado!" << std::endl;
         return;

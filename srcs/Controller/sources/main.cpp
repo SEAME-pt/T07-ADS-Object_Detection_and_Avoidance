@@ -27,6 +27,7 @@ int changeMode(int mode, Controller &controller, JetCar &jetCar) {
     controller.setMode(mode == MODE_JOYSTICK ? MODE_AUTONOMOUS : MODE_JOYSTICK);
     jetCar.set_servo_angle(0);
     jetCar.set_motor_speed(0);
+    std::cout << "Modo " << (mode == MODE_JOYSTICK ? "autônomo" : "joystick") << " ativado!" << std::endl;
 
     return 0;
 }

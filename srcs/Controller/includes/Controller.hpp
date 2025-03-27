@@ -41,7 +41,7 @@ public:
     void setAxisAction(int axis, std::function<void(int)> action);
     void processEvent(const SDL_Event& event);
     void setMode(const int &mode);
-    int getMode();
+    int  getMode();
     void listen();
     void setLaneDetector(std::unique_ptr<LaneDetector> detector);
 
