@@ -17,7 +17,7 @@ void moveForwardandBackward(int value) {
     value -= 16319;
     value = (value / 165) * -1;
     std::cout << "Axis moved to " << value << std::endl;
-    jetCar.setMotorSpeed(value); // Corrigir "car" para "jetCar"
+    jetCar.set_motor_speed(value); // Corrigir "car" para "jetCar"
 }
 
 int main(int argc, char *argv[]) {

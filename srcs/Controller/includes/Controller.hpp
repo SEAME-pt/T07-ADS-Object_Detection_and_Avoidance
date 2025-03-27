@@ -41,6 +41,7 @@ private:
     std::array<bool, 12> buttonStates;
     int _currentMode;
     cv::Mat frame, output_frame;
+    cv::VideoWriter video_writer;
 
     void autonomous();
 };
