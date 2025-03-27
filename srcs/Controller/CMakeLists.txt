@@ -38,7 +38,7 @@ set(SOURCES
     sources/Controller.cpp
     sources/JetCar.cpp
     sources/devices.cpp
-    sources/LaneDetection.cpp
+    sources/LaneDetector.cpp
     sources/main.cpp
 )
 

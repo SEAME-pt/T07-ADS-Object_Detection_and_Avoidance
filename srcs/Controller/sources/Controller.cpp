@@ -10,6 +10,9 @@ Controller::Controller(JetCar* jetCar) : joystick(nullptr), jetCar(jetCar) {
 
     _currentMode = MODE_JOYSTICK;
 
+    buttonStates[10] = false;
+    buttonStates[11] = false;
+
     if (joystickCount > 0) {
         joystick = SDL_JoystickOpen(0);
         if (joystick) {

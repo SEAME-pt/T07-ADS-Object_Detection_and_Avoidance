@@ -1,61 +1,73 @@
 #include <iostream>
 #include "JetCar.hpp"
-#include "Controller.hpp"
+#include "LaneDetector.hpp"
+#include <csignal>
 
 JetCar jetCar(0x60, 0x40);
 
-void handleSteering(int value) {
-    int servoAngle = static_cast<int>((value / 32768.0) * 90);
-    servoAngle = std::max(-90, std::min(90, servoAngle));
-    jetCar.set_servo_angle(servoAngle);
-}
-
-void handleMotors(int value) {
-    value *= -1;
-    int motorSpeed = static_cast<int>((value / 32768.0) * 100);
-    if (motorSpeed >= 30)
-        motorSpeed = 30;
-    motorSpeed = std::max(-100, std::min(100, motorSpeed));
-    std::cout << "Velocidade do motor: " << motorSpeed << std::endl;
-    jetCar.set_motor_speed(motorSpeed);
-}
-
-int changeMode(int mode, Controller &controller, JetCar &jetCar) {
-    controller.setMode(mode == MODE_JOYSTICK ? MODE_AUTONOMOUS : MODE_JOYSTICK);
+void signalHandler(int signum) {
+    std::cout << "Interrupt signal (" << signum << ") received.\n";
     jetCar.set_servo_angle(0);
     jetCar.set_motor_speed(0);
-
-    return 0;
+    exit(signum);
 }
 
-int main() {
+void moveForwardandBackward(int value) {
+    
+    value -= 16319;
 
-    Actions changeModeActions;
+ 
+    value = (value / 165) * -1;
+    
+    std::cout << "Axis moved to " << value << std::endl;
+    car.setMotorSpeed(value);
+}
 
-    try {
-        Controller controller(&jetCar);
-        
-        changeModeActions.onPress = nullptr;
-        changeModeActions.onRelease = [&](){
-            changeMode(controller.getMode(), controller, jetCar);
-        };
-
-        jetCar.set_servo_angle(0);
-        jetCar.set_motor_speed(0);
-
-        controller.setAxisAction(0, handleSteering);
-        controller.setAxisAction(3, handleMotors);
-        controller.setButtonAction(BTN_HOME, changeModeActions);
-
-        controller.listen();
-    } catch (const std::exception& e) {
-        jetCar.set_servo_angle(0);
-        jetCar.set_motor_speed(0); 
-        std::cerr << "Erro: " << e.what() << std::endl;
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        std::cerr << "Usage: " << argv[0] << " <path_to_model>" << std::endl;
         return 1;
     }
-    jetCar.set_servo_angle(0);
-    jetCar.set_motor_speed(0);
+
+    std::string modelPath = argv[1];
+    LaneDetector laneDetector(modelPath);
+
+    if (!laneDetector.initialize()) {
+        std::cerr << "Erro ao inicializar o detector de faixas!" << std::endl;
+        return -1;
+    }
+
+    std::cout << "Sistema iniciado com sucesso! Pressione 'q' para sair." << std::endl;
+    signal(SIGINT, signalHandler);
+
+    cv::Mat frame, output_frame;
+
+    Controller controller;
+    controller.setAxisAction(5, moveForwardandBackward);
+    while (true) {
+
+	if (!laneDetector.cap_.read(frame)) {
+            std::cerr << "🚨 Erro: Não foi possível capturar a imagem!" << std::endl;
+            break;
+        }
+
+        laneDetector.processFrame(frame, output_frame);
+
+        float angle = laneDetector.angle; 
+        float offset = laneDetector.offset;
+
+        std::cout << "Ângulo: " << angle << " graus" << std::endl;
+        std::cout << "Offset: " << offset << " pixels" << std::endl;
+
+        cv::imshow("Lane Detection", output_frame);
+
+        float steering = std::clamp(angle * 3, -90.0f, 90.0f);
+        std::cout << "Angulo: " << angle << std::endl;
+        jetCar.set_servo_angle(steering);
+
+        if (cv::waitKey(1) == 'q') break;
+    }
 
     return 0;
 }
+
