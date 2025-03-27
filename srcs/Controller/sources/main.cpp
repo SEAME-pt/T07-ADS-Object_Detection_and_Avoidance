@@ -14,13 +14,10 @@ void signalHandler(int signum) {
 }
 
 void moveForwardandBackward(int value) {
-    
     value -= 16319;
-
     value = (value / 165) * -1;
-    
     std::cout << "Axis moved to " << value << std::endl;
-    car.setMotorSpeed(value);
+    jetCar.setMotorSpeed(value); // Corrigir "car" para "jetCar"
 }
 
 int main(int argc, char *argv[]) {
@@ -30,24 +27,25 @@ int main(int argc, char *argv[]) {
     }
 
     std::string modelPath = argv[1];
-    LaneDetector laneDetector(modelPath);
+    auto laneDetector = std::make_unique<LaneDetector>(modelPath); // Criar com unique_ptr
 
-    if (!laneDetector.initialize()) {
+    if (!laneDetector->initialize()) {
         std::cerr << "Erro ao inicializar o detector de faixas!" << std::endl;
         return -1;
     }
 
-    
     std::cout << "Sistema iniciado com sucesso! Pressione 'q' para sair." << std::endl;
     signal(SIGINT, signalHandler);
-    
-    cv::Mat frame, output_frame;
-    
-    Controller controller;
-    controller.setLaneDetector(laneDetector);
-    controller.setAxisAction(5, moveForwardandBackward);
-    controller.listen();
+
+    try {
+        Controller controller(&jetCar); // Passar ponteiro para JetCar
+        controller.setLaneDetector(std::move(laneDetector)); // Transferir posse
+        controller.setAxisAction(5, moveForwardandBackward);
+        controller.listen();
+    } catch (const std::runtime_error& e) {
+        std::cerr << "Erro: " << e.what() << std::endl;
+        return -1;
+    }
 
     return 0;
 }
-

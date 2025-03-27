@@ -1,4 +1,5 @@
 #include "Controller.hpp"
+#include <iostream>
 
 Controller::Controller(JetCar* jetCar) : joystick(nullptr), jetCar(jetCar) {
     if (SDL_Init(SDL_INIT_JOYSTICK) < 0) {
@@ -41,11 +42,11 @@ void Controller::setAxisAction(int axis, std::function<void(int)> action) {
 }
 
 void Controller::processEvent(const SDL_Event& event) {
-    if (event.type == SDL_JOYBUTTONDOWN || event.type == SDL_JOYBUTTONUP) { // Joypad button
+    if (event.type == SDL_JOYBUTTONDOWN || event.type == SDL_JOYBUTTONUP) {
         bool isPressed = (event.type == SDL_JOYBUTTONDOWN);
         int button = event.jbutton.button;
 
-        if (button < buttonStates.size()) {
+        if (button < static_cast<int>(buttonStates.size())) { // Corrigir comparação signed/unsigned
             std::cout << "Button " << button << " " << (isPressed ? "pressed" : "released") << std::endl;
             buttonStates[button] = isPressed;
             if (buttonActions.find(button) != buttonActions.end()) {
@@ -58,7 +59,7 @@ void Controller::processEvent(const SDL_Event& event) {
                 }
             }
         }
-    } else if (event.type == SDL_JOYAXISMOTION && _currentMode != MODE_AUTONOMOUS) { // Joypad axis motion
+    } else if (event.type == SDL_JOYAXISMOTION && _currentMode != MODE_AUTONOMOUS) {
         int axis = event.jaxis.axis;
         int value = event.jaxis.value;
 
@@ -66,7 +67,7 @@ void Controller::processEvent(const SDL_Event& event) {
         if (axisActions.find(axis) != axisActions.end()) {
             axisActions[axis](value);
         }
-    } else if (event.type == SDL_JOYDEVICEREMOVED) { // Joypad removed
+    } else if (event.type == SDL_JOYDEVICEREMOVED) {
         std::cout << "Joystick off!" << std::endl;
 
         if (joystick) {
@@ -77,7 +78,7 @@ void Controller::processEvent(const SDL_Event& event) {
     }
 }
 
-void Controller::setMode(int const &mode) {
+void Controller::setMode(const int &mode) {
     _currentMode = mode;
 }
 
@@ -93,10 +94,10 @@ void Controller::listen() {
         }
 
         if (_currentMode == MODE_AUTONOMOUS) {
-           autonomous();
+            autonomous();
         }
 
-        if (buttonStates[10] && buttonStates[11]) { // Start + Select exit program
+        if (buttonStates[10] && buttonStates[11]) {
             break;
         }
 
@@ -109,18 +110,17 @@ void Controller::listen() {
     }
 }
 
-
 void Controller::autonomous() {
-
-    if (!laneDetector.cap_.read(frame)) {
-        std::cerr << "🚨 Erro: Não foi possível capturar a imagem!" << std::endl;
-        return ;
+    if (!laneDetector || !laneDetector->cap_.read(frame)) {
+        std::cerr << "🚨 Erro: Não foi possível capturar a imagem ou LaneDetector não inicializado!" << std::endl;
+        return;
     }
 
-    laneDetector.processFrame(frame, output_frame);
+    laneDetector->processFrame(frame, output_frame);
 
-    float angle = laneDetector.angle; 
-    float offset = laneDetector.offset;
+    // Usar offset_kalman e angle_kalman (valores filtrados)
+    float angle = laneDetector->angle_kalman;
+    float offset = laneDetector->offset_kalman;
 
     std::cout << "Ângulo: " << angle << " graus" << std::endl;
     std::cout << "Offset: " << offset << " pixels" << std::endl;
@@ -128,11 +128,16 @@ void Controller::autonomous() {
     cv::imshow("Lane Detection", output_frame);
 
     float steering = std::clamp(angle * 3, -90.0f, 90.0f);
-    std::cout << "Angulo: " << angle << std::endl;
+    std::cout << "Steering: " << steering << std::endl;
     jetCar->set_servo_angle(steering);
 
+    if (cv::waitKey(1) == 'q') {
+        jetCar->set_servo_angle(0);
+        jetCar->set_motor_speed(0);
+        exit(0);
+    }
 }
 
-void Controller::setLaneDetector(LaneDetector laneDetector) {
-    this->laneDetector = laneDetector;
+void Controller::setLaneDetector(std::unique_ptr<LaneDetector> detector) {
+    laneDetector = std::move(detector); // Transferir posse do ponteiro
 }
