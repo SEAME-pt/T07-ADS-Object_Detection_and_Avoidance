@@ -7,6 +7,7 @@
 #include <SDL2/SDL.h>
 #include <zmq.hpp>
 #include "JetCar.hpp"
+#include "LaneDetector.hpp"
 
 #define BTN_A 0
 #define BTN_B 1
@@ -38,7 +39,7 @@ public:
     void setButtonAction(int button, Actions actions);
     void setAxisAction(int axis, std::function<void(int)> action);
     void setMode(int const &mode);
-    void dummieAutonomous();
+    void autonomous();
 
     int     getMode();
 
@@ -48,9 +49,12 @@ private:
     SDL_Joystick*   joystick;
     JetCar*         jetCar;
     int             _currentMode;
+    LaneDetector    laneDetector;
 
     std::map<int, Actions> buttonActions;
     std::map<int, std::function<void(int)>> axisActions;
     std::array<bool, SDL_CONTROLLER_BUTTON_MAX> buttonStates;
     void processEvent(const SDL_Event& event);
+
+    void setLaneDetector(LaneDetector laneDetector);
 };

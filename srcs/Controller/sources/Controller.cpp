@@ -110,14 +110,25 @@ void Controller::listen() {
 }
 
 
-void Controller::dummieAutonomous() {
+void Controller::autonomous() {
 
-    jetCar->set_servo_angle(0);
-    jetCar->set_motor_speed(30);
-    SDL_Delay(2000);
-    jetCar->set_servo_angle(90);
-    jetCar->set_motor_speed(20);
-    SDL_Delay(2000);
-    
-    
+    if (!laneDetector.cap_.read(frame)) {
+        std::cerr << "🚨 Erro: Não foi possível capturar a imagem!" << std::endl;
+        break;
+    }
+
+    laneDetector.processFrame(frame, output_frame);
+
+    float angle = laneDetector.angle; 
+    float offset = laneDetector.offset;
+
+    std::cout << "Ângulo: " << angle << " graus" << std::endl;
+    std::cout << "Offset: " << offset << " pixels" << std::endl;
+
+    cv::imshow("Lane Detection", output_frame);
+
+    float steering = std::clamp(angle * 3, -90.0f, 90.0f);
+    std::cout << "Angulo: " << angle << std::endl;
+    jetCar.set_servo_angle(steering);
+
 }

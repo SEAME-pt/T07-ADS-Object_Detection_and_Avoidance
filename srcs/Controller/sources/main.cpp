@@ -16,7 +16,6 @@ void moveForwardandBackward(int value) {
     
     value -= 16319;
 
- 
     value = (value / 165) * -1;
     
     std::cout << "Axis moved to " << value << std::endl;
@@ -37,6 +36,8 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
+    controller.setLaneDetector(laneDetector);
+
     std::cout << "Sistema iniciado com sucesso! Pressione 'q' para sair." << std::endl;
     signal(SIGINT, signalHandler);
 
@@ -44,29 +45,7 @@ int main(int argc, char *argv[]) {
 
     Controller controller;
     controller.setAxisAction(5, moveForwardandBackward);
-    while (true) {
-
-	if (!laneDetector.cap_.read(frame)) {
-            std::cerr << "🚨 Erro: Não foi possível capturar a imagem!" << std::endl;
-            break;
-        }
-
-        laneDetector.processFrame(frame, output_frame);
-
-        float angle = laneDetector.angle; 
-        float offset = laneDetector.offset;
-
-        std::cout << "Ângulo: " << angle << " graus" << std::endl;
-        std::cout << "Offset: " << offset << " pixels" << std::endl;
-
-        cv::imshow("Lane Detection", output_frame);
-
-        float steering = std::clamp(angle * 3, -90.0f, 90.0f);
-        std::cout << "Angulo: " << angle << std::endl;
-        jetCar.set_servo_angle(steering);
-
-        if (cv::waitKey(1) == 'q') break;
-    }
+    controller.listen();
 
     return 0;
 }
