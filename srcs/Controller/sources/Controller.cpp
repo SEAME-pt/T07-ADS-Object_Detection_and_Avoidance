@@ -132,3 +132,7 @@ void Controller::autonomous() {
     jetCar->set_servo_angle(steering);
 
 }
+
+void Controller::setLaneDetector(LaneDetector laneDetector) {
+    this->laneDetector = laneDetector;
+}
