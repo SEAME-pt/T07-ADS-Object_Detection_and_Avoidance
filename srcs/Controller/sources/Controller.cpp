@@ -114,7 +114,7 @@ void Controller::autonomous() {
 
     if (!laneDetector.cap_.read(frame)) {
         std::cerr << "🚨 Erro: Não foi possível capturar a imagem!" << std::endl;
-        break;
+        return ;
     }
 
     laneDetector.processFrame(frame, output_frame);
@@ -129,6 +129,6 @@ void Controller::autonomous() {
 
     float steering = std::clamp(angle * 3, -90.0f, 90.0f);
     std::cout << "Angulo: " << angle << std::endl;
-    jetCar.set_servo_angle(steering);
+    jetCar->set_servo_angle(steering);
 
 }
