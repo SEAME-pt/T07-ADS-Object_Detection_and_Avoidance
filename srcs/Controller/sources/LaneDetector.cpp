@@ -87,7 +87,6 @@ void LaneDetector::findLaneEdges(int& left_edge, int& right_edge) {
     left_edge = center_x;
     right_edge = center_x;
 
-    // Analisar a região central
     std::vector<int> left_edges, right_edges;
     for (int y = roi_start_y_; y < roi_end_y_; ++y) {
         uchar* row = mask_8u.ptr<uchar>(y);
@@ -106,36 +105,68 @@ void LaneDetector::findLaneEdges(int& left_edge, int& right_edge) {
                 break;
             }
         }
-        // Relaxar a condição: aceitar bordas mesmo se apenas uma for encontrada
         if (temp_left != center_x) left_edges.push_back(temp_left);
         if (temp_right != center_x) right_edges.push_back(temp_right);
     }
 
-    // Depuração: verificar se a ROI tem valores
     if (left_edges.empty() && right_edges.empty()) {
         std::cout << "Nenhuma borda detectada na ROI (" << roi_start_y_ << " a " << roi_end_y_ << ")" << std::endl;
-        // Opcional: salvar a máscara para análise
         static int frame_count = 0;
         if (frame_count++ % 30 == 0) {
-            // cv::imwrite("debug_mask_" + std::to_string(frame_count) + ".png", mask_8u);
+            cv::imwrite("debug_mask_" + std::to_string(frame_count) + ".png", mask_8u);
             std::cout << "Salvando máscara de depuração: debug_mask_" << frame_count << ".png" << std::endl;
         }
     }
 
-    // Média das bordas detectadas
     if (!left_edges.empty()) {
         left_edge = std::accumulate(left_edges.begin(), left_edges.end(), 0) / left_edges.size();
     }
     if (!right_edges.empty()) {
         right_edge = std::accumulate(right_edges.begin(), right_edges.end(), 0) / right_edges.size();
     }
+
+    std::cout << "Left Edge: " << left_edge << ", Right Edge: " << right_edge << std::endl;
 }
 
 void LaneDetector::calculateSteeringParams(int left_edge, int right_edge, int& lane_center, float& offset, float& angle) {
-    lane_center = (left_edge + right_edge) / 2;
+    const int lane_width = 200; // Largura estimada da faixa em pixels (ajustar conforme necessário)
     int camera_center = frame_width_ / 2;
+    int roi_mid_y = (roi_start_y_ + roi_end_y_) / 2;
+
+    // Caso ambas as bordas sejam detectadas
+    if (left_edge != camera_center && right_edge != camera_center) {
+        lane_center = (left_edge + right_edge) / 2;
+    }
+    // Caso apenas a borda esquerda seja detectada (curva à direita)
+    else if (left_edge != camera_center && right_edge == camera_center) {
+        lane_center = left_edge + lane_width / 2; // Assumir que o centro está à direita da linha esquerda
+        std::cout << "Apenas linha esquerda detectada, estimando lane_center: " << lane_center << std::endl;
+    }
+    // Caso apenas a borda direita seja detectada (curva à esquerda)
+    else if (left_edge == camera_center && right_edge != camera_center) {
+        lane_center = right_edge - lane_width / 2; // Assumir que o centro está à esquerda da linha direita
+        std::cout << "Apenas linha direita detectada, estimando lane_center: " << lane_center << std::endl;
+    }
+    // Caso nenhuma borda seja detectada (usar última previsão do Kalman)
+    else {
+        lane_center = camera_center + static_cast<int>(offset_kalman); // Manter trajetória anterior
+        std::cout << "Nenhuma borda detectada, usando offset_kalman: " << offset_kalman << std::endl;
+    }
+
+    // Limitar lane_center para evitar valores fora da imagem
+    lane_center = std::max(0, std::min(lane_center, frame_width_ - 1));
+
+    // Calcular offset e angle com base na distância até o meio da ROI
     offset = static_cast<float>(lane_center - camera_center);
-    angle = atan2(offset, frame_height_) * 180.0 / CV_PI;
+    angle = atan2(offset, frame_height_ - roi_mid_y) * 180.0 / CV_PI;
+
+    // Limitar valores
+    if (offset > frame_width_ / 2) offset = frame_width_ / 2;
+    if (offset < -frame_width_ / 2) offset = -frame_width_ / 2;
+    if (angle > 90.0f) angle = 90.0f;
+    if (angle < -90.0f) angle = -90.0f;
+
+    std::cout << "Lane Center: " << lane_center << ", Offset: " << offset << ", Angle: " << angle << std::endl;
 }
 
 void LaneDetector::processFrame(cv::Mat& frame, cv::Mat& output_frame) {
@@ -159,6 +190,12 @@ void LaneDetector::processFrame(cv::Mat& frame, cv::Mat& output_frame) {
     offset_kalman = prediction_.at<float>(0);
     angle_kalman = prediction_.at<float>(2);
 
+    // Limitar valores do Kalman
+    if (offset_kalman > frame_width_ / 2) offset_kalman = frame_width_ / 2;
+    if (offset_kalman < -frame_width_ / 2) offset_kalman = -frame_width_ / 2;
+    if (angle_kalman > 90.0f) angle_kalman = 90.0f;
+    if (angle_kalman < -90.0f) angle_kalman = -90.0f;
+
     output_frame = frame.clone();
     int roi_mid_y = (roi_start_y_ + roi_end_y_) / 2;
     cv::line(output_frame, cv::Point(left_edge, roi_mid_y), cv::Point(left_edge, roi_mid_y - 20), cv::Scalar(0, 255, 0), 2);
@@ -172,7 +209,6 @@ void LaneDetector::processFrame(cv::Mat& frame, cv::Mat& output_frame) {
     sprintf(text, "Angle: %.2f deg", angle_kalman);
     cv::putText(output_frame, text, cv::Point(10, 60), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 255, 0), 2);
 
-    // Desenhar limites da ROI
     cv::line(output_frame, cv::Point(0, roi_start_y_), cv::Point(frame_width_, roi_start_y_), cv::Scalar(255, 255, 0), 1);
     cv::line(output_frame, cv::Point(0, roi_end_y_), cv::Point(frame_width_, roi_end_y_), cv::Scalar(255, 255, 0), 1);
 }

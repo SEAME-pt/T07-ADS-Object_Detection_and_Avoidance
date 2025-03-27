@@ -1,6 +1,7 @@
 #include "LaneDetector.hpp"
 #include <iostream>
 #include <fstream>
+#include <numeric>
 
 LaneDetector::LaneDetector(const std::string& trt_model_path) {
     cudaStreamCreate(&stream_);
@@ -14,12 +15,11 @@ LaneDetector::LaneDetector(const std::string& trt_model_path) {
     measurement_ = cv::Mat(2, 1, CV_32F);
     prediction_ = cv::Mat(4, 1, CV_32F);
 
+    loadEngine(trt_model_path);
     offset_kalman = 0.0f;
     angle_kalman = 0.0f;
     roi_start_y_ = 120;
     roi_end_y_ = 240;
-
-    loadEngine(trt_model_path);
 }
 
 LaneDetector::~LaneDetector() {
@@ -60,52 +60,12 @@ void LaneDetector::loadEngine(const std::string& trt_model_path) {
     output_data_.resize(1 * 1 * input_height_ * input_width_);
 }
 
-void LaneDetector::processFrame(cv::Mat& frame, cv::Mat& output_frame) {
-    preprocess(frame);
-    infer();
-
-    lane_mask_ = cv::Mat(input_height_, input_width_, CV_32F, output_data_.data());
-    cv::resize(lane_mask_, lane_mask_, cv::Size(frame_width_, frame_height_));
-    lane_mask_ = (lane_mask_ > 0.5);
-
-    int left_edge, right_edge;
-    findLaneEdges(left_edge, right_edge);
-    int lane_center;
-    float offset, angle;
-    calculateSteeringParams(left_edge, right_edge, lane_center, offset, angle);
-
-    measurement_.at<float>(0) = offset;
-    measurement_.at<float>(1) = angle;
-    kalman_.correct(measurement_);
-    prediction_ = kalman_.predict();
-    offset_kalman = prediction_.at<float>(0);
-    angle_kalman = prediction_.at<float>(2);
-
-    output_frame = frame.clone();
-    // Desenhar linhas na altura média da ROI
-    int roi_mid_y = (roi_start_y_ + roi_end_y_) / 2;
-    cv::line(output_frame, cv::Point(left_edge, roi_mid_y), cv::Point(left_edge, roi_mid_y - 20), cv::Scalar(0, 255, 0), 2);
-    cv::line(output_frame, cv::Point(right_edge, roi_mid_y), cv::Point(right_edge, roi_mid_y - 20), cv::Scalar(0, 255, 0), 2);
-    cv::line(output_frame, cv::Point(lane_center, roi_mid_y), cv::Point(lane_center, roi_mid_y - 30), cv::Scalar(0, 0, 255), 2);
-    cv::line(output_frame, cv::Point(frame_width_ / 2, roi_mid_y), cv::Point(frame_width_ / 2, roi_mid_y - 40), cv::Scalar(255, 0, 0), 2);
-
-    char text[128];
-    sprintf(text, "Offset: %.2f px", offset_kalman);
-    cv::putText(output_frame, text, cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 255, 0), 2);
-    sprintf(text, "Angle: %.2f deg", angle_kalman);
-    cv::putText(output_frame, text, cv::Point(10, 60), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 255, 0), 2);
-
-    // Desenhar limites da ROI (opcional, para depuração)
-    cv::line(output_frame, cv::Point(0, roi_start_y_), cv::Point(frame_width_, roi_start_y_), cv::Scalar(255, 255, 0), 1);
-    cv::line(output_frame, cv::Point(0, roi_end_y_), cv::Point(frame_width_, roi_end_y_), cv::Scalar(255, 255, 0), 1);
-}
-
 void LaneDetector::preprocess(const cv::Mat& frame) {
     gpu_frame_.upload(frame);
     cv::cuda::resize(gpu_frame_, gpu_resized_, cv::Size(input_width_, input_height_));
     cv::Mat resized;
     gpu_resized_.download(resized);
-    resized.convertTo(resized, CV_32F, 1.0 / 255.0); // Normalização no CPU
+    resized.convertTo(resized, CV_32F, 1.0 / 255.0);
     std::vector<cv::Mat> channels;
     cv::split(resized, channels);
     for (int c = 0; c < 3; ++c) {
@@ -120,16 +80,14 @@ void LaneDetector::infer() {
     cudaStreamSynchronize(stream_);
 }
 
-
 void LaneDetector::findLaneEdges(int& left_edge, int& right_edge) {
     cv::Mat mask_8u;
-    lane_mask_.convertTo(mask_8u, CV_8U, 255.0); // Converter para 8-bit
+    lane_mask_.convertTo(mask_8u, CV_8U, 255.0);
     int center_x = frame_width_ / 2;
     left_edge = center_x;
     right_edge = center_x;
 
-    // Analisar a região central (média das linhas entre roi_start_y_ e roi_end_y_)
-    int roi_height = roi_end_y_ - roi_start_y_;
+    // Analisar a região central
     std::vector<int> left_edges, right_edges;
     for (int y = roi_start_y_; y < roi_end_y_; ++y) {
         uchar* row = mask_8u.ptr<uchar>(y);
@@ -148,40 +106,30 @@ void LaneDetector::findLaneEdges(int& left_edge, int& right_edge) {
                 break;
             }
         }
-        if (temp_left != center_x && temp_right != center_x) { // Apenas linhas válidas
-            left_edges.push_back(temp_left);
-            right_edges.push_back(temp_right);
+        // Relaxar a condição: aceitar bordas mesmo se apenas uma for encontrada
+        if (temp_left != center_x) left_edges.push_back(temp_left);
+        if (temp_right != center_x) right_edges.push_back(temp_right);
+    }
+
+    // Depuração: verificar se a ROI tem valores
+    if (left_edges.empty() && right_edges.empty()) {
+        std::cout << "Nenhuma borda detectada na ROI (" << roi_start_y_ << " a " << roi_end_y_ << ")" << std::endl;
+        // Opcional: salvar a máscara para análise
+        static int frame_count = 0;
+        if (frame_count++ % 30 == 0) {
+            cv::imwrite("debug_mask_" + std::to_string(frame_count) + ".png", mask_8u);
+            std::cout << "Salvando máscara de depuração: debug_mask_" << frame_count << ".png" << std::endl;
         }
     }
 
-    // Média das bordas detectadas na ROI
-    if (!left_edges.empty() && !right_edges.empty()) {
+    // Média das bordas detectadas
+    if (!left_edges.empty()) {
         left_edge = std::accumulate(left_edges.begin(), left_edges.end(), 0) / left_edges.size();
+    }
+    if (!right_edges.empty()) {
         right_edge = std::accumulate(right_edges.begin(), right_edges.end(), 0) / right_edges.size();
     }
 }
-
-//void LaneDetector::findLaneEdges(int& left_edge, int& right_edge) {
-//    cv::Mat mask_8u;
-//    lane_mask_.convertTo(mask_8u, CV_8U, 255.0); // Converter para 8-bit com escala
-//    uchar* bottom_row = mask_8u.ptr<uchar>(mask_8u.rows - 1);
-//    int center_x = frame_width_ / 2;
-//    left_edge = center_x;
-//    right_edge = center_x;
-
-//    for (int x = center_x; x >= 0; --x) {
- //       if (bottom_row[x] > 0) {
-  //          left_edge = x;
-   //         break;
-    //    }
-//    }
-//    for (int x = center_x; x < frame_width_; ++x) {
-//        if (bottom_row[x] > 0) {
-//            right_edge = x;
-//            break;
-//        }
-//    }
-//}
 
 void LaneDetector::calculateSteeringParams(int left_edge, int right_edge, int& lane_center, float& offset, float& angle) {
     lane_center = (left_edge + right_edge) / 2;
@@ -190,36 +138,41 @@ void LaneDetector::calculateSteeringParams(int left_edge, int right_edge, int& l
     angle = atan2(offset, frame_height_) * 180.0 / CV_PI;
 }
 
-//void LaneDetector::processFrame(cv::Mat& frame, cv::Mat& output_frame) {
- //   preprocess(frame);
- //   infer();
+void LaneDetector::processFrame(cv::Mat& frame, cv::Mat& output_frame) {
+    preprocess(frame);
+    infer();
 
- //   lane_mask_ = cv::Mat(input_height_, input_width_, CV_32F, output_data_.data());
- //   cv::resize(lane_mask_, lane_mask_, cv::Size(frame_width_, frame_height_));
- //   lane_mask_ = (lane_mask_ > 0.5);
+    lane_mask_ = cv::Mat(input_height_, input_width_, CV_32F, output_data_.data());
+    cv::resize(lane_mask_, lane_mask_, cv::Size(frame_width_, frame_height_));
+    lane_mask_ = (lane_mask_ > 0.5);
 
-//    int left_edge, right_edge;
-//    findLaneEdges(left_edge, right_edge);
-//    int lane_center;
-    // float offset, angle;
-//    calculateSteeringParams(left_edge, right_edge, lane_center, offset, angle);
+    int left_edge, right_edge;
+    findLaneEdges(left_edge, right_edge);
+    int lane_center;
 
-//    measurement_.at<float>(0) = offset;
-//    measurement_.at<float>(1) = angle;
-//    kalman_.correct(measurement_);
-//    prediction_ = kalman_.predict();
-//    offset_kalman = prediction_.at<float>(0);
-//    angle_kalman = prediction_.at<float>(2);
+    calculateSteeringParams(left_edge, right_edge, lane_center, offset, angle);
 
-//    output_frame = frame.clone();
-//    cv::line(output_frame, cv::Point(left_edge, frame_height_ - 1), cv::Point(left_edge, frame_height_ - 20), cv::Scalar(0, 255, 0), 2);
-//    cv::line(output_frame, cv::Point(right_edge, frame_height_ - 1), cv::Point(right_edge, frame_height_ - 20), cv::Scalar(0, 255, 0), 2);
-//    cv::line(output_frame, cv::Point(lane_center, frame_height_ - 1), cv::Point(lane_center, frame_height_ - 30), cv::Scalar(0, 0, 255), 2);
-//    cv::line(output_frame, cv::Point(frame_width_ / 2, frame_height_ - 1), cv::Point(frame_width_ / 2, frame_height_ - 40), cv::Scalar(255, 0, 0), 2);
+    measurement_.at<float>(0) = offset;
+    measurement_.at<float>(1) = angle;
+    kalman_.correct(measurement_);
+    prediction_ = kalman_.predict();
+    offset_kalman = prediction_.at<float>(0);
+    angle_kalman = prediction_.at<float>(2);
 
-//    char text[128];
-//    sprintf(text, "Offset: %.2f px", offset_kalman);
-//    cv::putText(output_frame, text, cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 255, 0), 2);
-//    sprintf(text, "Angle: %.2f deg", angle_kalman);
-//    cv::putText(output_frame, text, cv::Point(10, 60), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 255, 0), 2);
-//}
+    output_frame = frame.clone();
+    int roi_mid_y = (roi_start_y_ + roi_end_y_) / 2;
+    cv::line(output_frame, cv::Point(left_edge, roi_mid_y), cv::Point(left_edge, roi_mid_y - 20), cv::Scalar(0, 255, 0), 2);
+    cv::line(output_frame, cv::Point(right_edge, roi_mid_y), cv::Point(right_edge, roi_mid_y - 20), cv::Scalar(0, 255, 0), 2);
+    cv::line(output_frame, cv::Point(lane_center, roi_mid_y), cv::Point(lane_center, roi_mid_y - 30), cv::Scalar(0, 0, 255), 2);
+    cv::line(output_frame, cv::Point(frame_width_ / 2, roi_mid_y), cv::Point(frame_width_ / 2, roi_mid_y - 40), cv::Scalar(255, 0, 0), 2);
+
+    char text[128];
+    sprintf(text, "Offset: %.2f px", offset_kalman);
+    cv::putText(output_frame, text, cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 255, 0), 2);
+    sprintf(text, "Angle: %.2f deg", angle_kalman);
+    cv::putText(output_frame, text, cv::Point(10, 60), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 255, 0), 2);
+
+    // Desenhar limites da ROI
+    cv::line(output_frame, cv::Point(0, roi_start_y_), cv::Point(frame_width_, roi_start_y_), cv::Scalar(255, 255, 0), 1);
+    cv::line(output_frame, cv::Point(0, roi_end_y_), cv::Point(frame_width_, roi_end_y_), cv::Scalar(255, 255, 0), 1);
+}
