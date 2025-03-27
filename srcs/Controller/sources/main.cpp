@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
         };
 
         controller.setAxisAction(3, handleMotors);
-        controller.setButtonAction(BTN_HOME, changeModeActions);
+        controller.setButtonAction(BTN_START, changeModeActions);
 
 
         controller.listen();
