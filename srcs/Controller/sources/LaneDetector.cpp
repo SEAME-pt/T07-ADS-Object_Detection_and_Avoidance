@@ -117,7 +117,8 @@ void LaneDetector::findLaneEdges(int& left_edge, int& right_edge) {
         // Opcional: salvar a máscara para análise
         static int frame_count = 0;
         if (frame_count++ % 30 == 0) {
-            cv::imwrite("debug_mask_" + std::to_string(frame_count) + ".png", mask_8u);
+            // cv::imwrite("debug_mask_" + std::to_string(frame_count) + ".png", mask_8u);
+            std::cout << "Salvando máscara de depuração: debug_mask_" << frame_count << ".png" << std::endl;
         }
     }
 
