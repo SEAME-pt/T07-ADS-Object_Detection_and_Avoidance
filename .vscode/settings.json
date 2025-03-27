@@ -62,6 +62,12 @@
         "stop_token": "cpp",
         "streambuf": "cpp",
         "thread": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "bitset": "cpp",
+        "codecvt": "cpp",
+        "set": "cpp",
+        "optional": "cpp",
+        "cfenv": "cpp",
+        "__nullptr": "cpp"
     }
 }

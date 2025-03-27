@@ -93,7 +93,7 @@ void Controller::listen() {
         }
 
         if (_currentMode == MODE_AUTONOMOUS) {
-           dummieAutonomous();
+           autonomous();
         }
 
         if (buttonStates[10] && buttonStates[11]) { // Start + Select exit program

@@ -50,6 +50,8 @@ private:
     JetCar*         jetCar;
     int             _currentMode;
     LaneDetector    laneDetector;
+    cv::Mat         frame
+    cv::MAt         output_frame;
 
     std::map<int, Actions> buttonActions;
     std::map<int, std::function<void(int)>> axisActions;
