@@ -18,8 +18,8 @@ LaneDetector::LaneDetector(const std::string& trt_model_path) {
     loadEngine(trt_model_path);
     offset_kalman = 0.0f;
     angle_kalman = 0.0f;
-    roi_start_y_ = 240; // Terço inferior para curvas
-    roi_end_y_ = 360;
+    roi_start_y_ = 120; // Terço central: início
+    roi_end_y_ = 240;   // Terço central: fim
 }
 
 LaneDetector::~LaneDetector() {
