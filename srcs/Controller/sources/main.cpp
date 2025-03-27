@@ -48,6 +48,8 @@ int main(int argc, char *argv[]) {
     std::cout << "Sistema iniciado com sucesso! Pressione 'q' para sair." << std::endl;
     signal(SIGINT, signalHandler);
 
+
+    Actions changeModeActions;
     try {
         Controller controller(&jetCar); // Passar ponteiro para JetCar
         controller.setLaneDetector(std::move(laneDetector)); // Transferir posse
