@@ -13,6 +13,12 @@ void signalHandler(int signum) {
     exit(signum);
 }
 
+void handleSteering(int value) {
+    int servoAngle = static_cast<int>((value / 32768.0) * 90);
+    servoAngle = std::max(-90, std::min(90, servoAngle));
+    jetCar.set_servo_angle(servoAngle);
+}
+
 void handleMotors(int value) {
     value *= -1;
     int motorSpeed = static_cast<int>((value / 32768.0) * 100);
@@ -61,6 +67,7 @@ int main(int argc, char *argv[]) {
         };
 
         controller.setAxisAction(3, handleMotors);
+        controller.setAxisAction(0, handleSteering);
         controller.setButtonAction(BTN_START, changeModeActions);
 
 
