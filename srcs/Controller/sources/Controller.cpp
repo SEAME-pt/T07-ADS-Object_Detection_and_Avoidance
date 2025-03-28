@@ -149,8 +149,8 @@ void Controller::autonomous() {
     laneDetector->processFrame(frame, output_frame);
 
     // Usar offset_kalman e angle_kalman (valores filtrados)
-    float angle = laneDetector->angle_kalman;
-    float offset = laneDetector->offset_kalman;
+    float angle = laneDetector->getAngle();
+    float offset = laneDetector->getOffset();
 
     std::cout << "Ângulo: " << angle << " graus" << std::endl;
     std::cout << "Offset: " << offset << " pixels" << std::endl;
