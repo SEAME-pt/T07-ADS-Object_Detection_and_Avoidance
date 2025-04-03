@@ -134,7 +134,7 @@ void Controller::listen() {
             break;
         }
         
-        video_writer.write(output_frame);
+        //video_writer.write(output_frame);
         SDL_Delay(10);
     }
 }
@@ -146,16 +146,18 @@ void Controller::autonomous() {
         return;
     }
 
-    laneDetector->processFrame(frame, output_frame);
+    laneDetector->processFrame(frame, output_frame, 1);
 
     // Usar offset_kalman e angle_kalman (valores filtrados)
-    float angle = laneDetector->getAngle();
-    float offset = laneDetector->getOffset();
+
+    float angle = laneDetector->angle_kalman;
+    float offset = laneDetector->offset_kalman;
 
     std::cout << "Ângulo: " << angle << " graus" << std::endl;
     std::cout << "Offset: " << offset << " pixels" << std::endl;
 
-    // cv::imshow("Lane Detection", output_frame);
+    video_writer.write(output_frame);
+    //cv::imshow("Lane Detection", output_frame);
 
     float steering = std::clamp(angle * 3, -90.0f, 90.0f);
     std::cout << "Steering: " << steering << std::endl;

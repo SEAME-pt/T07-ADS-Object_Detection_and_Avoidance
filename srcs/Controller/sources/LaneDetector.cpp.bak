@@ -2,7 +2,6 @@
 #include <iostream>
 #include <fstream>
 #include <numeric>
-#include <opencv2/opencv.hpp> // Para cv::fitLine
 
 LaneDetector::LaneDetector(const std::string& trt_model_path) {
     cudaStreamCreate(&stream_);
@@ -81,75 +80,77 @@ void LaneDetector::infer() {
     cudaStreamSynchronize(stream_);
 }
 
-void LaneDetector::findLanePoints(std::vector<cv::Point>& lane_points) {
+void LaneDetector::findLaneEdges(int& left_edge, int& right_edge) {
     cv::Mat mask_8u;
     lane_mask_.convertTo(mask_8u, CV_8U, 255.0);
     int center_x = frame_width_ / 2;
-    lane_points.clear();
+    left_edge = center_x;
+    right_edge = center_x;
 
-    // Escanear a ROI em intervalos de 10 pixels
-    for (int y = roi_start_y_; y < roi_end_y_; y += 10) {
+    std::vector<int> left_edges, right_edges;
+    for (int y = roi_start_y_; y < roi_end_y_; ++y) {
         uchar* row = mask_8u.ptr<uchar>(y);
-        std::vector<int> row_points;
+        int temp_left = center_x;
+        int temp_right = center_x;
 
-        // Procurar todos os pontos da faixa na linha
-        for (int x = 0; x < frame_width_; ++x) {
+        for (int x = center_x; x >= 0; --x) {
             if (row[x] > 0) {
-                row_points.push_back(x);
+                temp_left = x;
+                break;
             }
         }
-
-        // Se encontrar pontos, adicionar o ponto médio da faixa detectada
-        if (!row_points.empty()) {
-            int avg_x = std::accumulate(row_points.begin(), row_points.end(), 0) / row_points.size();
-            lane_points.push_back(cv::Point(avg_x, y));
+        for (int x = center_x; x < frame_width_; ++x) {
+            if (row[x] > 0) {
+                temp_right = x;
+                break;
+            }
         }
+        if (temp_left != center_x) left_edges.push_back(temp_left);
+        if (temp_right != center_x) right_edges.push_back(temp_right);
     }
 
-    if (lane_points.empty()) {
-        std::cout << "Nenhum ponto de faixa detectado na ROI (" << roi_start_y_ << " a " << roi_end_y_ << ")" << std::endl;
+    if (left_edges.empty() && right_edges.empty()) {
+        std::cout << "Nenhuma borda detectada na ROI (" << roi_start_y_ << " a " << roi_end_y_ << ")" << std::endl;
         static int frame_count = 0;
         if (frame_count++ % 30 == 0) {
             cv::imwrite("debug_mask_" + std::to_string(frame_count) + ".png", mask_8u);
             std::cout << "Salvando máscara de depuração: debug_mask_" << frame_count << ".png" << std::endl;
         }
     }
+
+    if (!left_edges.empty()) {
+        left_edge = std::accumulate(left_edges.begin(), left_edges.end(), 0) / left_edges.size();
+    }
+    if (!right_edges.empty()) {
+        right_edge = std::accumulate(right_edges.begin(), right_edges.end(), 0) / right_edges.size();
+    }
+
+    std::cout << "Left Edge: " << left_edge << ", Right Edge: " << right_edge << std::endl;
 }
 
-void LaneDetector::calculateSteeringParams(const std::vector<cv::Point>& lane_points, int& lane_center, float& offset, float& angle) {
-    const int desired_offset = 100; // Distância desejada da linha ao centro do carro
+void LaneDetector::calculateSteeringParams(int left_edge, int right_edge, int& lane_center, float& offset, float& angle) {
+    const int lane_width = 200; // Largura estimada da faixa em pixels (ajustar conforme necessário)
+    const int desired_offset = 100; // Distância desejada da linha detectada ao centro do carro (em pixels)
     int camera_center = frame_width_ / 2;
     int roi_mid_y = (roi_start_y_ + roi_end_y_) / 2;
 
-    if (lane_points.empty()) {
-        lane_center = camera_center + static_cast<int>(offset_kalman);
-        std::cout << "Nenhum ponto detectado, usando offset_kalman: " << offset_kalman << std::endl;
+    if (left_edge != camera_center && right_edge != camera_center) {
+        lane_center = (left_edge + right_edge) / 2;
+        std::cout << "Ambas as linhas detectadas, lane_center: " << lane_center << std::endl;
+    }
+    else if (left_edge != camera_center && right_edge == camera_center) {
+        // Curva à direita: manter a linha esquerda a 'desired_offset' pixels à esquerda do centro
+        lane_center = left_edge + desired_offset;
+        std::cout << "Apenas linha esquerda detectada, ajustando lane_center para distância fixa: " << lane_center << std::endl;
+    }
+    else if (left_edge == camera_center && right_edge != camera_center) {
+        // Curva à esquerda: manter a linha direita a 'desired_offset' pixels à direita do centro
+        lane_center = right_edge - desired_offset;
+        std::cout << "Apenas linha direita detectada, ajustando lane_center para distância fixa: " << lane_center << std::endl;
     }
     else {
-        // Ajustar uma reta aos pontos detectados
-        cv::Vec4f line_params;
-        cv::fitLine(lane_points, line_params, cv::DIST_L2, 0, 0.01, 0.01);
-        float vx = line_params[0]; // Direção x da reta
-        float vy = line_params[1]; // Direção y da reta
-        float x0 = line_params[2]; // Ponto x inicial
-        float y0 = line_params[3]; // Ponto y inicial
-
-        // Calcular o ponto da reta na altura roi_mid_y
-        float t = (roi_mid_y - y0) / vy;
-        int line_x = static_cast<int>(x0 + t * vx);
-
-        // Determinar se a linha está à esquerda ou à direita do centro
-        bool is_left_line = line_x < camera_center;
-
-        // Ajustar lane_center para manter a linha a desired_offset do camera_center
-        if (is_left_line) {
-            lane_center = line_x + desired_offset; // Linha à esquerda, centro à direita
-            std::cout << "Linha à esquerda detectada, lane_center: " << lane_center << std::endl;
-        }
-        else {
-            lane_center = line_x - desired_offset; // Linha à direita, centro à esquerda
-            std::cout << "Linha à direita detectada, lane_center: " << lane_center << std::endl;
-        }
+        lane_center = camera_center + static_cast<int>(offset_kalman);
+        std::cout << "Nenhuma borda detectada, usando offset_kalman: " << offset_kalman << std::endl;
     }
 
     lane_center = std::max(0, std::min(lane_center, frame_width_ - 1));
@@ -173,11 +174,11 @@ void LaneDetector::processFrame(cv::Mat& frame, cv::Mat& output_frame) {
     cv::resize(lane_mask_, lane_mask_, cv::Size(frame_width_, frame_height_));
     lane_mask_ = (lane_mask_ > 0.5);
 
-    std::vector<cv::Point> lane_points;
-    findLanePoints(lane_points);
+    int left_edge, right_edge;
+    findLaneEdges(left_edge, right_edge);
     int lane_center;
 
-    calculateSteeringParams(lane_points, lane_center, offset, angle);
+    calculateSteeringParams(left_edge, right_edge, lane_center, offset, angle);
 
     measurement_.at<float>(0) = offset;
     measurement_.at<float>(1) = angle;
@@ -193,11 +194,8 @@ void LaneDetector::processFrame(cv::Mat& frame, cv::Mat& output_frame) {
 
     output_frame = frame.clone();
     int roi_mid_y = (roi_start_y_ + roi_end_y_) / 2;
-
-    // Desenhar os pontos detectados e a reta ajustada
-    for (const auto& point : lane_points) {
-        cv::circle(output_frame, point, 3, cv::Scalar(0, 255, 255), -1); // Pontos amarelos
-    }
+    cv::line(output_frame, cv::Point(left_edge, roi_mid_y), cv::Point(left_edge, roi_mid_y - 20), cv::Scalar(0, 255, 0), 2);
+    cv::line(output_frame, cv::Point(right_edge, roi_mid_y), cv::Point(right_edge, roi_mid_y - 20), cv::Scalar(0, 255, 0), 2);
     cv::line(output_frame, cv::Point(lane_center, roi_mid_y), cv::Point(lane_center, roi_mid_y - 30), cv::Scalar(0, 0, 255), 2);
     cv::line(output_frame, cv::Point(frame_width_ / 2, roi_mid_y), cv::Point(frame_width_ / 2, roi_mid_y - 40), cv::Scalar(255, 0, 0), 2);
 
