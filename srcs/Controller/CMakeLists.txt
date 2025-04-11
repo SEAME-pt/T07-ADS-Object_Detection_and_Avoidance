@@ -13,6 +13,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -Wall -Wextra")
 # Diretórios de inclusão
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/includes
+    ${CMAKE_CURRENT_SOURCE_DIR}/eigen  # Inclui o diretório eigen na mesma pasta do CMake
     /usr/include/aarch64-linux-gnu
     /usr/local/cuda/include
     /usr/include/opencv4

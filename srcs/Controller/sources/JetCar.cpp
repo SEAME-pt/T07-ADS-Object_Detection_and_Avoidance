@@ -4,7 +4,7 @@
 
 JetCar::JetCar(int motorAddr, int servoAddr)
     : _motorAddr(motorAddr), _servoAddr(servoAddr), _fdMotor(-1), _fdServo(-1),
-      _maxAngle(90), _servoLeftPwm(170), _servoRightPwm(430), _servoCenterPwm(300),
+      _maxAngle(15), _servoLeftPwm(170), _servoRightPwm(430), _servoCenterPwm(300),
       _steeringChannel(0), _currentAngle(0) {
 
     // Inicializar servo e motores
@@ -29,9 +29,7 @@ JetCar::~JetCar() {
 }
 
 void JetCar::set_servo_angle(int angle) {
-    std::cout << "Ângulo do servo antes: " << angle << std::endl;
     angle = std::max(-_maxAngle, std::min(_maxAngle, angle));
-    std::cout << "Ângulo do servo depois " << angle << std::endl;
 
     int pwm;
     if (angle < 0) {

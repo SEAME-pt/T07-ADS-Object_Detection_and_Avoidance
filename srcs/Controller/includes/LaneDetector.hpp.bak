@@ -21,7 +21,7 @@ public:
     LaneDetector(const std::string& trt_model_path);
     ~LaneDetector();
     bool initialize();
-    void processFrame(cv::Mat& frame, cv::Mat& output_frame);
+    void processFrame(cv::Mat& frame, cv::Mat& output_frame, bool visualize_mask);
 
 
     // TensorRT
@@ -46,8 +46,8 @@ public:
     cv::Mat prediction_;
 
     // Dimensões
-    int input_width_ = 240;
-    int input_height_ = 160;
+    int input_width_;
+    int input_height_;
     int frame_width_ = 640;
     int frame_height_ = 360;
 
@@ -63,9 +63,13 @@ public:
     int roi_start_y_;
     int roi_end_y_;
 
-
+    float estimated_lane_width_;
+    int prev_left_edge_;  // Adicione isso
+    int prev_right_edge_; // Adicione isso
     float angle;
     float offset;
+    std::vector<float> left_poly_;
+    std::vector<float> right_poly_;
 };
 
 #endif // LANE_DETECTOR_HPP
