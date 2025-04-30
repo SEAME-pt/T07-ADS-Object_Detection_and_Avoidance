@@ -233,7 +233,7 @@ void Controller::autonomous() {
     std::cout << "Delta: " << tracker.delta() << " microseconds" << std::endl;
     // Apply controls to JetCar
     jetCar->set_servo_angle(steering * (180.0f / CV_PI));  // Convert radians to degrees for JetCar
-    jetCar->set_motor_speed(throttle * 35);  // Scale throttle to match expected range
+    jetCar->set_motor_speed(throttle * 25);  // Scale throttle to match expected range
 
     // Output control values
     //std::cout << "Steering: " << steering << " rad (" << (steering * 180.0f / CV_PI) << " deg), Throttle: " << throttle << std::endl;

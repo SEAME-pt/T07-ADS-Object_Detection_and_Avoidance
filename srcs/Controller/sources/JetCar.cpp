@@ -4,7 +4,7 @@
 
 JetCar::JetCar(int motorAddr, int servoAddr)
     : _motorAddr(motorAddr), _servoAddr(servoAddr), _fdMotor(-1), _fdServo(-1),
-      _maxAngle(15), _servoLeftPwm(170), _servoRightPwm(430), _servoCenterPwm(300),
+      _maxAngle(30), _servoLeftPwm(170), _servoRightPwm(430), _servoCenterPwm(300),
       _steeringChannel(0), _currentAngle(0) {
 
     // Inicializar servo e motores
