@@ -1,3 +1,11 @@
+/**
+ * @file mpc_socket.cpp
+ * @brief Implementation of Model Predictive Control (MPC) with socket communication for trajectory input.
+ *
+ * This file contains the implementation of an MPC algorithm that receives reference trajectories
+ * via a socket connection and computes optimal control inputs for a JetRacer-like vehicle.
+ */
+
 #include <Eigen/Dense>
 #include <cppad/cppad.hpp>
 #include <cppad/ipopt/solve.hpp>
@@ -16,25 +24,35 @@ using Eigen::Vector2d;
 using Eigen::MatrixXd;
 
 // JetRacer parameters
-const double L = 0.2;          // Wheelbase (m)
-const double DT = 0.02;        // Time step (s)
-const int N = 10;              // Prediction horizon
-const double V_MAX = 2.0;      // Max velocity (m/s)
-const double DELTA_MAX = 0.523; // Max steering angle (rad, 30 deg)
-const double A_MAX = 2.0;      // Max acceleration (m/s^2)
+const double L = 0.2;          ///< Wheelbase (m)
+const double DT = 0.02;        ///< Time step (s)
+const int N = 10;              ///< Prediction horizon
+const double V_MAX = 2.0;      ///< Max velocity (m/s)
+const double DELTA_MAX = 0.523; ///< Max steering angle (rad, 30 deg)
+const double A_MAX = 2.0;      ///< Max acceleration (m/s^2)
 
 // MPC weights
-const double Q_X = 100.0;      // Weight for x-position error
-const double Q_Y = 100.0;      // Weight for y-position error
-const double Q_PSI = 10.0;     // Weight for heading error
-const double R_DELTA = 1.0;    // Weight for steering effort
-const double R_A = 1.0;        // Weight for acceleration effort
+const double Q_X = 100.0;      ///< Weight for x-position error
+const double Q_Y = 100.0;      ///< Weight for y-position error
+const double Q_PSI = 10.0;     ///< Weight for heading error
+const double R_DELTA = 1.0;    ///< Weight for steering effort
+const double R_A = 1.0;        ///< Weight for acceleration effort
 
-// Socket client class
+/**
+ * @class SocketClient
+ * @brief A simple socket client for receiving reference trajectories.
+ */
 class SocketClient {
 private:
-    int sockfd;
+    int sockfd; ///< Socket file descriptor
+
 public:
+    /**
+     * @brief Constructor for SocketClient.
+     * @param host The IP address of the server.
+     * @param port The port number of the server.
+     * @throws std::runtime_error if the socket creation or connection fails.
+     */
     SocketClient(const std::string& host, int port) {
         sockfd = socket(AF_INET, SOCK_STREAM, 0);
         if (sockfd < 0) throw std::runtime_error("Socket creation failed");
@@ -49,6 +67,11 @@ public:
         }
     }
 
+    /**
+     * @brief Receives a reference trajectory from the server.
+     * @return A vector of reference states (Vector4d).
+     * @throws std::runtime_error if the trajectory is incomplete or the socket fails.
+     */
     std::vector<Vector4d> receive_trajectory() {
         std::vector<Vector4d> traj(N);
         double buffer[N * 4];
@@ -62,10 +85,18 @@ public:
         return traj;
     }
 
+    /**
+     * @brief Destructor for SocketClient. Closes the socket.
+     */
     ~SocketClient() { close(sockfd); }
 };
 
-// Bicycle model dynamics
+/**
+ * @brief Computes the next state of the vehicle using the bicycle model dynamics.
+ * @param state The current state of the vehicle [x, y, psi, v].
+ * @param input The control input [delta, a].
+ * @return The next state of the vehicle.
+ */
 Vector4d dynamics(const Vector4d& state, const Vector2d& input) {
     double x = state(0), y = state(1), psi = state(2), v = state(3);
     double delta = input(0), a = input(1);
@@ -77,16 +108,27 @@ Vector4d dynamics(const Vector4d& state, const Vector2d& input) {
     return next_state;
 }
 
-// MPC optimization class
+/**
+ * @class MPC
+ * @brief Model Predictive Control optimization class.
+ */
 class MPC {
 public:
-    typedef CPPAD_TESTVECTOR(AD<double>) ADvector;
+    typedef CPPAD_TESTVECTOR(AD<double>) ADvector; ///< Alias for AD vector type
 
-    // Store reference trajectory
-    std::vector<Vector4d> ref_traj;
+    std::vector<Vector4d> ref_traj; ///< Reference trajectory
 
+    /**
+     * @brief Constructor for MPC.
+     * @param ref The reference trajectory.
+     */
     MPC(const std::vector<Vector4d>& ref) : ref_traj(ref) {}
 
+    /**
+     * @brief Operator for Ipopt to evaluate the objective and constraints.
+     * @param fg The cost function and constraints.
+     * @param vars The optimization variables.
+     */
     void operator()(ADvector& fg, const ADvector& vars) {
         fg[0] = 0.0;
         int n_states = 4 * (N + 1);
@@ -127,7 +169,12 @@ public:
     }
 };
 
-// Solver function
+/**
+ * @brief Solves the MPC optimization problem.
+ * @param current_state The current state of the vehicle.
+ * @param ref_traj The reference trajectory.
+ * @return The optimal control input [delta, a].
+ */
 Vector2d solve_mpc(const Vector4d& current_state, const std::vector<Vector4d>& ref_traj) {
     size_t n_vars = 4 * (N + 1) + 2 * N;
     size_t n_constraints = 4 * N;
@@ -186,7 +233,11 @@ Vector2d solve_mpc(const Vector4d& current_state, const std::vector<Vector4d>& r
     return control;
 }
 
-// Get reference trajectory from ML model via socket
+/**
+ * @brief Gets the reference trajectory from an ML model via a socket connection.
+ * @param current_state The current state of the vehicle.
+ * @return The reference trajectory.
+ */
 std::vector<Vector4d> get_reference_trajectory(const Vector4d& current_state) {
     static SocketClient client("127.0.0.1", 12345);
     try {
@@ -205,6 +256,10 @@ std::vector<Vector4d> get_reference_trajectory(const Vector4d& current_state) {
     }
 }
 
+/**
+ * @brief Main function to run the MPC control loop.
+ * @return Exit status.
+ */
 int main() {
     Vector4d state(0.0, 0.0, 0.0, 1.0);
 
