@@ -1,5 +1,7 @@
 {
 	"files.associations": {
-		"dense": "cpp"
+		"dense": "cpp",
+		"tuple": "cpp",
+		"limits": "cpp"
 	}
 }

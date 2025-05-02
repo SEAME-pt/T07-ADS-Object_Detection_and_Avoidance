@@ -201,7 +201,8 @@ int main() {
 
         // Apply control (in real setup, send to servo/motors)
         std::cout << "Step " << i << ": delta = " << control(0) << ", a = " << control(1) << std::endl;
-
+		// ----->>>>>   call control routine here <<<<-----
+		// Simulate state update (in real setup, read from sensors)
         // Update state
         state = dynamics(state, control);
     }
