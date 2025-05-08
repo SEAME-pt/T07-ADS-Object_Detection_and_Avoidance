@@ -1,11 +1,11 @@
-MPC working with **global coordinates** can get complex, especially for a **laboratory context** with a **small testing course** for the **Waveshare JetRacer**. Since you're testing in a controlled environment (likely a compact track or arena), we can simplify the **Model Predictive Control (MPC)** framework by using a **local coordinate frame** relative to the car or the lane, which aligns perfectly with your **ML model outputs** (steering angle \(\delta\), longitudinal speed \(v\), facing angle \(\psi_{\text{error}}\), and offset \(e_y\)). This approach reduces complexity, avoids the need for absolute global positioning, and leverages your **42 School** C++ skills for a clean, efficient implementation on the **Jetson Nano**. Let’s dive in, clarify the setup, and update the C++ MPC code to work in a local frame, keeping it real-time at 50 Hz.
+MPC working with **global coordinates** can get complex, especially for a **laboratory context** with a **small testing course** for the **Waveshare JetRacer**. Since you're testing in a controlled environment (likely a compact track or arena), we can simplify the **Model Predictive Control (MPC)** framework by using a **local coordinate frame** relative to the car or the lane, which aligns perfectly with your **ML model outputs** (steering angle \(\delta\), longitudinal speed \(v\), facing angle $\psi_{\text{error}}$, and offset $e_{\text{y}}$). This approach reduces complexity, avoids the need for absolute global positioning, and leverages your **42 School** C++ skills for a clean, efficient implementation on the **Jetson Nano**. Let’s dive in, clarify the setup, and update the C++ MPC code to work in a local frame, keeping it real-time at 50 Hz.
 
 ### Why Local Coordinates?
 In a **small testing course** (e.g., a lab with a track a few meters long), you don’t need a global reference frame (like GPS or a world map) because:
 - The JetRacer operates based on **local sensor data** (dash cam for lane detection).
 - Your ML model provides **relative measurements**:
-  - **Offset (\(e_y\))**: Distance from the car’s center to the lane centerline.
-  - **Facing angle (\(\psi_{\text{error}}\))**: Angle between the car’s heading and the lane’s tangent.
+  - **Offset ($e_{\text{y}}$)**: Distance from the car’s center to the lane centerline.
+  - **Facing angle ($\psi_{\text{error}}$)**: Angle between the car’s heading and the lane’s tangent.
   - **Speed (\(v\))**: Longitudinal velocity.
   - **Steering angle (\(\delta\))**: Current steering input.
 - A **local frame** (centered on the car or aligned with the lane) simplifies the dynamics and reference trajectory, focusing on **tracking the lane** rather than maintaining global \(x, y\) positions.
@@ -16,12 +16,12 @@ We’ll redefine the **bicycle model** and **MPC** in a **car-centric local fram
 - The origin is at the car’s **center of mass** at each time step.
 - The x-axis aligns with the car’s **longitudinal axis** (heading direction).
 - The y-axis is perpendicular (lateral direction).
-- The **lane centerline** is represented by the ML model’s **offset (\(e_y\))** and **facing angle (\(\psi_{\text{error}}\))**, which define the desired path relative to the car.
+- The **lane centerline** is represented by the ML model’s **offset $e_{\text{y}}$** and **facing angle $\psi_{\text{error}}$**, which define the desired path relative to the car.
 
 In this frame:
-- **States**: Instead of global \([x, y, \psi, v]\), we use local errors:
-  - \(e_y\): Cross-track error (offset from lane centerline, directly from ML).
-  - \(\psi_{\text{error}}\): Heading error (facing angle, directly from ML).
+- **States**: Instead of global \([x, y, \(\psi_{\text{error}}\), v]\), we use local errors:
+  - $e_{\text{y}}$: Cross-track error (offset from lane centerline, directly from ML).
+  - $\psi_{\text{error}}$: Heading error (facing angle, directly from ML).
   - \(v\): Longitudinal velocity (from ML).
 - **Inputs**: \([\delta, a]\) (steering angle, acceleration).
 - **Reference trajectory**: A sequence of desired \([e_y, \psi_{\text{error}}, v]\) (e.g., \([0, 0, v_{\text{ref}}]\) to stay on the centerline).
@@ -29,8 +29,8 @@ In this frame:
 
 ### Simplified Bicycle Model in Local Frame
 In the local frame, we model the **error dynamics** rather than global position. The states are:
-- \(e_y\): Lateral offset from the lane centerline (m).
-- \(\psi_{\text{error}}\): Heading error relative to the lane’s tangent (rad).
+- $e_{\text{y}}$: Lateral offset from the lane centerline (m).
+- $\psi_{\text{error}}$: Heading error relative to the lane’s tangent (rad).
 - \(v\): Longitudinal velocity (m/s).
 
 The **dynamics** describe how these errors evolve:
@@ -81,8 +81,8 @@ v_{k+1} = v_k + a_k \Delta t
 
 ### ML Model Integration
 Your ML model provides:
-- **Offset (\(e_y\))**: Initial state for \(e_{y,0}\).
-- **Facing angle (\(\psi_{\text{error}}\))**: Initial state for \(\psi_{\text{error},0}\).
+- **Offset ($e_{\text{y}}$)**: Initial state for \(e_{y,0}\).
+- **Facing angle ($\psi_{\text{error}}$)**: Initial state for \(\psi_{\text{error},0}\).
 - **Speed (\(v\))**: Initial state for \(v_0\).
 - **Steering angle (\(\delta\))**: Current control input for rate constraints.
 

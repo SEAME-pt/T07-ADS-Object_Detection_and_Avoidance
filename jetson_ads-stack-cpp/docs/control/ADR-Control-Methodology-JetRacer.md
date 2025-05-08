@@ -16,7 +16,7 @@ We will implement a dual-loop control architecture:
 
 ## Considered Options
 1. **Pure MPC**:
-   - Single MPC optimizes steering **_δ_** and **_a_**, controlling steering and motor voltage.
+   - Single MPC optimizes **_δ_** and **_a_**, controlling steering and motor voltage.
 2. **Dual-Loop MPC + PID** (Chosen):
    - MPC for trajectory; PID for speed.
 3. **Pure PID**:
