@@ -1,14 +1,16 @@
-MPC working with **global coordinates** can get complex, especially for a **laboratory context** with a **small testing course** for the **Waveshare JetRacer**. Since you're testing in a controlled environment (likely a compact track or arena), we can simplify the **Model Predictive Control (MPC)** framework by using a **local coordinate frame** relative to the car or the lane, which aligns perfectly with your **ML model outputs** (steering angle \(\delta\), longitudinal speed \(v\), facing angle $\psi_{\text{error}}$, and offset $e_{\text{y}}$). This approach reduces complexity, avoids the need for absolute global positioning, and leverages your **42 School** C++ skills for a clean, efficient implementation on the **Jetson Nano**. Let’s dive in, clarify the setup, and update the C++ MPC code to work in a local frame, keeping it real-time at 50 Hz.
+MPC working with **global coordinates** can get complex, especially for a **laboratory context** with a **small testing course** for the **Waveshare JetRacer**. Since you're testing in a controlled environment (likely a compact track or arena), we can simplify the **Model Predictive Control (MPC)** framework by using a **local coordinate frame** relative to the car or the lane, which aligns perfectly with your **ML model outputs** steering angle \($\delta$\), longitudinal speed \($v$\), facing angle \($\psi_{\text{error}}$\), and offset \($e_{\text{y}}$\). This approach reduces complexity, avoids the need for absolute global positioning, and leverages **C++ skills** for a clean, efficient implementation on the **Jetson Nano**.
+
+Let’s clarify the setup, and implement the C++ MPC code to work in a local frame, keeping it real-time at 30 Hz.
 
 ### Why Local Coordinates?
 In a **small testing course** (e.g., a lab with a track a few meters long), you don’t need a global reference frame (like GPS or a world map) because:
 - The JetRacer operates based on **local sensor data** (dash cam for lane detection).
 - Your ML model provides **relative measurements**:
-  - **Offset ($e_{\text{y}}$)**: Distance from the car’s center to the lane centerline.
-  - **Facing angle ($\psi_{\text{error}}$)**: Angle between the car’s heading and the lane’s tangent.
-  - **Speed (\(v\))**: Longitudinal velocity.
-  - **Steering angle (\(\delta\))**: Current steering input.
-- A **local frame** (centered on the car or aligned with the lane) simplifies the dynamics and reference trajectory, focusing on **tracking the lane** rather than maintaining global \(x, y\) positions.
+  - **Offset** ($e_{\text{y}}$): Distance from the car’s center to the lane centerline.
+  - **Facing angle** (**$\psi_{\text{error}}$**): Angle between the car’s heading and the lane’s tangent.
+  - **Speed** \(**$v$**\): Longitudinal velocity.
+  - **Steering angle** (\(**$\delta$**\)): Current steering input.
+- A **local frame** (centered on the car or aligned with the lane) simplifies the dynamics and reference trajectory, focusing on **tracking the lane** rather than maintaining global \(**$x$**, **$y$**\) positions.
 - It’s easier to compute and more robust in a lab where global positioning (e.g., via odometry or SLAM) might be noisy or unnecessary.
 
 ### Local Coordinate Frame Approach
@@ -19,57 +21,57 @@ We’ll redefine the **bicycle model** and **MPC** in a **car-centric local fram
 - The **lane centerline** is represented by the ML model’s **offset $e_{\text{y}}$** and **facing angle $\psi_{\text{error}}$**, which define the desired path relative to the car.
 
 In this frame:
-- **States**: Instead of global \([x, y, \(\psi_{\text{error}}\), v]\), we use local errors:
-  - $e_{\text{y}}$: Cross-track error (offset from lane centerline, directly from ML).
-  - $\psi_{\text{error}}$: Heading error (facing angle, directly from ML).
-  - \(v\): Longitudinal velocity (from ML).
-- **Inputs**: \([\delta, a]\) (steering angle, acceleration).
-- **Reference trajectory**: A sequence of desired \([e_y, \psi_{\text{error}}, v]\) (e.g., \([0, 0, v_{\text{ref}}]\) to stay on the centerline).
-- **Cost function**: Penalizes deviations from \(e_y = 0\), \(\psi_{\text{error}} = 0\), and control effort.
+- **States**: Instead of global \([**$x$**, **$y$**, $\psi_{\text{error}}$, v]\), we use local errors:
+  - **$e_{\text{y}}$**: Cross-track error (offset from lane centerline, directly from ML).
+  - **$\psi_{\text{error}}$**: Heading error (facing angle, directly from ML).
+  - \(**$v$**\): Longitudinal velocity (from ML).
+- **Inputs**: [**$\delta$**\, **$a$**] (steering angle, acceleration).
+- **Reference trajectory**: A sequence of desired [**$e{\text{y}}$**, **$\psi_{\text{error}}$**, **$v$**] (e.g., [0, 0, **$v_{\text{ref}}$**] to stay on the centerline).
+- **Cost function**: Penalizes deviations from \(**$e_{\text{y}}$** = 0\), \(**$\psi_{\text{error}}$** = 0\), and control effort.
 
 ### Simplified Bicycle Model in Local Frame
 In the local frame, we model the **error dynamics** rather than global position. The states are:
-- $e_{\text{y}}$: Lateral offset from the lane centerline (m).
-- $\psi_{\text{error}}$: Heading error relative to the lane’s tangent (rad).
-- \(v\): Longitudinal velocity (m/s).
+- **$e_{\text{y}}$**: Lateral offset from the lane centerline (m).
+- **$\psi_{\text{error}}$**: Heading error relative to the lane’s tangent (rad).
+- **$v$**: Longitudinal velocity (**$m/s$**).
 
 The **dynamics** describe how these errors evolve:
-- **Cross-track error rate** (\(\dot{e}_y\)):
+- **Cross-track error rate** **$\dot{e}_{\text{y}}$** :
   \[
-  \dot{e}_y = v \sin(\psi_{\text{error}})
+  $\dot{e}_y = v \sin(\psi_{\text{error}})$
   \]
-  - If the car’s heading is misaligned (\(\psi_{\text{error}} \neq 0\)), the lateral error changes based on velocity.
-- **Heading error rate** (\(\dot{\psi}_{\text{error}}\)):
+  - If the car’s heading is misaligned (**$\psi_{\text{error}} \neq 0$**), the lateral error changes based on velocity.
+- **Heading error rate** **$\dot{\psi}_{\text{error}}$** :
   \[
-  \dot{\psi}_{\text{error}} = \frac{v}{L} \tan(\delta) - \dot{\psi}_{\text{lane}}
+  **$\dot{\psi}_{\text{error}} = \frac{v}{L} \tan(\delta) - \dot{\psi}_{\text{lane}}$**
   \]
-  - \(\frac{v}{L} \tan(\delta)\): Yaw rate from steering (same as global model).
-  - \(\dot{\psi}_{\text{lane}}\): Rate of change of the lane’s tangent angle (curvature-related). In a lab with gentle curves, we can approximate \(\dot{\psi}_{\text{lane}} \approx 0\) for simplicity, assuming the lane’s curvature is small over the prediction horizon (\(N \cdot \Delta t = 0.2 \, \text{s}\)).
-- **Velocity rate** (\(\dot{v}\)):
+  - **$\frac{v}{L} \tan(\delta)$** : Yaw rate from steering (same as global model).
+  - **$\dot{\psi}_{\text{lane}}$**: Rate of change of the lane’s tangent angle (curvature-related). In a lab with gentle curves, we can approximate **$\dot{\psi}_{\text{lane}} \approx 0$** for simplicity, assuming the lane’s curvature is small over the prediction horizon (**$N \cdot \Delta t = 0.2 \, \text{s}$**).
+- **Velocity rate** **$\dot{v}$** :
   \[
-  \dot{v} = a
+  **$\dot{v} = a$**
   \]
 
-**Discrete dynamics** (Euler, \(\Delta t = 0.02 \, \text{s}\)):
-\[
-e_{y,k+1} = e_{y,k} + v_k \sin(\psi_{\text{error},k}) \Delta t
-\]
-\[
-\psi_{\text{error},k+1} = \psi_{\text{error},k} + \frac{v_k}{L} \tan(\delta_k) \Delta t
-\]
-\[
-v_{k+1} = v_k + a_k \Delta t
-\]
+**Discrete dynamics** (_Euler_, **$\Delta t = 0.02 \, \text{s}$**):
+
+**$$e_{y,k+1} = e_{y,k} + v_k \sin(\psi_{\text{error},k}) \cdot \Delta t$$**
+
+
+**$$\psi_{\text{error},k+1} = \psi_{\text{error},k} + \frac{v_k}{L} \tan(\delta_k)  \cdot \Delta t$$**
+
+
+**$$v_{k+1} = v_k + a_k \cdot \Delta t$$**
+
 
 ### MPC Formulation
-- **States**: \([e_y, \psi_{\text{error}}, v]\).
-- **Inputs**: \([\delta, a]\).
+- **States**: **$[e_y, \psi_{\text{error}}, v]$**.
+- **Inputs**: **$[\delta, a]$**.
 - **Cost function**:
-  \[
-  J = \sum_{k=0}^{N-1} \left( Q_{e_y} e_{y,k}^2 + Q_{\psi} \psi_{\text{error},k}^2 + Q_v (v_k - v_{\text{ref}})^2 + R_\delta \delta_k^2 + R_a a_k^2 \right)
-  \]
-  - \(e_{y,k}\): Penalize lateral offset (want \(e_y = 0\)).
-  - \(\psi_{\text{error},k}\): Penalize heading misalignment (want \(\psi_{\text{error}} = 0\)).
+
+  **$J = \sum_{k=0}^{N-1} \left( Q_{e_y} e_{y,k}^2 + Q_{\psi} \psi_{\text{error},k}^2 + Q_v (v_k - v_{\text{ref}})^2 + R_\delta \delta_k^2 + R_a a_k^2 \right)$**
+
+  - **$e_{y,k}$** : Penalize lateral offset ( desired **$e_y = 0$**).
+  - **$\psi_{\text{error},k}$**: Penalize heading misalignment (desired **$\psi_{\text{error}} = 0$**).
   - \(v_k - v_{\text{ref}}\): Track desired speed (e.g., \(v_{\text{ref}} = 1 \, \text{m/s}\)).
   - Weights: \(Q_{e_y} = 100\), \(Q_{\psi} = 10\), \(Q_v = 1\), \(R_\delta = 1\), \(R_a = 1\).
 - **Constraints**:
