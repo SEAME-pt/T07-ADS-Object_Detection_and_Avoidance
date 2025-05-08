@@ -71,9 +71,9 @@ The **dynamics** describe how these errors evolve:
   **$J = \sum_{k=0}^{N-1} \left( Q_{e_y} e_{y,k}^2 + Q_{\psi} \psi_{\text{error},k}^2 + Q_v (v_k - v_{\text{ref}})^2 + R_\delta \delta_k^2 + R_a a_k^2 \right)$**
 
   - **$e_{y,k}$** : Penalize lateral offset ( desired **$e_y = 0$**).
-  - **$\psi_{\text{error},k}$**: Penalize heading misalignment (desired **$\psi_{\text{error}} = 0$**).
-  - \(v_k - v_{\text{ref}}\): Track desired speed (e.g., \(v_{\text{ref}} = 1 \, \text{m/s}\)).
-  - Weights: \(Q_{e_y} = 100\), \(Q_{\psi} = 10\), \(Q_v = 1\), \(R_\delta = 1\), \(R_a = 1\).
+  - **$\psi_{\text{error},k}$** : Penalize heading misalignment (desired **$\psi_{\text{error}} = 0$**).
+  - **$v_k - v_{\text{ref}}$**: Track desired speed (e.g., **$v_{\text{ref}} = 1 \, \text{m/s}$**).
+  - Weights: **$Q_{e_y} = 100\), \(Q_{\psi} = 10\), \(Q_v = 1\), \(R_\delta = 1\), \(R_a = 1\).
 - **Constraints**:
   - Steering: \(-\delta_{\text{max}} \leq \delta_k \leq \delta_{\text{max}}\) (0.523 rad = 30°).
   - Acceleration: \(-a_{\text{max}} \leq a_k \leq a_{\text{max}}\) (2 m/s²).
