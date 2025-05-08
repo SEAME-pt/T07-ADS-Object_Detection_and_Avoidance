@@ -4,7 +4,7 @@
 Accepted
 
 ## Context
-The Waveshare JetRacer, powered by a Jetson Nano, requires an autonomous drive system to navigate a small laboratory testing course using a dash cam and a TensorFlow-based ML model outputting offset (\(e_y\)), facing angle (\(\psi_{\text{error}}\)), speed (\(v\)), and steering angle (\(\delta\)). The system must track the lane centerline, maintain a desired speed, operate at 50 Hz, and map control outputs to servo/motor commands via GPIO. A local coordinate frame with error dynamics \([e_y, \psi_{\text{error}}, v]\) is used, and the implementation leverages C++ with Python ML communication via TCP sockets.
+The Waveshare JetRacer, powered by a Jetson Nano, requires an autonomous drive system to navigate a small laboratory testing course using a dash cam and a TensorFlow-based ML model outputting offset (\(e_y\)), facing angle (\($\psi$_{\text{error}}\)), speed (\(v\)), and steering angle (\(\delta\)). The system must track the lane centerline, maintain a desired speed, operate at 50 Hz, and map control outputs to servo/motor commands via GPIO. A local coordinate frame with error dynamics \([e_y, \psi_{\text{error}}, v]\) is used, and the implementation leverages C++ with Python ML communication via TCP sockets.
 
 ## Decision
 We will implement a dual-loop control architecture:
