@@ -1,0 +1,46 @@
+#---------------------------------------------------------------------------
+# Basic Project Settings
+#---------------------------------------------------------------------------
+PROJECT_NAME           = "Digital Cluster"
+PROJECT_NUMBER         = 
+OUTPUT_DIRECTORY       = ./Digital_Cluster/docs
+OUTPUT_LANGUAGE        = English
+OPTIMIZE_OUTPUT_FOR_C  = NO
+
+#---------------------------------------------------------------------------
+# Files and Directories to Document (Explicit List)
+#---------------------------------------------------------------------------
+INPUT                  = ./Digital_Cluster/System.h \
+                         ./Digital_Cluster/System.cpp \
+                         ./Digital_Cluster/zmqreader.h \
+                         ./Digital_Cluster/zmqreader.cpp \
+                         ./Digital_Cluster/main.cpp  # Added files
+RECURSIVE              = NO  # Does not search in subdirectories
+
+#---------------------------------------------------------------------------
+# Exclusions (Not needed if INPUT is explicit, but reinforces exclusions)
+#---------------------------------------------------------------------------
+EXCLUDE                = ui/ tests/ build/  # Directories to ignore
+EXCLUDE_PATTERNS       = */catch2/*  # Excludes Catch2 (or other patterns)
+
+#---------------------------------------------------------------------------
+# Information Extraction (Only What Has Comments)
+#---------------------------------------------------------------------------
+EXTRACT_ALL            = NO   # Documents only entities with comments
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = NO
+
+#---------------------------------------------------------------------------
+# Graph Configuration (Diagrams)
+#---------------------------------------------------------------------------
+HAVE_DOT               = YES  # Enables diagrams via Graphviz
+CLASS_DIAGRAMS         = YES
+CALL_GRAPH             = YES
+CALLER_GRAPH           = YES
+
+#---------------------------------------------------------------------------
+# HTML Output
+#---------------------------------------------------------------------------
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+GENERATE_LATEX         = YES
