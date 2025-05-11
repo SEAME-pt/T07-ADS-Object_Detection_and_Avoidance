@@ -16,9 +16,10 @@ We measured the JetRacer’s speed using an encoder wheel and validated it with 
    - Calculated theoretical speed from motor RPM and wheel geometry.
    - Conducted on-floor tests by driving the JetRacer on a straight track, measuring speed via encoder and comparing with theoretical values.
 4. **Parameters**:
-   - Encoder slots: 18 per revolution.
-   - Sampling interval: 10 ms (0.01 s).
-   - Wheel circumference: 21.5 cm (0.215 m).
+   - Wheel diameter **$W_d$** : 21.5 cm (0.215 m).
+   - Encoder Slots, Pulses per turn **$E_s$** : 18 slots.
+   - Sampling interval **$T_s$**: 10 ms.
+   - Time logging: `finish_time_stamp - start_time_stamp` in milliseconds.
 
 ## Calculations
 ### Theoretical Speed
@@ -43,13 +44,13 @@ We measured the JetRacer’s speed using an encoder wheel and validated it with 
 
   **$\text{Pulses/0.01 s} = 216 \cdot 0.01 = 2.16 \, \text{pulses}$**
 
-- **Distance per Pulse**:
+- **Distance per Pulse** **$(D_p)$**:
 
-  **$\text{Distance/pulse} = \frac{0.215}{18} \approx 0.012 \, \text{m}$**
+  **$\frac{W_d}{E_s} = \frac{0.215}{18} \approx 0.012 \, \text{m}$** **$(m)$**
 
 - **Speed from Encoder** (assuming 2 pulses measured in 10 ms, adjusted for 9 km/h):
 
-  **$v = \frac{\text{Pulses} \cdot \text{Distance/pulse}}{\text{Time}} = \frac{2.16 \cdot 0.012}{0.01} = 2.59 \, \text{m/s}$**
+  **$v = \text{pulses} \cdot \frac{D_p}{T_s} = 2 \cdot \frac{0.012}{0.01} = 2.59 \, \text{m/s}$**
 
   Convert to km/h:
 
@@ -71,9 +72,8 @@ We measured the JetRacer’s speed using an encoder wheel and validated it with 
 ### On-Floor Validation
 - On-floor tests yielded speeds close to 9 km/h (2.5 m/s), confirming the encoder measurements under realistic conditions (friction, load).
 - Discrepancy from 9.29 km/h (0.29 km/h) is attributed to:
-  - Gear ratio reducing effective RPM.
   - Motor efficiency losses.
-  - Surface friction.
+  - Floor Surface friction.
 
 ## Results
 - **Maximum Speed (**$v_{\text{max}}$**)**: **$2.5 \, \text{m/s} \approx 9 \, \text{km/h}$**.
