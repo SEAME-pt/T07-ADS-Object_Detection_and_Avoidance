@@ -16,13 +16,13 @@ using Eigen::Vector3d;
 using Eigen::Vector2d;
 
 // JetRacer parameters
-const double L = 0.2;          // Wheelbase (m)
-const double DT = 0.02;        // Time step (s)
-const int N = 10;              // Prediction horizon
+const double L = 0.15;          // Wheelbase (m)
+const double DT = 0.03;        // Time step (s)
+const int N = 10;              // Prediction horizon if too long N=5
 const double V_MAX = 2.0;      // Max velocity (m/s)
-const double DELTA_MAX = 0.523; // Max steering angle (rad, 30 deg)
+const double DELTA_MAX = 0.5; // Max steering angle (rad, 30 deg)
 const double A_MAX = 2.0;      // Max acceleration (m/s^2)
-const double DELTA_RATE_MAX = 0.1; // Max steering rate (rad/step)
+const double DELTA_RATE_MAX = 0.05; // Max steering rate (rad/step) => 1/10 de delta_max
 const double V_REF = 1.0;      // Reference velocity (m/s)
 
 // MPC weights
