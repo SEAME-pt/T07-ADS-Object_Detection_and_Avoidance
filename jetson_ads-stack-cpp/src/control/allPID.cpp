@@ -28,6 +28,12 @@ void SpeedPIDController::reset() {
     integral_ = 0.0f;
 }
 
+// execute this function in a loop
+// to update the speed
+// v_current: current speed
+// v_target: target speed
+// dt: time step
+// returns the PWM value to be sent to the motor controller
 float SpeedPIDController::update(float v_current, float v_target, float dt) {
     float error = v_target - v_current;
     integral_ += error * dt;

@@ -81,7 +81,7 @@ Eigen::Vector2d solve_mpc(const Eigen::Vector3d& current_state, double prev_delt
     }
 
     Eigen::Vector2d control;
-    control << solution.x[3 * (N + 1)], solution.x[3 * (N + 1) + 1];
+    control << solution.x[3 * (N + 1)], solution.x[3 * (N + 1) + 1]; // delta, a
     return control;
 }
 
@@ -96,7 +96,8 @@ int main() {
 
         double ey, psi_err, v, delta;
         try {
-            std::tie(ey, psi_err, v, delta) = client.receive_ml_data();
+            std::tie(ey, psi_err, v, delta) = client.receive_ml_data(); // Assuming this function returns ey, psi_err, v, delta
+			std::cout << "Received: ey = " << ey << ", psi_err = " << psi_err << ", v = " << v << ", delta = " << delta << std::endl;
         } catch (const std::exception& e) {
             std::cerr << "Socket error: " << e.what() << std::endl;
             ey = 0.1; psi_err = 0.0; v = 1.0; delta = 0.0;
