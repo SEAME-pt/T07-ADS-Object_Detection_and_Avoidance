@@ -1,0 +1,15 @@
+
+services:
+  testers:
+    build:
+      context: ./srcs/Testers
+    command: /bin/bash
+    stdin_open: true
+    tty: true
+    volumes:
+      - type: bind
+        source: ./srcs/Testers
+        target: /workspace
+      - type: bind
+        source: ../jetson-sysroot
+        target: /opt/jetson-sysroot
