@@ -110,7 +110,7 @@ void JetSnailsCar::setOdometer(Odometer *odometer) {
 }
 
 float JetSnailsCar::getSpeed() const {
-    return _speedSensor->getValue();
+    return this->vehicle->getSpeed();
 }
 
 float JetSnailsCar::getDistance() const {

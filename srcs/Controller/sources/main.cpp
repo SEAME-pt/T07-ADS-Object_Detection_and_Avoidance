@@ -22,9 +22,6 @@ void handleSteering(int value) {
 void handleMotors(int value) {
     value *= -1;
     int motorSpeed = static_cast<int>((value / 32768.0) * 100);
-    if (motorSpeed >= 30)
-        motorSpeed = 30;
-    motorSpeed = std::max(-100, std::min(100, motorSpeed));
     std::cout << "Velocidade do motor: " << motorSpeed << std::endl;
     jetCar.set_motor_speed(motorSpeed);
 }

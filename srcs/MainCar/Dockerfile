@@ -2,14 +2,15 @@ FROM hmacielp/crosscompile-covesa
 
 RUN apt update && apt-get install -y \
     libzmq3-dev \
-    build-essential
+    build-essential \
+    python3-pip \
+    libgpiod-dev \
+    libi2c-dev
 
 # Instalar a versão mais recente do cppzmq
 RUN git clone https://github.com/zeromq/cppzmq.git /tmp/cppzmq && \
     cp /tmp/cppzmq/zmq.hpp /usr/include/ && \
     rm -rf /tmp/cppzmq
-
-COPY tools/*.so /usr/lib/
 
 WORKDIR /workspace
 

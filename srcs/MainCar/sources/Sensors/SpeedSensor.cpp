@@ -12,30 +12,31 @@ void SpeedSensor::initialize() {
 }
 
 int SpeedSensor::readData() {
-    uint32_t id;  // Variável para armazenar o ID da mensagem CAN
-    std::vector<uint8_t> data;  // Vetor para armazenar os dados da mensagem CAN
+    uint32_t id;
+    std::vector<uint8_t> data;
 
-    // Verificar se uma mensagem foi recebida no barramento CAN
     if (canBus.receiveMessage(id, data)) {
-        // Ignorar mensagens com IDs inesperados
         if (id == canId) {
-            // Certificar-se de que há dados suficientes
-            if (data.size() >= 2) {
-                int sensorValue = data[0] | (data[1] << 8);
+            if (data.size() >= 4) {  // Agora são 4 bytes
+                union {
+                    float f;
+                    uint8_t b[4];
+                } speedData;
 
-                std::cout << "inside sensor class: " << _lastSpeed << std::endl;
-                _lastSpeed = sensorValue;  // Atualizar o valor de velocidade
-                return 0;  // Indicar sucesso
+                for (int i = 0; i < 4; ++i) {
+                    speedData.b[i] = data[i];
+                }
+
+                _lastSpeed = speedData.f;
+                return 0;
             } else {
-                // Mensagem recebida com dados insuficientes
-                return -1;  // Indicar falha
+                return -1;  // Dados insuficientes
             }
         } else {
-            return -1;
+            return -1;  // ID diferente
         }
     } else {
-        // Nenhuma mensagem disponível no barramento CAN (sem imprimir)
-        return -1;  // Indicar falha
+        return -1;  // Nenhuma mensagem
     }
 }
 

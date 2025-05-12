@@ -16,3 +16,4 @@ build
 env/
 env_dash/
 *.trt
+jetson-sysroot/

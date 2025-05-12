@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   main-car:
     build:
@@ -9,6 +11,7 @@ services:
       - type: bind
         source: ./srcs/MainCar
         target: /workspace
+
   controller:
     build:
       context: ./srcs/Controller
@@ -19,5 +22,8 @@ services:
       - type: bind
         source: ./srcs/Controller
         target: /workspace
+      - type: bind
+        source: ../jetson-sysroot
+        target: /opt/jetson-sysroot
     depends_on:
       - main-car

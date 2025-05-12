@@ -28,9 +28,8 @@ public:
     explicit vehicleSensors(zmq::socket_t& pub) : publisher(pub) {}
 
     void onSpeedChanged(float speed) override {
-        std::cout << "Speed updated on Cluster Display: " << speed << " m/h" << std::endl;
+        std::cout << "Speed changed: " << speed << std::endl;
         sendMessage("speed", std::to_string(speed));
-        //sendMessage("speed", std::to_string(speed));
     }
 
     void onLowVoltageSystemStateChanged(Vehicle_LowVoltageSystemState_ValueEnum LowVoltageSystemState) override {
