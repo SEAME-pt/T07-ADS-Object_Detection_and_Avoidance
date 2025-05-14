@@ -1,0 +1,15 @@
+-rootPath
+/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster
+-cmake-output
+-output-file
+/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/build/Desktop_Qt_6_10_0-Debug/.qt/qml_imports/appDigital_Cluster_build.cmake
+-importPath
+/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/build/Desktop_Qt_6_10_0-Debug/Digital_Cluster
+-importPath
+/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/build/Desktop_Qt_6_10_0-Debug
+-importPath
+/home/ivo/Qt/6.10.0/gcc_64/qml
+-qrcFiles
+/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/build/Desktop_Qt_6_10_0-Debug/.qt/rcc/qmake_Digital_Cluster.qrc
+/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/build/Desktop_Qt_6_10_0-Debug/.qt/rcc/appDigital_Cluster_raw_qml_0.qrc
+/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/build/Desktop_Qt_6_10_0-Debug/.qt/rcc/appDigital_Cluster_raw_res_0.qrc

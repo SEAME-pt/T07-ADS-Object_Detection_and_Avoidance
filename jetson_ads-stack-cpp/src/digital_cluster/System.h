@@ -23,6 +23,12 @@ class System : public QObject
     Q_PROPERTY(QString lineLeft READ lineLeft WRITE setLineLeft NOTIFY lineLeftChanged FINAL)
     Q_PROPERTY(QString gamePad READ gamePad WRITE setGamePad NOTIFY gamePadChanged FINAL)
 
+	Q_PROPERTY(QString horn READ horn WRITE setHorn NOTIFY hornChanged FINAL)
+	Q_PROPERTY(QString lightsLow READ lightsLow WRITE setLightsLow NOTIFY lightsLowChanged FINAL)
+	Q_PROPERTY(QString lightSpark READ lightSpark WRITE setLightSpark NOTIFY lightSparkChanged FINAL)
+	Q_PROPERTY(QString isMoving READ isMoving WRITE setIsMoving NOTIFY isMovingChanged FINAL)
+	// batteryPer já existe, mas pode ser mapeado para batteryPercentage
+
 public:
     // explicit System(QObject *parent = nullptr);
     explicit System(zmq::context_t &context, QObject *parent = nullptr);
@@ -68,6 +74,16 @@ public:
     QString gamePad() const;
     void setGamePad(const QString &newGamePad);
 
+	// Novo: métodos para horn, lightsLow, lightSpark e isMoving
+	QString horn() const;
+    void setHorn(const QString &newHorn);
+    QString lightsLow() const;
+    void setLightsLow(const QString &newLightsLow);
+    QString lightSpark() const;
+    void setLightSpark(const QString &newLightSpark);
+    QString isMoving() const;
+    void setIsMoving(const QString &newIsMoving);
+
 signals:
 
     void speedChanged();
@@ -96,6 +112,12 @@ signals:
 
     void gamePadChanged();
 
+	// Novo: sinais para horn, lightsLow, lightSpark e isMoving
+	void hornChanged();
+    void lightsLowChanged();
+    void lightSparkChanged();
+    void isMovingChanged();
+
 private:
 
     QString m_speed;
@@ -111,6 +133,12 @@ private:
     QString m_lineRight;
     QString m_lineLeft;
     QString m_gamePad;
+
+	// Novo: atributos para horn, lightsLow, lightSpark e isMoving
+	QString m_horn;
+    QString m_lightsLow;
+    QString m_lightSpark;
+    QString m_isMoving;
 
     bool m_updatingFromZMQ; // Novo: flag para evitar loop
     zmq::socket_t m_zmqSocket; // Novo: socket para enviar ao ZMQ

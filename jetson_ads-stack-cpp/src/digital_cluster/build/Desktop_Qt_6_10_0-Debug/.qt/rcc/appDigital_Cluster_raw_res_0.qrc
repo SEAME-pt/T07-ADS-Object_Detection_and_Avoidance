@@ -1,0 +1,43 @@
+<RCC>
+  <qresource prefix="/qt/qml/Digital_Cluster/">
+    <file alias="ui/assets/modes.svg">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/modes.svg</file>
+    <file alias="ui/assets/navigation.svg">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/navigation.svg</file>
+    <file alias="ui/assets/settings.svg">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/settings.svg</file>
+    <file alias="ui/assets/nirvana.jpg">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/nirvana.jpg</file>
+    <file alias="ui/assets/red_marker.png">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/red_marker.png</file>
+    <file alias="ui/assets/battery.png">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/battery.png</file>
+    <file alias="ui/assets/odometer.png">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/odometer.png</file>
+    <file alias="ui/assets/trip.png">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/trip.png</file>
+    <file alias="ui/assets/brake.png">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/brake.png</file>
+    <file alias="ui/assets/hold.png">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/hold.png</file>
+    <file alias="ui/assets/maxLight.png">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/maxLight.png</file>
+    <file alias="ui/assets/lightAuto.png">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/lightAuto.png</file>
+    <file alias="ui/assets/minLight.png">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/minLight.png</file>
+    <file alias="ui/assets/car.png">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/car.png</file>
+    <file alias="ui/assets/headLights.png">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/headLights.png</file>
+    <file alias="ui/assets/tirePressure.png">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/tirePressure.png</file>
+    <file alias="ui/assets/tractionControl.png">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/tractionControl.png</file>
+    <file alias="ui/assets/turn_light_01.png">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/turn_light_01.png</file>
+    <file alias="ui/assets/turn_light_02.png">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/turn_light_02.png</file>
+    <file alias="ui/assets/media_r.svg">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/media_r.svg</file>
+    <file alias="ui/assets/modes_r.svg">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/modes_r.svg</file>
+    <file alias="ui/assets/navigation_r.svg">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/navigation_r.svg</file>
+    <file alias="ui/assets/settings_r.svg">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/settings_r.svg</file>
+    <file alias="ui/assets/race_flag.svg">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/race_flag.svg</file>
+    <file alias="ui/assets/search.svg">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/search.svg</file>
+    <file alias="ui/assets/arrow_back.svg">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/arrow_back.svg</file>
+    <file alias="ui/assets/search_black.svg">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/search_black.svg</file>
+    <file alias="ui/assets/autopilot_1.png">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/autopilot_1.png</file>
+    <file alias="ui/assets/autopilot_2.png">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/autopilot_2.png</file>
+    <file alias="ui/assets/home.svg">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/home.svg</file>
+    <file alias="ui/assets/stop.svg">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/stop.svg</file>
+    <file alias="ui/assets/work.svg">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/work.svg</file>
+    <file alias="ui/assets/ecoMode.svg">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/ecoMode.svg</file>
+    <file alias="ui/assets/normalMode.svg">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/normalMode.svg</file>
+    <file alias="ui/assets/sportMode.svg">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/sportMode.svg</file>
+    <file alias="ui/assets/playMode.svg">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/playMode.svg</file>
+    <file alias="ui/assets/lkas.svg">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/lkas.svg</file>
+    <file alias="ui/assets/autoSteer.svg">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/autoSteer.svg</file>
+  </qresource>
+</RCC>
+

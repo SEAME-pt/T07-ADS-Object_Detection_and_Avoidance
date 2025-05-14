@@ -1,0 +1,36 @@
+<RCC>
+  <qresource prefix="/qt/qml/Digital_Cluster/">
+    <file alias="Main.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/Main.qml</file>
+    <file alias="ui/LeftPanel/LeftPanel.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/LeftPanel/LeftPanel.qml</file>
+    <file alias="ui/CenterPanel/CenterPanel.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/CenterPanel/CenterPanel.qml</file>
+    <file alias="ui/LeftPanel/Leftcolumn/Gear.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/LeftPanel/Leftcolumn/Gear.qml</file>
+    <file alias="ui/CenterPanel/Navigation.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/CenterPanel/Navigation.qml</file>
+    <file alias="ui/LeftPanel/Leftcolumn/LeftColumn.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/LeftPanel/Leftcolumn/LeftColumn.qml</file>
+    <file alias="ui/LeftPanel/Centercolumn/CenterColumn.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/LeftPanel/Centercolumn/CenterColumn.qml</file>
+    <file alias="ui/LeftPanel/Rightcolumn/RightColumn.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/LeftPanel/Rightcolumn/RightColumn.qml</file>
+    <file alias="ui/LeftPanel/Leftcolumn/Info.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/LeftPanel/Leftcolumn/Info.qml</file>
+    <file alias="ui/LeftPanel/Rightcolumn/Media.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/LeftPanel/Rightcolumn/Media.qml</file>
+    <file alias="ui/LeftPanel/Rightcolumn/List.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/LeftPanel/Rightcolumn/List.qml</file>
+    <file alias="ui/LeftPanel/Centercolumn/Signs.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/LeftPanel/Centercolumn/Signs.qml</file>
+    <file alias="ui/LeftPanel/Rightcolumn/Navigation_right.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/LeftPanel/Rightcolumn/Navigation_right.qml</file>
+    <file alias="ui/LeftPanel/Rightcolumn/Navigation_right_Mapview.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/LeftPanel/Rightcolumn/Navigation_right_Mapview.qml</file>
+    <file alias="ui/CenterPanel/Bottombar.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/CenterPanel/Bottombar.qml</file>
+    <file alias="ui/LeftPanel/Centercolumn/Left.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/LeftPanel/Centercolumn/Left.qml</file>
+    <file alias="ui/LeftPanel/Centercolumn/Route.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/LeftPanel/Centercolumn/Route.qml</file>
+    <file alias="ui/LeftPanel/Centercolumn/Right.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/LeftPanel/Centercolumn/Right.qml</file>
+    <file alias="ui/LeftPanel/Centercolumn/Signsright.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/LeftPanel/Centercolumn/Signsright.qml</file>
+    <file alias="ui/CenterPanel/MediaBottomBar.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/CenterPanel/MediaBottomBar.qml</file>
+    <file alias="ui/CenterPanel/LeftColumnCenterPanel.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/CenterPanel/LeftColumnCenterPanel.qml</file>
+    <file alias="ui/CenterPanel/SignsLeftCenterPanel.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/CenterPanel/SignsLeftCenterPanel.qml</file>
+    <file alias="ui/CenterPanel/Directions.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/CenterPanel/Directions.qml</file>
+    <file alias="ui/LeftPanel/Rightcolumn/Navigation_menu.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/LeftPanel/Rightcolumn/Navigation_menu.qml</file>
+    <file alias="ui/LeftPanel/Rightcolumn/Modes.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/LeftPanel/Rightcolumn/Modes.qml</file>
+    <file alias="ui/LeftPanel/Rightcolumn/Settings.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/LeftPanel/Rightcolumn/Settings.qml</file>
+    <file alias="ui/Main/Root.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/Main/Root.qml</file>
+    <file alias="ui/Play/Gamepad.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/Play/Gamepad.qml</file>
+    <file alias="ui/Play/DPad.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/Play/DPad.qml</file>
+    <file alias="ui/Play/Buttons.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/Play/Buttons.qml</file>
+    <file alias="ui/Play/TopButtons.qml">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/Play/TopButtons.qml</file>
+  </qresource>
+</RCC>
+

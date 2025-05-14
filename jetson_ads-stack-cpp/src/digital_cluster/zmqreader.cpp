@@ -29,7 +29,7 @@ void ZMQReader::run()
 
         QMap<QString, std::function<void(QString)>> handlers = {
             {"speed", [this](QString v) { emit speedReceived(v); }},
-            {"battery", [this](QString v) { emit batteryReceived(v); }},
+            {"battery", [this](QString v) { emit batteryReceived(v); }},  // Confirmar valor da bateria
             {"lightshigh", [this](QString v) { emit headLightsReceived(v); }},
             {"brake", [this](QString v) { emit brakeLightReceived(v); }},
             {"lightsemergency", [this](QString v) { emit emergencyLightsReceived(v); }},
@@ -40,6 +40,12 @@ void ZMQReader::run()
             {"autopilot", [this](QString v) { emit autoPilotReceived(v); }},
             {"lineleft", [this](QString v) { emit lineLeftReceived(v); }},
             {"lineright", [this](QString v) { emit lineRightReceived(v); }},
+
+			{"horn", [this](QString v) { emit hornReceived(v); }},
+			{"lightslow", [this](QString v) { emit lightsLowReceived(v); }},
+			{"lightspark", [this](QString v) { emit lightSparkReceived(v); }},
+			{"ismoving", [this](QString v) { emit isMovingReceived(v); }},
+			{"batterypercentage", [this](QString v) { emit batteryPercentageReceived(v); }}  // Para corrigir bateria por percentagem
         };
 
         m_running = true;

@@ -1,0 +1,35 @@
+module Digital_Cluster
+typeinfo appDigital_Cluster.qmltypes
+prefer :/qt/qml/Digital_Cluster/
+Main 1.0 Main.qml
+LeftPanel 1.0 ui/LeftPanel/LeftPanel.qml
+CenterPanel 1.0 ui/CenterPanel/CenterPanel.qml
+Gear 1.0 ui/LeftPanel/Leftcolumn/Gear.qml
+Navigation 1.0 ui/CenterPanel/Navigation.qml
+LeftColumn 1.0 ui/LeftPanel/Leftcolumn/LeftColumn.qml
+CenterColumn 1.0 ui/LeftPanel/Centercolumn/CenterColumn.qml
+RightColumn 1.0 ui/LeftPanel/Rightcolumn/RightColumn.qml
+Info 1.0 ui/LeftPanel/Leftcolumn/Info.qml
+Media 1.0 ui/LeftPanel/Rightcolumn/Media.qml
+List 1.0 ui/LeftPanel/Rightcolumn/List.qml
+Signs 1.0 ui/LeftPanel/Centercolumn/Signs.qml
+Navigation_right 1.0 ui/LeftPanel/Rightcolumn/Navigation_right.qml
+Navigation_right_Mapview 1.0 ui/LeftPanel/Rightcolumn/Navigation_right_Mapview.qml
+Bottombar 1.0 ui/CenterPanel/Bottombar.qml
+Left 1.0 ui/LeftPanel/Centercolumn/Left.qml
+Route 1.0 ui/LeftPanel/Centercolumn/Route.qml
+Right 1.0 ui/LeftPanel/Centercolumn/Right.qml
+Signsright 1.0 ui/LeftPanel/Centercolumn/Signsright.qml
+MediaBottomBar 1.0 ui/CenterPanel/MediaBottomBar.qml
+LeftColumnCenterPanel 1.0 ui/CenterPanel/LeftColumnCenterPanel.qml
+SignsLeftCenterPanel 1.0 ui/CenterPanel/SignsLeftCenterPanel.qml
+Directions 1.0 ui/CenterPanel/Directions.qml
+Navigation_menu 1.0 ui/LeftPanel/Rightcolumn/Navigation_menu.qml
+Modes 1.0 ui/LeftPanel/Rightcolumn/Modes.qml
+Settings 1.0 ui/LeftPanel/Rightcolumn/Settings.qml
+Root 1.0 ui/Main/Root.qml
+Gamepad 1.0 ui/Play/Gamepad.qml
+DPad 1.0 ui/Play/DPad.qml
+Buttons 1.0 ui/Play/Buttons.qml
+TopButtons 1.0 ui/Play/TopButtons.qml
+

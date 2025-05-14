@@ -19,7 +19,7 @@ public:
 
 signals:
     void speedReceived(QString speed);
-    void batteryReceived(QString battery);
+    void batteryReceived(QString battery); // Confirmar valor da bateria
     void headLightsReceived(QString headLights);
     void brakeLightReceived(QString brakeLight);
     void turnLightLeftReceived(QString turnLightLeft);
@@ -30,6 +30,13 @@ signals:
     void autoPilotReceived(QString autoPilot);
     void lineLeftReceived(QString lineLeft);
     void lineRightReceived(QString lineRight);
+
+	void hornReceived(QString horn);
+    void lightsLowReceived(QString lightsLow);
+    void lightSparkReceived(QString lightSpark);
+    void isMovingReceived(QString isMoving);
+    void batteryPercentageReceived(QString batteryPercentage); // Para corrigir bateria por percentagem
+
 
 protected:
     void run() override;

@@ -1,0 +1,169 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-5c4db24beddcab7faa1a.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "Digital_Cluster",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "all_qmllint::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-all_qmllint-Debug-4dfa989ed0a99f61a566.json",
+					"name" : "all_qmllint",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "all_qmllint_json::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-all_qmllint_json-Debug-51041467aa33fa60b749.json",
+					"name" : "all_qmllint_json",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "all_qmllint_module::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-all_qmllint_module-Debug-17b3685242e66a4c3c15.json",
+					"name" : "all_qmllint_module",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "all_qmltyperegistrations::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-all_qmltyperegistrations-Debug-5897baac36230c953326.json",
+					"name" : "all_qmltyperegistrations",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "appDigital_Cluster::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-appDigital_Cluster-Debug-c940925b309b9edc8bc4.json",
+					"name" : "appDigital_Cluster",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "appDigital_Cluster_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-appDigital_Cluster_autogen-Debug-0d82e2623ce51d9c2bd4.json",
+					"name" : "appDigital_Cluster_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "appDigital_Cluster_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-appDigital_Cluster_autogen_timestamp_deps-Debug-16e5f3e59d99ab43eb9b.json",
+					"name" : "appDigital_Cluster_autogen_timestamp_deps",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "appDigital_Cluster_qmlimportscan::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-appDigital_Cluster_qmlimportscan-Debug-ff39ba2025a77a4fd0d1.json",
+					"name" : "appDigital_Cluster_qmlimportscan",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "appDigital_Cluster_qmllint::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-appDigital_Cluster_qmllint-Debug-edaf5f34f9f7a656f641.json",
+					"name" : "appDigital_Cluster_qmllint",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "appDigital_Cluster_qmllint_json::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-appDigital_Cluster_qmllint_json-Debug-540f9ab9b5431172952b.json",
+					"name" : "appDigital_Cluster_qmllint_json",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "appDigital_Cluster_qmllint_module::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-appDigital_Cluster_qmllint_module-Debug-e08088d5cde25057ff76.json",
+					"name" : "appDigital_Cluster_qmllint_module",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "appDigital_Cluster_qmltyperegistration::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-appDigital_Cluster_qmltyperegistration-Debug-3178211993be56bc9423.json",
+					"name" : "appDigital_Cluster_qmltyperegistration",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "appDigital_Cluster_tooling::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-appDigital_Cluster_tooling-Debug-2fae83aa613c84003041.json",
+					"name" : "appDigital_Cluster_tooling",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/build/Desktop_Qt_6_5_3_GCC_64bit-Debug",
+		"source" : "/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 7
+	}
+}

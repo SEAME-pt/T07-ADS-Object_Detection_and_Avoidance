@@ -1,0 +1,151 @@
+{
+    "classes": [
+        {
+            "className": "ZMQReader",
+            "object": true,
+            "qualifiedClassName": "ZMQReader",
+            "signals": [
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "speed",
+                            "type": "QString"
+                        }
+                    ],
+                    "name": "speedReceived",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "battery",
+                            "type": "QString"
+                        }
+                    ],
+                    "name": "batteryReceived",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "headLights",
+                            "type": "QString"
+                        }
+                    ],
+                    "name": "headLightsReceived",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "brakeLight",
+                            "type": "QString"
+                        }
+                    ],
+                    "name": "brakeLightReceived",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "turnLightLeft",
+                            "type": "QString"
+                        }
+                    ],
+                    "name": "turnLightLeftReceived",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "turnLightRight",
+                            "type": "QString"
+                        }
+                    ],
+                    "name": "turnLightRightReceived",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "emergencyLights",
+                            "type": "QString"
+                        }
+                    ],
+                    "name": "emergencyLightsReceived",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "totalDistance",
+                            "type": "QString"
+                        }
+                    ],
+                    "name": "totalDistanceReceived",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "lkas",
+                            "type": "QString"
+                        }
+                    ],
+                    "name": "lkasReceived",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "autoPilot",
+                            "type": "QString"
+                        }
+                    ],
+                    "name": "autoPilotReceived",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "lineLeft",
+                            "type": "QString"
+                        }
+                    ],
+                    "name": "lineLeftReceived",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "lineRight",
+                            "type": "QString"
+                        }
+                    ],
+                    "name": "lineRightReceived",
+                    "returnType": "void"
+                }
+            ],
+            "superClasses": [
+                {
+                    "access": "public",
+                    "name": "QThread"
+                }
+            ]
+        }
+    ],
+    "inputFile": "zmqreader.h",
+    "outputRevision": 68
+}

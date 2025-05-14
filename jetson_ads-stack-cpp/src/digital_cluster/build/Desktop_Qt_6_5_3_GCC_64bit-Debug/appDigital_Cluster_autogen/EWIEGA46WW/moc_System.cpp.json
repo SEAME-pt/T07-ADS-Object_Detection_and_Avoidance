@@ -1,0 +1,281 @@
+{
+    "classes": [
+        {
+            "className": "System",
+            "object": true,
+            "properties": [
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": true,
+                    "index": 0,
+                    "name": "speed",
+                    "notify": "speedChanged",
+                    "read": "speed",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QString",
+                    "user": false,
+                    "write": "setSpeed"
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": true,
+                    "index": 1,
+                    "name": "batteryPer",
+                    "notify": "batteryPerChanged",
+                    "read": "batteryPer",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QString",
+                    "user": false,
+                    "write": "setBatteryPer"
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": true,
+                    "index": 2,
+                    "name": "headLights",
+                    "notify": "headLightsChanged",
+                    "read": "headLights",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QString",
+                    "user": false,
+                    "write": "setHeadLights"
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": true,
+                    "index": 3,
+                    "name": "brakeLight",
+                    "notify": "brakeLightChanged",
+                    "read": "brakeLight",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QString",
+                    "user": false,
+                    "write": "setBrakeLight"
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": true,
+                    "index": 4,
+                    "name": "turnLightLeft",
+                    "notify": "turnLightLeftChanged",
+                    "read": "turnLightLeft",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QString",
+                    "user": false,
+                    "write": "setTurnLightLeft"
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": true,
+                    "index": 5,
+                    "name": "turnLightRight",
+                    "notify": "turnLightRightChanged",
+                    "read": "turnLightRight",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QString",
+                    "user": false,
+                    "write": "setTurnLightRight"
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": true,
+                    "index": 6,
+                    "name": "emergencyLights",
+                    "notify": "emergencyLightsChanged",
+                    "read": "emergencyLights",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QString",
+                    "user": false,
+                    "write": "setEmergencyLights"
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": true,
+                    "index": 7,
+                    "name": "totalDistance",
+                    "notify": "totalDistanceChanged",
+                    "read": "totalDistance",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QString",
+                    "user": false,
+                    "write": "setTotalDistance"
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": true,
+                    "index": 8,
+                    "name": "lkas",
+                    "notify": "lkasChanged",
+                    "read": "lkas",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QString",
+                    "user": false,
+                    "write": "setLkas"
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": true,
+                    "index": 9,
+                    "name": "autoPilot",
+                    "notify": "autoPilotChanged",
+                    "read": "autoPilot",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QString",
+                    "user": false,
+                    "write": "setAutoPilot"
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": true,
+                    "index": 10,
+                    "name": "lineRight",
+                    "notify": "lineRightChanged",
+                    "read": "lineRight",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QString",
+                    "user": false,
+                    "write": "setLineRight"
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": true,
+                    "index": 11,
+                    "name": "lineLeft",
+                    "notify": "lineLeftChanged",
+                    "read": "lineLeft",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QString",
+                    "user": false,
+                    "write": "setLineLeft"
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": true,
+                    "index": 12,
+                    "name": "gamePad",
+                    "notify": "gamePadChanged",
+                    "read": "gamePad",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QString",
+                    "user": false,
+                    "write": "setGamePad"
+                }
+            ],
+            "qualifiedClassName": "System",
+            "signals": [
+                {
+                    "access": "public",
+                    "name": "speedChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "name": "batteryPerChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "name": "headLightsChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "name": "brakeLightChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "name": "turnLightLeftChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "name": "turnLightRightChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "name": "emergencyLightsChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "name": "totalDistanceChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "name": "lkasChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "name": "autoPilotChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "name": "lineRightChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "name": "lineLeftChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "name": "gamePadChanged",
+                    "returnType": "void"
+                }
+            ],
+            "superClasses": [
+                {
+                    "access": "public",
+                    "name": "QObject"
+                }
+            ]
+        }
+    ],
+    "inputFile": "System.h",
+    "outputRevision": 68
+}
