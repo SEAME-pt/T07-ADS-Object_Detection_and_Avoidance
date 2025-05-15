@@ -53,6 +53,7 @@ static constexpr auto qt_meta_stringdata_CLASSSystemENDCLASS = QtMocHelpers::str
     "lineRightChanged",
     "lineLeftChanged",
     "gamePadChanged",
+    "hornChanged",
     "speed",
     "batteryPer",
     "headLights",
@@ -65,11 +66,12 @@ static constexpr auto qt_meta_stringdata_CLASSSystemENDCLASS = QtMocHelpers::str
     "autoPilot",
     "lineRight",
     "lineLeft",
-    "gamePad"
+    "gamePad",
+    "horn"
 );
 #else  // !QT_MOC_HAS_STRING_DATA
 struct qt_meta_stringdata_CLASSSystemENDCLASS_t {
-    uint offsetsAndSizes[56];
+    uint offsetsAndSizes[60];
     char stringdata0[7];
     char stringdata1[13];
     char stringdata2[1];
@@ -85,19 +87,21 @@ struct qt_meta_stringdata_CLASSSystemENDCLASS_t {
     char stringdata12[17];
     char stringdata13[16];
     char stringdata14[15];
-    char stringdata15[6];
-    char stringdata16[11];
+    char stringdata15[12];
+    char stringdata16[6];
     char stringdata17[11];
     char stringdata18[11];
-    char stringdata19[14];
-    char stringdata20[15];
-    char stringdata21[16];
-    char stringdata22[14];
-    char stringdata23[5];
-    char stringdata24[10];
+    char stringdata19[11];
+    char stringdata20[14];
+    char stringdata21[15];
+    char stringdata22[16];
+    char stringdata23[14];
+    char stringdata24[5];
     char stringdata25[10];
-    char stringdata26[9];
-    char stringdata27[8];
+    char stringdata26[10];
+    char stringdata27[9];
+    char stringdata28[8];
+    char stringdata29[5];
 };
 #define QT_MOC_LITERAL(ofs, len) \
     uint(sizeof(qt_meta_stringdata_CLASSSystemENDCLASS_t::offsetsAndSizes) + ofs), len 
@@ -118,19 +122,21 @@ Q_CONSTINIT static const qt_meta_stringdata_CLASSSystemENDCLASS_t qt_meta_string
         QT_MOC_LITERAL(191, 16),  // "lineRightChanged"
         QT_MOC_LITERAL(208, 15),  // "lineLeftChanged"
         QT_MOC_LITERAL(224, 14),  // "gamePadChanged"
-        QT_MOC_LITERAL(239, 5),  // "speed"
-        QT_MOC_LITERAL(245, 10),  // "batteryPer"
-        QT_MOC_LITERAL(256, 10),  // "headLights"
-        QT_MOC_LITERAL(267, 10),  // "brakeLight"
-        QT_MOC_LITERAL(278, 13),  // "turnLightLeft"
-        QT_MOC_LITERAL(292, 14),  // "turnLightRight"
-        QT_MOC_LITERAL(307, 15),  // "emergencyLights"
-        QT_MOC_LITERAL(323, 13),  // "totalDistance"
-        QT_MOC_LITERAL(337, 4),  // "lkas"
-        QT_MOC_LITERAL(342, 9),  // "autoPilot"
-        QT_MOC_LITERAL(352, 9),  // "lineRight"
-        QT_MOC_LITERAL(362, 8),  // "lineLeft"
-        QT_MOC_LITERAL(371, 7)   // "gamePad"
+        QT_MOC_LITERAL(239, 11),  // "hornChanged"
+        QT_MOC_LITERAL(251, 5),  // "speed"
+        QT_MOC_LITERAL(257, 10),  // "batteryPer"
+        QT_MOC_LITERAL(268, 10),  // "headLights"
+        QT_MOC_LITERAL(279, 10),  // "brakeLight"
+        QT_MOC_LITERAL(290, 13),  // "turnLightLeft"
+        QT_MOC_LITERAL(304, 14),  // "turnLightRight"
+        QT_MOC_LITERAL(319, 15),  // "emergencyLights"
+        QT_MOC_LITERAL(335, 13),  // "totalDistance"
+        QT_MOC_LITERAL(349, 4),  // "lkas"
+        QT_MOC_LITERAL(354, 9),  // "autoPilot"
+        QT_MOC_LITERAL(364, 9),  // "lineRight"
+        QT_MOC_LITERAL(374, 8),  // "lineLeft"
+        QT_MOC_LITERAL(383, 7),  // "gamePad"
+        QT_MOC_LITERAL(391, 4)   // "horn"
     },
     "System",
     "speedChanged",
@@ -147,6 +153,7 @@ Q_CONSTINIT static const qt_meta_stringdata_CLASSSystemENDCLASS_t qt_meta_string
     "lineRightChanged",
     "lineLeftChanged",
     "gamePadChanged",
+    "hornChanged",
     "speed",
     "batteryPer",
     "headLights",
@@ -159,7 +166,8 @@ Q_CONSTINIT static const qt_meta_stringdata_CLASSSystemENDCLASS_t qt_meta_string
     "autoPilot",
     "lineRight",
     "lineLeft",
-    "gamePad"
+    "gamePad",
+    "horn"
 };
 #undef QT_MOC_LITERAL
 #endif // !QT_MOC_HAS_STRING_DATA
@@ -171,27 +179,28 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSSystemENDCLASS[] = {
       11,       // revision
        0,       // classname
        0,    0, // classinfo
-      13,   14, // methods
-      13,  105, // properties
+      14,   14, // methods
+      14,  112, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-      13,       // signalCount
+      14,       // signalCount
 
  // signals: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    0,   92,    2, 0x06,   14 /* Public */,
-       3,    0,   93,    2, 0x06,   15 /* Public */,
-       4,    0,   94,    2, 0x06,   16 /* Public */,
-       5,    0,   95,    2, 0x06,   17 /* Public */,
-       6,    0,   96,    2, 0x06,   18 /* Public */,
-       7,    0,   97,    2, 0x06,   19 /* Public */,
-       8,    0,   98,    2, 0x06,   20 /* Public */,
-       9,    0,   99,    2, 0x06,   21 /* Public */,
-      10,    0,  100,    2, 0x06,   22 /* Public */,
-      11,    0,  101,    2, 0x06,   23 /* Public */,
-      12,    0,  102,    2, 0x06,   24 /* Public */,
-      13,    0,  103,    2, 0x06,   25 /* Public */,
-      14,    0,  104,    2, 0x06,   26 /* Public */,
+       1,    0,   98,    2, 0x06,   15 /* Public */,
+       3,    0,   99,    2, 0x06,   16 /* Public */,
+       4,    0,  100,    2, 0x06,   17 /* Public */,
+       5,    0,  101,    2, 0x06,   18 /* Public */,
+       6,    0,  102,    2, 0x06,   19 /* Public */,
+       7,    0,  103,    2, 0x06,   20 /* Public */,
+       8,    0,  104,    2, 0x06,   21 /* Public */,
+       9,    0,  105,    2, 0x06,   22 /* Public */,
+      10,    0,  106,    2, 0x06,   23 /* Public */,
+      11,    0,  107,    2, 0x06,   24 /* Public */,
+      12,    0,  108,    2, 0x06,   25 /* Public */,
+      13,    0,  109,    2, 0x06,   26 /* Public */,
+      14,    0,  110,    2, 0x06,   27 /* Public */,
+      15,    0,  111,    2, 0x06,   28 /* Public */,
 
  // signals: parameters
     QMetaType::Void,
@@ -207,21 +216,23 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSSystemENDCLASS[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
+    QMetaType::Void,
 
  // properties: name, type, flags
-      15, QMetaType::QString, 0x00015903, uint(0), 0,
-      16, QMetaType::QString, 0x00015903, uint(1), 0,
-      17, QMetaType::QString, 0x00015903, uint(2), 0,
-      18, QMetaType::QString, 0x00015903, uint(3), 0,
-      19, QMetaType::QString, 0x00015903, uint(4), 0,
-      20, QMetaType::QString, 0x00015903, uint(5), 0,
-      21, QMetaType::QString, 0x00015903, uint(6), 0,
-      22, QMetaType::QString, 0x00015903, uint(7), 0,
-      23, QMetaType::QString, 0x00015903, uint(8), 0,
-      24, QMetaType::QString, 0x00015903, uint(9), 0,
-      25, QMetaType::QString, 0x00015903, uint(10), 0,
-      26, QMetaType::QString, 0x00015903, uint(11), 0,
-      27, QMetaType::QString, 0x00015903, uint(12), 0,
+      16, QMetaType::QString, 0x00015903, uint(0), 0,
+      17, QMetaType::QString, 0x00015903, uint(1), 0,
+      18, QMetaType::QString, 0x00015903, uint(2), 0,
+      19, QMetaType::QString, 0x00015903, uint(3), 0,
+      20, QMetaType::QString, 0x00015903, uint(4), 0,
+      21, QMetaType::QString, 0x00015903, uint(5), 0,
+      22, QMetaType::QString, 0x00015903, uint(6), 0,
+      23, QMetaType::QString, 0x00015903, uint(7), 0,
+      24, QMetaType::QString, 0x00015903, uint(8), 0,
+      25, QMetaType::QString, 0x00015903, uint(9), 0,
+      26, QMetaType::QString, 0x00015903, uint(10), 0,
+      27, QMetaType::QString, 0x00015903, uint(11), 0,
+      28, QMetaType::QString, 0x00015903, uint(12), 0,
+      29, QMetaType::QString, 0x00015903, uint(13), 0,
 
        0        // eod
 };
@@ -259,6 +270,8 @@ Q_CONSTINIT const QMetaObject System::staticMetaObject = { {
         QtPrivate::TypeAndForceComplete<QString, std::true_type>,
         // property 'gamePad'
         QtPrivate::TypeAndForceComplete<QString, std::true_type>,
+        // property 'horn'
+        QtPrivate::TypeAndForceComplete<QString, std::true_type>,
         // Q_OBJECT / Q_GADGET
         QtPrivate::TypeAndForceComplete<System, std::true_type>,
         // method 'speedChanged'
@@ -286,6 +299,8 @@ Q_CONSTINIT const QMetaObject System::staticMetaObject = { {
         // method 'lineLeftChanged'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'gamePadChanged'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'hornChanged'
         QtPrivate::TypeAndForceComplete<void, std::false_type>
     >,
     nullptr
@@ -310,6 +325,7 @@ void System::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void
         case 10: _t->lineRightChanged(); break;
         case 11: _t->lineLeftChanged(); break;
         case 12: _t->gamePadChanged(); break;
+        case 13: _t->hornChanged(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -405,6 +421,13 @@ void System::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void
                 return;
             }
         }
+        {
+            using _t = void (System::*)();
+            if (_t _q_method = &System::hornChanged; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
+                *result = 13;
+                return;
+            }
+        }
     }else if (_c == QMetaObject::ReadProperty) {
         auto *_t = static_cast<System *>(_o);
         (void)_t;
@@ -423,6 +446,7 @@ void System::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void
         case 10: *reinterpret_cast< QString*>(_v) = _t->lineRight(); break;
         case 11: *reinterpret_cast< QString*>(_v) = _t->lineLeft(); break;
         case 12: *reinterpret_cast< QString*>(_v) = _t->gamePad(); break;
+        case 13: *reinterpret_cast< QString*>(_v) = _t->horn(); break;
         default: break;
         }
     } else if (_c == QMetaObject::WriteProperty) {
@@ -443,6 +467,7 @@ void System::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void
         case 10: _t->setLineRight(*reinterpret_cast< QString*>(_v)); break;
         case 11: _t->setLineLeft(*reinterpret_cast< QString*>(_v)); break;
         case 12: _t->setGamePad(*reinterpret_cast< QString*>(_v)); break;
+        case 13: _t->setHorn(*reinterpret_cast< QString*>(_v)); break;
         default: break;
         }
     } else if (_c == QMetaObject::ResetProperty) {
@@ -470,18 +495,18 @@ int System::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 13)
+        if (_id < 14)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 13;
+        _id -= 14;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 13)
+        if (_id < 14)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 13;
+        _id -= 14;
     }else if (_c == QMetaObject::ReadProperty || _c == QMetaObject::WriteProperty
             || _c == QMetaObject::ResetProperty || _c == QMetaObject::BindableProperty
             || _c == QMetaObject::RegisterPropertyMetaType) {
         qt_static_metacall(this, _c, _id, _a);
-        _id -= 13;
+        _id -= 14;
     }
     return _id;
 }
@@ -562,5 +587,11 @@ void System::lineLeftChanged()
 void System::gamePadChanged()
 {
     QMetaObject::activate(this, &staticMetaObject, 12, nullptr);
+}
+
+// SIGNAL 13
+void System::hornChanged()
+{
+    QMetaObject::activate(this, &staticMetaObject, 13, nullptr);
 }
 QT_WARNING_POP

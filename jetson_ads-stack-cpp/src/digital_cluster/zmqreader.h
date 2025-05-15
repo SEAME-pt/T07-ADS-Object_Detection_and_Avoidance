@@ -31,11 +31,11 @@ signals:
     void lineLeftReceived(QString lineLeft);
     void lineRightReceived(QString lineRight);
 
-	void hornReceived(QString horn);
-    void lightsLowReceived(QString lightsLow);
-    void lightSparkReceived(QString lightSpark);
-    void isMovingReceived(QString isMoving);
-    void batteryPercentageReceived(QString batteryPercentage); // Para corrigir bateria por percentagem
+    void hornReceived(QString horn);
+ //    void lightsLowReceived(QString lightsLow);
+ //    void lightSparkReceived(QString lightSpark);
+ //    void isMovingReceived(QString isMoving);
+ //    void batteryPercentageReceived(QString batteryPercentage); // Para corrigir bateria por percentagem
 
 
 protected:

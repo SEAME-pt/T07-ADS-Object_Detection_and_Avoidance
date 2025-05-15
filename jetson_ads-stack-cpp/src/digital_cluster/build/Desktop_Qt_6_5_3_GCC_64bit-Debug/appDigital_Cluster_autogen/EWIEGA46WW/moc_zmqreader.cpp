@@ -63,11 +63,13 @@ static constexpr auto qt_meta_stringdata_CLASSZMQReaderENDCLASS = QtMocHelpers::
     "lineLeftReceived",
     "lineLeft",
     "lineRightReceived",
-    "lineRight"
+    "lineRight",
+    "hornReceived",
+    "horn"
 );
 #else  // !QT_MOC_HAS_STRING_DATA
 struct qt_meta_stringdata_CLASSZMQReaderENDCLASS_t {
-    uint offsetsAndSizes[52];
+    uint offsetsAndSizes[56];
     char stringdata0[10];
     char stringdata1[14];
     char stringdata2[1];
@@ -94,6 +96,8 @@ struct qt_meta_stringdata_CLASSZMQReaderENDCLASS_t {
     char stringdata23[9];
     char stringdata24[18];
     char stringdata25[10];
+    char stringdata26[13];
+    char stringdata27[5];
 };
 #define QT_MOC_LITERAL(ofs, len) \
     uint(sizeof(qt_meta_stringdata_CLASSZMQReaderENDCLASS_t::offsetsAndSizes) + ofs), len 
@@ -124,7 +128,9 @@ Q_CONSTINIT static const qt_meta_stringdata_CLASSZMQReaderENDCLASS_t qt_meta_str
         QT_MOC_LITERAL(311, 16),  // "lineLeftReceived"
         QT_MOC_LITERAL(328, 8),  // "lineLeft"
         QT_MOC_LITERAL(337, 17),  // "lineRightReceived"
-        QT_MOC_LITERAL(355, 9)   // "lineRight"
+        QT_MOC_LITERAL(355, 9),  // "lineRight"
+        QT_MOC_LITERAL(365, 12),  // "hornReceived"
+        QT_MOC_LITERAL(378, 4)   // "horn"
     },
     "ZMQReader",
     "speedReceived",
@@ -151,7 +157,9 @@ Q_CONSTINIT static const qt_meta_stringdata_CLASSZMQReaderENDCLASS_t qt_meta_str
     "lineLeftReceived",
     "lineLeft",
     "lineRightReceived",
-    "lineRight"
+    "lineRight",
+    "hornReceived",
+    "horn"
 };
 #undef QT_MOC_LITERAL
 #endif // !QT_MOC_HAS_STRING_DATA
@@ -163,26 +171,27 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSZMQReaderENDCLASS[] = {
       11,       // revision
        0,       // classname
        0,    0, // classinfo
-      12,   14, // methods
+      13,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-      12,       // signalCount
+      13,       // signalCount
 
  // signals: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    1,   86,    2, 0x06,    1 /* Public */,
-       4,    1,   89,    2, 0x06,    3 /* Public */,
-       6,    1,   92,    2, 0x06,    5 /* Public */,
-       8,    1,   95,    2, 0x06,    7 /* Public */,
-      10,    1,   98,    2, 0x06,    9 /* Public */,
-      12,    1,  101,    2, 0x06,   11 /* Public */,
-      14,    1,  104,    2, 0x06,   13 /* Public */,
-      16,    1,  107,    2, 0x06,   15 /* Public */,
-      18,    1,  110,    2, 0x06,   17 /* Public */,
-      20,    1,  113,    2, 0x06,   19 /* Public */,
-      22,    1,  116,    2, 0x06,   21 /* Public */,
-      24,    1,  119,    2, 0x06,   23 /* Public */,
+       1,    1,   92,    2, 0x06,    1 /* Public */,
+       4,    1,   95,    2, 0x06,    3 /* Public */,
+       6,    1,   98,    2, 0x06,    5 /* Public */,
+       8,    1,  101,    2, 0x06,    7 /* Public */,
+      10,    1,  104,    2, 0x06,    9 /* Public */,
+      12,    1,  107,    2, 0x06,   11 /* Public */,
+      14,    1,  110,    2, 0x06,   13 /* Public */,
+      16,    1,  113,    2, 0x06,   15 /* Public */,
+      18,    1,  116,    2, 0x06,   17 /* Public */,
+      20,    1,  119,    2, 0x06,   19 /* Public */,
+      22,    1,  122,    2, 0x06,   21 /* Public */,
+      24,    1,  125,    2, 0x06,   23 /* Public */,
+      26,    1,  128,    2, 0x06,   25 /* Public */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::QString,    3,
@@ -197,6 +206,7 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSZMQReaderENDCLASS[] = {
     QMetaType::Void, QMetaType::QString,   21,
     QMetaType::Void, QMetaType::QString,   23,
     QMetaType::Void, QMetaType::QString,   25,
+    QMetaType::Void, QMetaType::QString,   27,
 
        0        // eod
 };
@@ -245,6 +255,9 @@ Q_CONSTINIT const QMetaObject ZMQReader::staticMetaObject = { {
         QtPrivate::TypeAndForceComplete<QString, std::false_type>,
         // method 'lineRightReceived'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<QString, std::false_type>,
+        // method 'hornReceived'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
         QtPrivate::TypeAndForceComplete<QString, std::false_type>
     >,
     nullptr
@@ -268,6 +281,7 @@ void ZMQReader::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, v
         case 9: _t->autoPilotReceived((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
         case 10: _t->lineLeftReceived((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
         case 11: _t->lineRightReceived((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
+        case 12: _t->hornReceived((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -356,6 +370,13 @@ void ZMQReader::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, v
                 return;
             }
         }
+        {
+            using _t = void (ZMQReader::*)(QString );
+            if (_t _q_method = &ZMQReader::hornReceived; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
+                *result = 12;
+                return;
+            }
+        }
     }
 }
 
@@ -378,13 +399,13 @@ int ZMQReader::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 12)
+        if (_id < 13)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 12;
+        _id -= 13;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 12)
+        if (_id < 13)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 12;
+        _id -= 13;
     }
     return _id;
 }
@@ -471,5 +492,12 @@ void ZMQReader::lineRightReceived(QString _t1)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
     QMetaObject::activate(this, &staticMetaObject, 11, _a);
+}
+
+// SIGNAL 12
+void ZMQReader::hornReceived(QString _t1)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
+    QMetaObject::activate(this, &staticMetaObject, 12, _a);
 }
 QT_WARNING_POP

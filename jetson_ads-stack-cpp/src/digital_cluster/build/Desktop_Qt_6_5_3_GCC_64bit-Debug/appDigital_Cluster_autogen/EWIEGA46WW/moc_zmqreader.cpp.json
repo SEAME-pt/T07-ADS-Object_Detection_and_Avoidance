@@ -136,6 +136,17 @@
                     ],
                     "name": "lineRightReceived",
                     "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "horn",
+                            "type": "QString"
+                        }
+                    ],
+                    "name": "hornReceived",
+                    "returnType": "void"
                 }
             ],
             "superClasses": [

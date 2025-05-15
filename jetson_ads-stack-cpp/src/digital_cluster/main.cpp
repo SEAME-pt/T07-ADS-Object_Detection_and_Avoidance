@@ -93,21 +93,21 @@ int main(int argc, char *argv[])
     });
 
 	// Conexões para horn, lightsLow, lightSpark e isMoving
-	QObject::connect(&zmqReader, &ZMQReader::hornReceived, [&](QString horn) {
-		m_systemHandler.setHorn(horn);
-	});
-	QObject::connect(&zmqReader, &ZMQReader::lightsLowReceived, [&](QString lightsLow) {
-		m_systemHandler.setLightsLow(lightsLow);
-	});
-	QObject::connect(&zmqReader, &ZMQReader::lightSparkReceived, [&](QString lightSpark) {
-		m_systemHandler.setLightSpark(lightSpark);
-	});
-	QObject::connect(&zmqReader, &ZMQReader::isMovingReceived, [&](QString isMoving) {
-		m_systemHandler.setIsMoving(isMoving);
-	});
-	QObject::connect(&zmqReader, &ZMQReader::batteryPercentageReceived, [&](QString batteryPercentage) {
-		m_systemHandler.setBatteryPer(batteryPercentage);
-	});
+    QObject::connect(&zmqReader, &ZMQReader::hornReceived, [&](QString horn) {
+        m_systemHandler.setHorn(horn);
+    });
+    // QObject::connect(&zmqReader, &ZMQReader::lightsLowReceived, [&](QString lightsLow) {
+    // 	m_systemHandler.setLightsLow(lightsLow);
+    // });
+    // QObject::connect(&zmqReader, &ZMQReader::lightSparkReceived, [&](QString lightSpark) {
+    // 	m_systemHandler.setLightSpark(lightSpark);
+    // });
+    // QObject::connect(&zmqReader, &ZMQReader::isMovingReceived, [&](QString isMoving) {
+    // 	m_systemHandler.setIsMoving(isMoving);
+    // });
+    // QObject::connect(&zmqReader, &ZMQReader::batteryPercentageReceived, [&](QString batteryPercentage) {
+    // 	m_systemHandler.setBatteryPer(batteryPercentage);
+    // });
 
     zmqReader.start(); // Inicia a thread - corre o run
 

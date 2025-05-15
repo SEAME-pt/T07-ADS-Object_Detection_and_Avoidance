@@ -16,12 +16,12 @@ System::System(zmq::context_t &context, QObject *parent)
     m_lineLeft("false"),
     m_gamePad(""),
     m_updatingFromZMQ(false), // Inicializa a flag
-    m_zmqSocket(context, ZMQ_PUB), // Inicializa o socket PUB
+    m_zmqSocket(context, ZMQ_PUB) // Inicializa o socket PUB
 
-	m_horn("false"),
-	m_lightsLow("false"),
-	m_lightSpark("false"),
-	m_isMoving("false")
+    // m_horn("false"),
+    // m_lightsLow("false"),
+    // m_lightSpark("false"),
+    // m_isMoving("false")
 {
     try {
         m_zmqSocket.bind("tcp://*:5557"); // Tenta uma porta diferente
@@ -255,13 +255,26 @@ void System::setGamePad(const QString &newGamePad)
     emit gamePadChanged();
 }
 
-QString System::horn() const 
+// QString System::horn() const
+// {
+// 	return m_horn;
+// }
+
+// void System::setHorn(const QString &newHorn) {
+//     if (m_horn == newHorn) return;
+//     m_horn = newHorn;
+//     emit hornChanged();
+// }
+
+QString System::horn() const
 {
-	return m_horn;
+    return m_horn;
 }
 
-void System::setHorn(const QString &newHorn) {
-    if (m_horn == newHorn) return;
+void System::setHorn(const QString &newHorn)
+{
+    if (m_horn == newHorn)
+        return;
     m_horn = newHorn;
     emit hornChanged();
 }

@@ -198,6 +198,21 @@
                     "type": "QString",
                     "user": false,
                     "write": "setGamePad"
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": true,
+                    "index": 13,
+                    "name": "horn",
+                    "notify": "hornChanged",
+                    "read": "horn",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QString",
+                    "user": false,
+                    "write": "setHorn"
                 }
             ],
             "qualifiedClassName": "System",
@@ -265,6 +280,11 @@
                 {
                     "access": "public",
                     "name": "gamePadChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "name": "hornChanged",
                     "returnType": "void"
                 }
             ],

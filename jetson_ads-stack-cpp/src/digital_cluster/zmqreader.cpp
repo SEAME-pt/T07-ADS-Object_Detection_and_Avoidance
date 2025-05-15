@@ -41,11 +41,11 @@ void ZMQReader::run()
             {"lineleft", [this](QString v) { emit lineLeftReceived(v); }},
             {"lineright", [this](QString v) { emit lineRightReceived(v); }},
 
-			{"horn", [this](QString v) { emit hornReceived(v); }},
-			{"lightslow", [this](QString v) { emit lightsLowReceived(v); }},
-			{"lightspark", [this](QString v) { emit lightSparkReceived(v); }},
-			{"ismoving", [this](QString v) { emit isMovingReceived(v); }},
-			{"batterypercentage", [this](QString v) { emit batteryPercentageReceived(v); }}  // Para corrigir bateria por percentagem
+            {"horn", [this](QString v) { emit hornReceived(v); }}
+            // {"lightslow", [this](QString v) { emit lightsLowReceived(v); }},
+            // {"lightspark", [this](QString v) { emit lightSparkReceived(v); }},
+            // {"ismoving", [this](QString v) { emit isMovingReceived(v); }},
+            // {"batterypercentage", [this](QString v) { emit batteryPercentageReceived(v); }}  // Para corrigir bateria por percentagem
         };
 
         m_running = true;
