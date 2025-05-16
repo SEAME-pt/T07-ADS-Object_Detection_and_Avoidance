@@ -17,6 +17,6 @@ float SpeedPIDController::update(float v_current, float v_target, float dt) {
     float derivative = (error - prev_error_) / dt;
     prev_error_ = error;
 
-    float output = kp_ * error + ki_ * integral_ + kd_ * derivative;
+    float output = v_target + kp_ * error + ki_ * integral_ + kd_ * derivative;
     return std::clamp(output, pwm_min_, pwm_max_);
 }

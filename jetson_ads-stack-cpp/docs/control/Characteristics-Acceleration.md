@@ -17,8 +17,8 @@ We tested acceleration using a C++ routine to apply step inputs to the motor and
    - Measured speed via encoder pulses over 10 ms intervals to calculate acceleration.
 3. **Parameters**:
    - Wheel diameter **$W_d$** : 21.5 cm (0.215 m).
-   - Encoder Slots, Pulses per turn **$E_s$** : 18 slots.
-   - Sampling interval **$T_s$**: 50 ms.
+   - Encoder Slots, Pulses per turn **$E_s$** : 18 slots, 36 pulses.
+   - Sampling interval **$T_s$**: 30 ms.
    - Time logging: `finish_time_stamp - start_time_stamp` in milliseconds.
 
 ## Calculations
@@ -27,8 +27,8 @@ Acceleration is calculated as:
 **$a = \frac{\Delta v}{\Delta t}$**
 \]
 - **Speed from Encoder** (from Speed Report):
-  - Distance per slot, per pulse **$D_p$** = **$\frac{W_d}{E_s} = \frac{0.215}{18} \approx 0.012 \, (m)$**
-  - Speed : **$v = {pulses}\ \cdot \frac{D_p}{T_c} \approx {pulse} \cdot \frac{0.012}{0.01} \, (m/s)$**
+  - Distance per slot, per pulse **$D_p$** = **$\frac{W_d}{E_s} = \frac{0.215}{36} \approx 0.006 \, (m)$**
+  - Speed : **$v = {pulses}\ \cdot \frac{D_p}{T_c} \approx {pulse} \cdot \frac{0.006}{0.03} \, (m/s)$**
 
 ### Tests previous notes:
     PWM values are ranging from 0 to 4095 equivalent to 0km/h (0 m/s) to 9,3km/h (2,58 m/s) respectively

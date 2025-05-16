@@ -1,6 +1,6 @@
-Let’s dial in that **PID tuning** like a pro racer crew chief.
+**PID tuning** 
 
-You’re controlling **speed**, so the goal is:
+We’re controlling **speed**, so the goal is:
 **smooth, stable tracking of the target velocity** (which came from MPC via acceleration integration), **without overshoot or oscillation.**
 
 ---
@@ -52,7 +52,7 @@ integral_ = std::clamp(integral_, -i_limit, i_limit);
 Kd = 0.01 – 0.1 (start small)
 ```
 
-- Helps **dampen** the system if you see **ringing/overshoot**.
+- Helps **dampen** the system if we see **ringing/overshoot**.
 - Too much = noise amplification (especially with encoders).
 
 ---
@@ -65,7 +65,7 @@ Ki = 0.02
 Kd = 0.05
 ```
 
-But you **must tune for your car** — weight, motor power, encoder resolution, etc. all matter.
+But you **must tune for our car** — weight, motor power, encoder resolution, etc. all matter.
 
 ---
 
@@ -84,7 +84,7 @@ But you **must tune for your car** — weight, motor power, encoder resolution, 
 
 1. Set a step in `v_target` (e.g. jump from 0.5 → 1.5 m/s).
 2. Watch response (log it).
-3. Adjust gains until you get fast rise, little overshoot, stable settle.
+3. Adjust gains until we get fast rise, little overshoot, stable settle.
 
 ---
 
