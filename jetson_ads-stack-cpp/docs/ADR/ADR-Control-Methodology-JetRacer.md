@@ -7,7 +7,7 @@ Accepted
 The Waveshare JetRacer, powered by a Jetson Nano, requires an autonomous drive system to navigate a small laboratory testing course using a dash cam and a TensorFlow-based ML model outputting offset **_e_**_y_, facing angle **_ψₑᵣᵣₒᵣ_**, speed **_v_**, and steering angle **_δ_**. The system must track the lane center line, maintain a desired speed, operate at 30 Hz*, and map control outputs to servo/motor commands via GPIO. A local coordinate frame with error dynamics [**_e_**_y_, ψₑᵣᵣₒᵣ, v] is used, and the implementation leverages C++ with Python ML communication via TCP sockets.
 
 **Why 30Hz?**
-_The ML lane detection is capable of a 33FPS process stream, wich gives 30Hz (1/FPS) of state update frequency._
+_The ML lane detection is capable of a 30ms process stream, wich gives 33Hz (or FPS) of state update frequency._
 
 ## Decision
 We will implement a dual-loop control architecture:
@@ -29,7 +29,7 @@ We will implement a dual-loop control architecture:
 1. **Optimal Trajectory Tracking**: MPC ensures smooth lane following with constraint handling.
 2. **Precise Speed Control**: PID compensates for motor nonlinearities.
 3. **Decoupled Control**: Simplifies tuning and debugging.
-4. **Real-Time Feasibility**: MPC and PID run at 30 Hz on Jetson Nano.
+4. **Real-Time Feasibility**: MPC and PID run at 30ms on Jetson Nano.
 5. **Reuses Code**: Leverages existing MPC.
 6. **Robustness**: MPC smooths ML noise; PID corrects velocity errors.
 
@@ -37,7 +37,7 @@ We will implement a dual-loop control architecture:
 1. **Complexity**: Dual-loop is more complex than single controller.
 2. **Tuning Effort**: PID gains require empirical tuning.
 3. **MPC Convergence**: Failure to converge may affect PID inputs.
-4. **Latency**: Slight delay in PID loop (negligible at 30 Hz).
+4. **Latency**: Slight delay in PID loop (negligible at 30ms ).
 5. **Implementation Overhead**: PID requires GPIO integration.
 
 ## Justification
@@ -53,7 +53,7 @@ The dual-loop MPC + PID balances optimality (MPC for trajectory) and simplicity 
 ## Risks and Mitigations
 - **Tuning**: Use Ziegler-Nichols; test conservatively.
 - **MPC Convergence**: Fallback to previous inputs.
-- **Latency**: Verify 30 Hz timing.
+- **Latency**: Verify 30ms timing.
 
 ## Date
 May 08, 2025
