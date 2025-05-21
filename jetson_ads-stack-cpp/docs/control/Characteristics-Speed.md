@@ -16,7 +16,7 @@ We measured the JetRacer’s speed using an encoder wheel and validated it with 
    - Calculated theoretical speed from motor RPM and wheel geometry.
    - Conducted on-floor tests by driving the JetRacer on a straight track, measuring speed via encoder and comparing with theoretical values.
 4. **Parameters**:
-   - Wheel diameter **$W_d$** : 21.5 cm (0.215 m).
+   - Wheel diameter **$W_d$** : **$21.5 \, cm \, (0.215 m)$**.
    - Encoder Slots, Pulses per turn **$E_s$** : **$18 \,{slots} \, \text{x} \, 2 \, edges = 36 \, edges$** (rising + falling).
    - Sampling interval **$T_s$**: 30 ms (**$\frac{1}{33 \text{FPS}}$**).
    - Time logging: `finish_time_stamp - start_time_stamp` in milliseconds.
@@ -46,7 +46,7 @@ We measured the JetRacer’s speed using an encoder wheel and validated it with 
 
 - **Distance per Pulse** **$(D_p)$**:
 
-  **$\frac{W_d}{E_s} = \frac{0.215}{36} \approx 0.006 \, \text{m}$** **$(6 \,mm)$**
+  **$\frac{W_d}{E_s} = \frac{0.215}{36} \approx 0.006 \, \text{m}$** **$(6 \,mm)$**, **$error E_{D_p}=0,5 \cdot D_p = 0,003 m$**
 
 - **Speed from Encoder** (assuming 13 pulses measured in 30 ms):
 

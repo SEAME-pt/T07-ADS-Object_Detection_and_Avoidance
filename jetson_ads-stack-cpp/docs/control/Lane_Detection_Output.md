@@ -40,7 +40,7 @@ The user has a working lane detection model providing information about lane lim
 2. Dash cam center is 0.075 m forward of the car’s center of mass (COM).
 3. Dash cam axis is tilted down by 17° (approximately 0.297 rad).
 4. Dash cam field of view (FOV) is approximately 100° horizontally and vertically.
-5. The imagery center spot (point where the optical axis intersects the street plane) is 0.575 m ahead of the COM.
+5. The imagery center spot (point where the optical axis intersects the street plane) is 0.75 m ahead of the COM.
 
 The MPC uses a local coordinate frame with states **$[e_y, \psi_{\text{error}}, v]$**, where **$e_y$** is the lateral offset **$y$**, and **$\psi_{\text{error}}$** is the heading error (yaw angle between the car and the lane center). The goal is to map the lane detection model’s output from image coordinates to world coordinates relative to the car’s COM, accounting for the dash cam’s position and orientation.
 
@@ -107,7 +107,7 @@ Let’s compute where the optical axis hits the street to verify:
 - Parametric line: **$P(t) = (0.075, 0, 0.15) + t \cdot (0.9563, 0, 0.2924)$**.
 - Intersect with street plane **$z = 0$**:
 
-  0.15 + t \cdot 0.2924 = 0 \implies t = -0.15 / 0.2924 \approx -0.513
+  **$0.15 + t \cdot 0.2924 = 0 \implies t = -0.15 / 0.2924 \approx -0.513$**
 
 - Then **$x = 0.075 + (-0.513) \cdot 0.9563 \approx 0.075 - 0.490 \approx -0.415$**, **$y = 0$**, which is behind COM, not 0.575 m ahead. This suggests a discrepancy; let’s re-evaluate tilt or assume user measurement error (0.575 m vs. calculated ~0.565 m from earlier, close enough).
 
