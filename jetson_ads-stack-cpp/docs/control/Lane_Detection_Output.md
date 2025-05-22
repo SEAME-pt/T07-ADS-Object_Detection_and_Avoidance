@@ -11,12 +11,12 @@ To configure your MPC states for the JetRacer using dash cam data, we need to de
 
 ### Dash Cam Setup Summary
 - The dash cam is 0.15 m above the street, 0.075 m forward of the car’s center, tilted down by 17°, with a 100° field of view (FOV).
-- The imagery center spot is 0.575 m ahead of the car’s center on the street.
+- The imagery center spot is 0.552 m ahead of the car’s center on the street.
 
 ### Determining Lateral Offset **$y$**
 - **Assumption**: Your model likely outputs the lane center’s position in the image as a horizontal offset **$\delta u$** from the center. To find **$y$**, we map this to the world using the camera’s position and tilt.
 - Without intrinsic parameters (like focal length), exact mapping is complex. Research suggests using the camera’s tilt and height to estimate distances, but calibration is needed for precision.
-- For a simplified approach, assume the model outputs **$y$** directly at the car’s position, adjusted for the 0.075 m forward offset. If it outputs at a distance ahead (e.g., 0.575 m), extrapolate back assuming a straight lane.
+- For a simplified approach, assume the model outputs **$y$** directly at the car’s position, adjusted for the 0.075 m forward offset. If it outputs at a distance ahead (e.g., 0.552 m), extrapolate back assuming a straight lane.
 
 ### Determining Heading Error **$\psi_{\text{error}}$**
 - **Assumption**: The heading error is the angle between the car’s heading and the lane’s direction, likely output as the lane’s slope in the image. The 17° tilt affects this, so we adjust using trigonometry.
