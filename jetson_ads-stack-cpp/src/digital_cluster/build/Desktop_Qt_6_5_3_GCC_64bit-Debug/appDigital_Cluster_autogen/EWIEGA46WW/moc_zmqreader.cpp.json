@@ -147,6 +147,50 @@
                     ],
                     "name": "hornReceived",
                     "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "lightsLow",
+                            "type": "QString"
+                        }
+                    ],
+                    "name": "lightsLowReceived",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "lightSpark",
+                            "type": "QString"
+                        }
+                    ],
+                    "name": "lightSparkReceived",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "isMoving",
+                            "type": "QString"
+                        }
+                    ],
+                    "name": "isMovingReceived",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "batteryPercentage",
+                            "type": "QString"
+                        }
+                    ],
+                    "name": "batteryPercentageReceived",
+                    "returnType": "void"
                 }
             ],
             "superClasses": [

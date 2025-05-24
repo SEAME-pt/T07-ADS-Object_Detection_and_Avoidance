@@ -91,6 +91,11 @@ qt_add_qml_module(appDigital_Cluster
         System.cpp
         zmqreader.h
         zmqreader.cpp
+        RESOURCES ../../../../../../Downloads/road-svgrepo-com.svg
+        RESOURCES ../../../../../../Downloads/road-svgrepo-com.svg
+        RESOURCES ../../../../../../Downloads/road-svgrepo-com.svg
+        RESOURCES ui/assets/laneDetect.svg
+        RESOURCES ui/assets/laneDetect.png
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

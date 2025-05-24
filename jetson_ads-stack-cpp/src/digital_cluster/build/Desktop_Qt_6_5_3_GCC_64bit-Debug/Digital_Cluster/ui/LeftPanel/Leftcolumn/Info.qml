@@ -187,8 +187,8 @@ Rectangle {
 
         Text {
             id: batteryInfo
-            text: "70%"
-            // text:systemHandler.batteryPer +"%"
+            // text: "70%"
+            text:systemHandler.batteryPer +"%"
             color: "white"
             font.pixelSize: 17
             anchors.horizontalCenter: parent.horizontalCenter

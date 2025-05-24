@@ -214,6 +214,51 @@
                         "type": "QString",
                         "user": false,
                         "write": "setHorn"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": true,
+                        "index": 14,
+                        "name": "lightsLow",
+                        "notify": "lightsLowChanged",
+                        "read": "lightsLow",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "setLightsLow"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": true,
+                        "index": 15,
+                        "name": "lightSpark",
+                        "notify": "lightSparkChanged",
+                        "read": "lightSpark",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "setLightSpark"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": true,
+                        "index": 16,
+                        "name": "isMoving",
+                        "notify": "isMovingChanged",
+                        "read": "isMoving",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "setIsMoving"
                     }
                 ],
                 "qualifiedClassName": "System",
@@ -286,6 +331,21 @@
                     {
                         "access": "public",
                         "name": "hornChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "name": "lightsLowChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "name": "lightSparkChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "name": "isMovingChanged",
                         "returnType": "void"
                     }
                 ],
@@ -448,6 +508,50 @@
                             }
                         ],
                         "name": "hornReceived",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "lightsLow",
+                                "type": "QString"
+                            }
+                        ],
+                        "name": "lightsLowReceived",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "lightSpark",
+                                "type": "QString"
+                            }
+                        ],
+                        "name": "lightSparkReceived",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "isMoving",
+                                "type": "QString"
+                            }
+                        ],
+                        "name": "isMovingReceived",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "batteryPercentage",
+                                "type": "QString"
+                            }
+                        ],
+                        "name": "batteryPercentageReceived",
                         "returnType": "void"
                     }
                 ],

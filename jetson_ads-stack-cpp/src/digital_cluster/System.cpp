@@ -16,12 +16,11 @@ System::System(zmq::context_t &context, QObject *parent)
     m_lineLeft("false"),
     m_gamePad(""),
     m_updatingFromZMQ(false), // Inicializa a flag
-    m_zmqSocket(context, ZMQ_PUB) // Inicializa o socket PUB
-
-    // m_horn("false"),
-    // m_lightsLow("false"),
-    // m_lightSpark("false"),
-    // m_isMoving("false")
+    m_zmqSocket(context, ZMQ_PUB), // Inicializa o socket PUB
+    m_horn("false"),
+    m_lightsLow("false"),
+    m_lightSpark("false"),
+    m_isMoving("false")
 {
     try {
         m_zmqSocket.bind("tcp://*:5557"); // Tenta uma porta diferente
@@ -255,17 +254,6 @@ void System::setGamePad(const QString &newGamePad)
     emit gamePadChanged();
 }
 
-// QString System::horn() const
-// {
-// 	return m_horn;
-// }
-
-// void System::setHorn(const QString &newHorn) {
-//     if (m_horn == newHorn) return;
-//     m_horn = newHorn;
-//     emit hornChanged();
-// }
-
 QString System::horn() const
 {
     return m_horn;
@@ -277,4 +265,43 @@ void System::setHorn(const QString &newHorn)
         return;
     m_horn = newHorn;
     emit hornChanged();
+}
+
+QString System::lightsLow() const
+{
+    return m_lightsLow;
+}
+
+void System::setLightsLow(const QString &newLightsLow)
+{
+    if (m_lightsLow == newLightsLow)
+        return;
+    m_lightsLow = newLightsLow;
+    emit lightsLowChanged();
+}
+
+QString System::lightSpark() const
+{
+    return m_lightSpark;
+}
+
+void System::setLightSpark(const QString &newLightSpark)
+{
+    if (m_lightSpark == newLightSpark)
+        return;
+    m_lightSpark = newLightSpark;
+    emit lightSparkChanged();
+}
+
+QString System::isMoving() const
+{
+    return m_isMoving;
+}
+
+void System::setIsMoving(const QString &newIsMoving)
+{
+    if (m_isMoving == newIsMoving)
+        return;
+    m_isMoving = newIsMoving;
+    emit isMovingChanged();
 }

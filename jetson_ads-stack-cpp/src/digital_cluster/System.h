@@ -22,9 +22,10 @@ class System : public QObject
     Q_PROPERTY(QString lineRight READ lineRight WRITE setLineRight NOTIFY lineRightChanged FINAL)
     Q_PROPERTY(QString lineLeft READ lineLeft WRITE setLineLeft NOTIFY lineLeftChanged FINAL)
     Q_PROPERTY(QString gamePad READ gamePad WRITE setGamePad NOTIFY gamePadChanged FINAL)
-
-    // batteryPer já existe, mas pode ser mapeado para batteryPercentage
     Q_PROPERTY(QString horn READ horn WRITE setHorn NOTIFY hornChanged FINAL)
+    Q_PROPERTY(QString lightsLow READ lightsLow WRITE setLightsLow NOTIFY lightsLowChanged FINAL)
+    Q_PROPERTY(QString lightSpark READ lightSpark WRITE setLightSpark NOTIFY lightSparkChanged FINAL)
+    Q_PROPERTY(QString isMoving READ isMoving WRITE setIsMoving NOTIFY isMovingChanged FINAL)
 
 public:
     // explicit System(QObject *parent = nullptr);
@@ -73,9 +74,17 @@ public:
 
 	// Novo: métodos para horn, lightsLow, lightSpark e isMoving
 
-
     QString horn() const;
     void setHorn(const QString &newHorn);
+
+    QString lightsLow() const;
+    void setLightsLow(const QString &newLightsLow);
+
+    QString lightSpark() const;
+    void setLightSpark(const QString &newLightSpark);
+
+    QString isMoving() const;
+    void setIsMoving(const QString &newIsMoving);
 
 signals:
 
@@ -107,8 +116,13 @@ signals:
 
 	// Novo: sinais para horn, lightsLow, lightSpark e isMoving
 
-
     void hornChanged();
+
+    void lightsLowChanged();
+
+    void lightSparkChanged();
+
+    void isMovingChanged();
 
 private:
 
@@ -126,15 +140,17 @@ private:
     QString m_lineLeft;
     QString m_gamePad;
 
-	// Novo: atributos para horn, lightsLow, lightSpark e isMoving
-
+    // Novo: atributos para horn, lightsLow, lightSpark e isMoving
+    QString m_horn;
+    QString m_lightsLow;
+    QString m_lightSpark;
+    QString m_isMoving;
 
     bool m_updatingFromZMQ; // Novo: flag para evitar loop
     zmq::socket_t m_zmqSocket; // Novo: socket para enviar ao ZMQ
 
     void sendToZMQ(const QString &key, const QString &value); // Novo: função para enviar ao ZMQ
 
-    QString m_horn;
 };
 
 #endif // SYSTEM_H

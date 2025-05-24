@@ -91,20 +91,20 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 10
         anchors.horizontalCenter: parent.horizontalCenter
-        width: parent.width * 0.15
+        width: parent.width * 0.275
         fillMode: Image.PreserveAspectFit
 
         // Deslocação horizontal do carro
         property real targetOffset: {
-            if (route.laneLeft) return -parent.width * 0.08;  // Move para a esquerda
-            if (route.laneRight) return parent.width * 0.08;  // Move para a direita
+            if (route.laneLeft) return -parent.width * 0.05;  // Move para a esquerda
+            if (route.laneRight) return parent.width * 0.05;  // Move para a direita
             return 0;                                         // Volta ao centro
         }
 
         // Inclinação do carro (em graus)
         property real targetRotation: {
-            if (route.laneLeft) return -10;   // Inclina a frente para a esquerda (negativo)
-            if (route.laneRight) return 10;   // Inclina a frente para a direita (positivo)
+            if (route.laneLeft) return -5;   // Inclina a frente para a esquerda (negativo)
+            if (route.laneRight) return 5;   // Inclina a frente para a direita (positivo)
             return 0;                         // Sem inclinação (centro)
         }
 
@@ -117,7 +117,7 @@ Rectangle {
         // Animação para o movimento horizontal
         Behavior on anchors.horizontalCenterOffset {
             NumberAnimation {
-                duration: 300  // Duração da animação em milissegundos (300ms para um movimento suave)
+                duration: 200  // Duração da animação em milissegundos (300ms para um movimento suave)
                 easing.type: Easing.InOutQuad  // Tipo de easing para um movimento natural
             }
         }
