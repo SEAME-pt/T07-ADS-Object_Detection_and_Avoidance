@@ -1,7 +1,6 @@
 import QtQuick 2.15
 
 Rectangle {
-
     id: left
     anchors {
         top: parent.top
@@ -9,69 +8,66 @@ Rectangle {
         bottom: parent.bottom
         margins: 25
     }
-
     signal gearSelected(string gear)
     width: parent.width * 0.1
-    // height: parent.height
     color: "transparent"
-
+    // border.color: "white" // Borda do retângulo principal
+    // border.width: 2
 
     Column {
+        anchors.fill: parent // O Column preenche o retângulo pai
+        spacing: 0 // Sem espaçamento entre as linhas
 
-        anchors.horizontalCenter: parent.horizontalCenter
-        spacing: 10
-
-        //Speed Limit
+        // Linha de cima: contém o speedLimit
         Rectangle {
-            id: speedLimit
-
-            anchors {
-                horizontalCenter: parent.horizontalCenter
-            }
-            width: 60
-            height: 60
-            color: "white"
-            radius: 50
-            border.color: "red"
-            border.width: 4
-            Text {
-                text: "70"
-                font.pixelSize: 30
-                anchors.centerIn: parent
-            }
-        }
-
-        Rectangle {
-            height: 20 // Espaçamento específico para este ponto
+            id: topRow
             width: parent.width
+            height: 60 // Altura fixa para a linha de cima
             color: "transparent"
+            // border.color: "white" // Borda para visualização
+            // border.width: 2
+
+            // Speed Limit
+            Rectangle {
+                id: speedLimit
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                    verticalCenter: parent.verticalCenter // Centraliza verticalmente na linha
+                }
+                width: 60
+                height: 60
+                color: "white"
+                radius: 50
+                border.color: "red"
+                border.width: 4
+                Text {
+                    text: "70"
+                    font.pixelSize: 30
+                    anchors.centerIn: parent
+                }
+            }
         }
 
-        Signs {
-            id: signs
-
-            // atenção só fornece os estados quando corre no inicio, não é dinâmico
-            // Component.onCompleted: {
-            //             // Converte a string recebida para um valor booleano
-            //             // var state = system.headLights === "true";
-            //             // let stateHeadLights = false; //true liga os headLights
-            //             let stateHeadLights = systemHandler.headLights === "true" ? true : false;
-            //             toggleLight("headLights", stateHeadLights); // Liga ou desliga o ícone
-            //         }
-
-        }
-
+        // Linha de baixo: contém os sinais
         Rectangle {
-            height: 10 // Espaçamento específico para este ponto
+            id: bottomRow
             width: parent.width
+            height: parent.height - topRow.height // Ocupa o espaço restante
             color: "transparent"
-        }
+            // border.color: "white" // Borda para visualização
+            // border.width: 2
 
+            Signs {
+                id: signs
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                    bottom: parent.bottom // Alinha os sinais à parte inferior da linha de baixo
+                }
+            }
+        }
     }
 
     onGearSelected: function (gear) {
-        // console.log("gear in left", gear);
         signs.gearSelected(gear);
     }
-
 }

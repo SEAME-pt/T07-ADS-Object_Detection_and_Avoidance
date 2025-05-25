@@ -31,7 +31,6 @@ System::System(zmq::context_t &context, QObject *parent)
     }
 }
 
-
 QString System::speed() const
 {
     return m_speed;

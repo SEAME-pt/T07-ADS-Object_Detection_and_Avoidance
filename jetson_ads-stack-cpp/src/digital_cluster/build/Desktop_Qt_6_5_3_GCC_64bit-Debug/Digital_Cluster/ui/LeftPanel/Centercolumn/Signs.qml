@@ -27,6 +27,8 @@ Column {
             height: 40
             color: "transparent"
             clip: true
+            // border.color: "white" // Borda adicionada ao retângulo principal
+            // border.width: 2
 
             Image {
                 source: "../../assets/" + modelData + ".png"

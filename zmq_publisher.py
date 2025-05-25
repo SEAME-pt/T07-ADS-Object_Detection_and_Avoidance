@@ -53,7 +53,7 @@ def simulate_signals():
         # send_message("lightsemergency", "true" if random.random() > 0.5 else "false")
         send_message("lka", "true" if random.random() > 0.5 else "false")
         send_message("autopilot", "true" if random.random() > 0.5 else "false")
-        # send_message("horn", "true" if random.random() > 0.9 else "false")
+        send_message("horn", "true" if random.random() > 0.9 else "false")
         send_message("lightslow", "true" if random.random() > 0.5 else "false")
         # send_message("lightspark", "true" if random.random() > 0.5 else "false")
         # send_message("ismoving", "true" if speed > 0 else "false")

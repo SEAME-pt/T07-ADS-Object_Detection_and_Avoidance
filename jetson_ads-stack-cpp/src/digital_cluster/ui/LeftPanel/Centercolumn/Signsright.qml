@@ -13,20 +13,23 @@ Column {
     property string gear: "P"
     property bool showIcons: false // Indica se os ícones devem estar "ligados"
 
-    property bool holdOn: systemHandler.holdLight === "true"                      // falta no systemHandler
+    property bool holdOn: systemHandler.holdLight === "true"
     property bool brakeOn: systemHandler.brakeLight === "true"
-    property bool tractionControlOn: systemHandler.tractionControlOn === "true"   // falta no systemHandler
-    property bool tirePressureOn: systemHandler.tirePressureLight === "true"      // falta no systemHandler
-    property bool autoPilot: systemHandler.autoPilot === "true"                   // falta no systemHandler
+    property bool tractionControlOn: systemHandler.tractionControlOn === "true"
+    property bool tirePressureOn: systemHandler.tirePressureLight === "true"
+    property bool autoPilot: systemHandler.autoPilot === "true"
+    property bool horn: systemHandler.horn === "true"
 
     Repeater {
-        model: ["hold", "brake", "tractionControl", "tirePressure", "autopilot_1"]
+        model: ["horn", "hold", "brake", "tractionControl", "tirePressure", "autopilot_1"]
 
         delegate: Rectangle {
             width: 40
             height: 40
             color: "transparent"
             clip: true
+            // border.color: "white" // Borda adicionada ao retângulo principal
+            // border.width: 2
 
             Image {
                 source: "../../assets/" + modelData + ".png"
@@ -34,11 +37,12 @@ Column {
                 fillMode: Image.PreserveAspectFit
                 smooth: true // Para renderização de alta qualidade
                 // opacity: showIcons ? 1 : 0.2
-                opacity: showIcons ? 1 : (modelData === "hold" ? (signsRight.holdOn ? 1 : 0.2) :
+                opacity: showIcons ? 1 : (modelData === "horn" ? (signsRight.horn ? 1: 0.2) :
                                         modelData === "brake" ? (signsRight.brakeOn ? 1 : 0.2) :
                                         modelData === "tractionControl" ? (signsRight.tractionControlOn ? 1 : 0.2) :
                                         modelData === "tirePressure" ? (signsRight.tirePressureOn ? 1 : 0.2) :
-                                        modelData === "autopilot_1" ? (signsRight.autoPilot ? 1: 0.2) : 0.2)
+                                        modelData === "autopilot_1" ? (signsRight.autoPilot ? 1: 0.2) :
+                                        modelData === "hold" ? (signsRight.holdOn ? 1 : 0.2) : 0.2)
             }
         }
     }

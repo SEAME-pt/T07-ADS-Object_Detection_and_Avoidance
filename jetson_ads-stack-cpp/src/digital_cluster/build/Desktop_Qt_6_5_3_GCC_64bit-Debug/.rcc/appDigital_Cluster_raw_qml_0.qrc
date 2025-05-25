@@ -69,11 +69,8 @@
     <file alias="ui/assets/playMode.svg">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/playMode.svg</file>
     <file alias="ui/assets/lkas.svg">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/lkas.svg</file>
     <file alias="ui/assets/autoSteer.svg">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/autoSteer.svg</file>
-    <file alias="../../../../../../Downloads/road-svgrepo-com.svg">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/../../../../../../Downloads/road-svgrepo-com.svg</file>
-    <file alias="../../../../../../Downloads/road-svgrepo-com.svg">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/../../../../../../Downloads/road-svgrepo-com.svg</file>
-    <file alias="../../../../../../Downloads/road-svgrepo-com.svg">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/../../../../../../Downloads/road-svgrepo-com.svg</file>
-    <file alias="ui/assets/laneDetect.svg">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/laneDetect.svg</file>
     <file alias="ui/assets/laneDetect.png">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/laneDetect.png</file>
+    <file alias="ui/assets/horn.png">/home/ivo/Desktop/ODA/T07-ADS-Object_Detection_and_Avoidance/jetson_ads-stack-cpp/src/digital_cluster/ui/assets/horn.png</file>
   </qresource>
 </RCC>
 

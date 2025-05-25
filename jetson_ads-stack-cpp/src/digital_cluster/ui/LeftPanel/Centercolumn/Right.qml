@@ -8,40 +8,46 @@ Rectangle {
         bottom: parent.bottom
         margins: 25
     }
-
     signal gearSelected(string gear)
     width: parent.width * 0.1
-    // height: parent.height
     color: "transparent"
-
+    // border.color: "white" // Borda do retângulo principal
+    // border.width: 2
 
     Column {
+        anchors.fill: parent // O Column preenche o retângulo pai
+        spacing: 0 // Sem espaçamento entre as linhas
 
-        anchors.horizontalCenter: parent.horizontalCenter
-        spacing: 10
-
-        //Speed Limit
-
+        // Linha de cima: retângulo vazio com altura 60
         Rectangle {
-            height: 85 // Espaçamento específico para este ponto
+            id: topRow
             width: parent.width
+            height: 60 // Altura fixa para corresponder à linha de cima do lado esquerdo
             color: "transparent"
+            // border.color: "white" // Borda para visualização
+            // border.width: 2
         }
 
-        Signsright {
-            id: signsRight
-        }
-
+        // Linha de baixo: contém os sinais
         Rectangle {
-            height: 10 // Espaçamento específico para este ponto
+            id: bottomRow
             width: parent.width
+            height: parent.height - topRow.height // Ocupa o espaço restante
             color: "transparent"
+            // border.color: "white" // Borda para visualização
+            // border.width: 2
+
+            Signsright {
+                id: signsRight
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                    bottom: parent.bottom // Alinha os sinais à parte inferior da linha de baixo
+                }
+            }
         }
     }
 
     onGearSelected: function (gear) {
-        // console.log("gear in left", gear);
         signsRight.gearSelected(gear);
     }
-
 }
