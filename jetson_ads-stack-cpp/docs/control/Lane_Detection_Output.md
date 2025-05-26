@@ -1,3 +1,8 @@
+## Lane Detection
+
+### Introduction
+This document details the process of configuring the Model Predictive Controller (MPC) states for a Waveshare JetRacer, focusing on deriving the lateral offset $y$ (distance from the car’s center to the lane center) and heading error $\psi_{\text{error}}$ (angle between the car’s heading and the lane) using data from a dash cam and a pre-existing lane detection model. The analysis leverages the dash cam’s mounting parameters—positioned 0.15 m above the street, 0.075 m forward of the car’s center, with a 17° downward tilt and a 100° field of view—to map lane detection outputs from image coordinates to the vehicle’s coordinate system. Intended for a laboratory environment with a small testing course, this document provides a comprehensive approach to computing these states, including coordinate transformations, practical implementation steps, and recommendations for camera calibration to ensure accurate integration with the MPC (referenced in artifact ID ccabe509-783f-4485-9de7-396d64a70058). The goal is to enable precise autonomous navigation by effectively utilizing the lane detection model’s outputs.
+
 ### Key Points
 - Research suggests that determining lateral offset **$y$** and heading error **$\psi_{\text{error}}$** from dash cam images requires camera calibration, which may be complex without intrinsic parameters.
 - It seems likely that your lane detection model, already working, outputs these values directly, simplifying the process.

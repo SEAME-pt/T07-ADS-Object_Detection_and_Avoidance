@@ -1,0 +1,10 @@
+
+[Unit]
+Description=Start can0
+After=network.target
+
+[Service]
+ExecStart=/home/team07/car_services/start_can.sh
+
+[Install]
+WantedBy=multi-user.target

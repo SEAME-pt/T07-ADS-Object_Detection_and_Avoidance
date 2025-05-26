@@ -1,0 +1,9 @@
+    [Unit]
+    Description=Covesa MQQt server
+    After=network.target
+
+    [Service]
+    ExecStart=/home/team07/car_services/MainCarServer
+
+    [Install]
+    WantedBy=multi-user.target
