@@ -264,7 +264,8 @@ bool LaneDetector::findLaneEdges(const cv::Mat& lane_mask, const cv::Rect& roi,
             right_edges.emplace_back(right_x, y);
         }
     }
-    return !left_edges.empty() && !right_edges.empty();
+    return !left_edges.empty() && !right_edges.empty();// returns true if at least one pair of edges was found
+	// Note: This function assumes that the lane_mask is in float format with values in [0.0, 1.0].
 }
 
 // Perform weighted linear regression (fits x = m*y + b)
