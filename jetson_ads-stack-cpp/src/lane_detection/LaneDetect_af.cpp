@@ -86,7 +86,7 @@ public:
     static constexpr double METER_PER_PIXEL = 0.0005556;  // Example scale factor, should be calibrated [m/pixel]
     static constexpr float ROI_START_Y_PERCENT = 0.7f; // ROI starts at 70% of image height
     static constexpr float ROI_END_Y_PERCENT = 1.0f;   // ROI ends at 100% of image height
-    static constexpr int MAX_SEARCH_DISTANCE = 500;    // Max distance (pixels) to search for edges
+    static constexpr int MAX_SEARCH_DISTANCE = 320;    // Max distance (pixels) to search for edges
 	static constexpr double A_DISTANCE = -2.62e-6; // Coefficient for distance calculation
 	static constexpr double B_DISTANCE = 1.4722e-3;   // Coefficient for distance calculation
 
