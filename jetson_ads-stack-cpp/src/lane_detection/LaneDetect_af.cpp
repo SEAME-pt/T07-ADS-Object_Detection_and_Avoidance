@@ -141,6 +141,20 @@ bool LaneDetector::initialize() {
     return cap_.isOpened();
 }
 
+/**
+ * @brief Estimates the vehicle's lateral offset and heading angle relative to lane center.
+ *
+ * This function processes the internal lane mask to compute the vehicle's relative position and orientation with respect
+ * to the lane using edge detection, linear regression, and Kalman filtering. It optionally visualizes results on a debug image.
+ *
+ * @param[out] offset Estimated lateral distance (in pixels or meters depending on calibration) from the lane center.
+ * @param[out] angle Estimated heading angle (in radians or degrees depending on context) relative to the lane.
+ * @param[in,out] debug_img Optional pointer to a debug image where lane geometry and results will be drawn. Can be nullptr.
+ *
+ * @return true if valid lane geometry was successfully computed; false if the lane mask was invalid or lane edges could not be found.
+ *
+ * @note This function assumes that `lane_mask_` has been populated with a float32 lane probability map before being called.
+ */
 bool LaneDetector::calculateLaneGeometry(float& offset, float& angle, cv::Mat* debug_img) {
     // Check if lane mask is valid
     if (lane_mask_.empty() || lane_mask_.type() != CV_32F) {
@@ -184,7 +198,19 @@ bool LaneDetector::calculateLaneGeometry(float& offset, float& angle, cv::Mat* d
     return true;
 }
 
-// Define the ROI based on image dimensions and fixed percentages
+/**
+ * @brief Defines the region of interest (ROI) for lane detection based on image dimensions and preset vertical bounds.
+ *
+ * Calculates the ROI bounds in image coordinates using percentage-based vertical limits. The full image width is used,
+ * while the vertical range is defined by constants `ROI_START_Y_PERCENT` and `ROI_END_Y_PERCENT`.
+ *
+ * @param[out] start_y Top Y coordinate of the ROI, computed as a percentage of image height.
+ * @param[out] end_y Bottom Y coordinate of the ROI, computed as a percentage of image height.
+ * @param[out] start_x Left X coordinate of the ROI (always set to 0 — full width).
+ * @param[out] end_x Right X coordinate of the ROI (equal to image width — full width).
+ *
+ * @note This function assumes that `image_height_` and `image_width_` are properly initialized class members.
+ */
 void LaneDetector::defineROI(int& start_y, int& end_y, int& start_x, int& end_x) const {
     start_y = static_cast<int>(image_height_ * ROI_START_Y_PERCENT);
     end_y = static_cast<int>(image_height_ * ROI_END_Y_PERCENT);
@@ -192,7 +218,25 @@ void LaneDetector::defineROI(int& start_y, int& end_y, int& start_x, int& end_x)
     end_x = image_width_;
 }
 
-// Find left and right lane edges using dense sampling
+/**
+ * @brief Detects left and right lane edges within a specified region of interest (ROI) in a binary lane mask image.
+ *
+ * This function scans each row within the given ROI of the lane mask image to identify the leftmost and rightmost
+ * pixels that are likely part of the lane. It applies a binary threshold (0.5) on each pixel, assuming the mask is
+ * in [0.0, 1.0] float format. It returns points corresponding to the detected left and right lane edges.
+ *
+ * @param[in] lane_mask A single-channel float matrix (CV_32FC1) with values in [0.0, 1.0], representing the lane mask.
+ * @param[in] roi A rectangular region (ROI) within which the function will search for lane edges.
+ * @param[out] left_edges Vector to be filled with detected left edge points (from top to bottom of ROI).
+ * @param[out] right_edges Vector to be filled with detected right edge points (from top to bottom of ROI).
+ *
+ * @return true if at least one pair of left and right edges was detected; false otherwise.
+ *
+ * @note This function assumes `lane_mask` has the same dimensions as the full image. It does **not** perform bounds checking
+ * beyond the ROI.
+ *
+ * @warning `lane_mask` must be of type CV_32FC1. Any other type may lead to undefined behavior.
+ */
 bool LaneDetector::findLaneEdges(const cv::Mat& lane_mask, const cv::Rect& roi,
                                  std::vector<cv::Point>& left_edges,
                                  std::vector<cv::Point>& right_edges) const {
@@ -224,6 +268,7 @@ bool LaneDetector::findLaneEdges(const cv::Mat& lane_mask, const cv::Rect& roi,
 }
 
 // Perform weighted linear regression (fits x = m*y + b)
+
 void LaneDetector::weightedLinearRegression(const std::vector<cv::Point>& points,
                                             double& slope, double& intercept) const {
     if (points.size() < 2) {
