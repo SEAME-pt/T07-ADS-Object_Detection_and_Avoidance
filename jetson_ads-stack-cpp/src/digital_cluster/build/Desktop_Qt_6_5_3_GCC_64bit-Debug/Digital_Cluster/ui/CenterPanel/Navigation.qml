@@ -15,8 +15,9 @@ Item {
         radius: 8
         color: "transparent"
         // border.color: "red"
-        border.color: "#2F2F2F"
-        border.width: 9
+        border.color: "#ffffff"
+        border.width: 2
+
         z: 1
     }
 
@@ -33,10 +34,10 @@ Item {
                    bottom: parent.bottom
 
                    // Simula o padding
-                   leftMargin: 7
-                   rightMargin: 7
-                   topMargin: 7
-                   bottomMargin: 7
+                   // leftMargin: 7
+                   // rightMargin: 7
+                   // topMargin: 7
+                   // bottomMargin: 7
                }
 
         map {

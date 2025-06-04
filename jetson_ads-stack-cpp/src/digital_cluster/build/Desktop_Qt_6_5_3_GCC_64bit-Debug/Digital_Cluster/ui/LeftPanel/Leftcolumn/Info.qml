@@ -1,37 +1,31 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import Qt5Compat.GraphicalEffects
 
 Rectangle {
-
     id: info
-    anchors {
-        // top: parent.top
-        // bottom: parent.bottom
-        // horizontalCenter: parent.horizontalCenter
-        fill: parent
-    }
-
-    width: parent.width * 0.6 // 60% da largura do container
-    color: "#3A3A3A"
+    anchors.fill: parent
     radius: 8
-
-
+    gradient: Gradient {
+        GradientStop { position: 0.0; color: "#3A3A3A" }
+        GradientStop { position: 0.5; color: "#000000" }
+        GradientStop { position: 0.85; color: "#505050" }
+        GradientStop { position: 1.0; color: "#252525" }
+    }
+    border.width: 1
+    border.color: "#202020"
     Column {
-        // anchors.centerIn: parent
         anchors.fill: parent
-        anchors.top: parent.top // Defina como base o topo do `parent`
-        // anchors.topMargin: 25 // Margem de 50 pixels a partir do topo
+        anchors.top: parent.top
         spacing: 10
+        padding: 5
 
         Rectangle {
-            height: 30 // Espaçamento específico para este ponto
+            height: 30
             width: parent.width
             color: "transparent"
         }
 
-        padding: 5
-
-        // Total de km
         Row {
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 15
@@ -42,6 +36,7 @@ Rectangle {
                 height: 40
                 color: "transparent"
                 clip: true
+
 
                 Image {
                     source: "../../assets/odometer.png"
@@ -72,8 +67,6 @@ Rectangle {
             }
         }
 
-
-        // Linha separadora
         Rectangle {
             width: parent.width * 0.8
             height: 1
@@ -81,15 +74,12 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
-        // Espaçamento específico para este ponto
         Rectangle {
-            height: 10 // Espaçamento específico para este ponto
+            height: 10
             width: parent.width
             color: "transparent"
         }
 
-
-        // Trip
         Row {
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 30
@@ -130,13 +120,11 @@ Rectangle {
             }
         }
 
-
         Rectangle {
-            height: 40 // Espaçamento específico para este ponto
+            height: 40
             width: parent.width
             color: "transparent"
         }
-
 
         Rectangle {
             id: batteryIcon
@@ -150,9 +138,8 @@ Rectangle {
                 source: "../../assets/battery.png"
                 anchors.fill: parent
                 fillMode: Image.PreserveAspectFit
-                smooth: true // Para renderização de alta qualidade
+                smooth: true
             }
-
         }
 
         ProgressBar {
@@ -163,7 +150,6 @@ Rectangle {
             padding: 2
 
             background: Rectangle {
-                // implicitWidth: 200 // ver Customization da ajuda
                 implicitWidth: parent.width
                 implicitHeight: 6
                 color: "#e6e6e6"
@@ -171,7 +157,6 @@ Rectangle {
             }
 
             contentItem: Item {
-                // implicitWidth: 200
                 implicitWidth: parent.width
                 implicitHeight: 4
 
@@ -184,32 +169,26 @@ Rectangle {
             }
         }
 
-
         Text {
             id: batteryInfo
-            // text: "70%"
-            text:systemHandler.batteryPer +"%"
+            text: systemHandler.batteryPer + "%"
             color: "white"
             font.pixelSize: 17
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
         Rectangle {
-            height: 30 // Espaçamento específico para este ponto
+            height: 30
             width: parent.width
             color: "transparent"
         }
 
         Gear {
             id: gear
-            // onGearSelected: leftPanel.gearSelected(gear) // Propaga o sinal para o LeftPanel
             onGearSelected: function(selectedGear) {
-                leftPanel.gearSelected(selectedGear); // Propaga o sinal com o parâmetro correto
-                centerColumn.gearSelected(selectedGear);
+                leftPanel.gearSelected(selectedGear)
+                centerColumn.gearSelected(selectedGear)
             }
         }
-
     }
-
-
 }

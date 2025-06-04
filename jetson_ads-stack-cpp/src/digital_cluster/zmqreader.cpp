@@ -67,18 +67,18 @@ void ZMQReader::run() {
                 }
 
                 std::string msg(static_cast<const char*>(message.data()), message.size());
-                qDebug() << "Mensagem bruta recebida:" << QString::fromStdString(msg);
+                // qDebug() << "Mensagem bruta recebida:" << QString::fromStdString(msg);
 
                 QString receivedValue = QString::fromStdString(msg);
                 if (!receivedValue.isEmpty() && receivedValue.back() == QChar::Null) {
                     receivedValue.chop(1);
                 }
-                qDebug() << "Mensagem processada:" << receivedValue;
+                // qDebug() << "Mensagem processada:" << receivedValue;
 
                 auto parts = receivedValue.split(" ", Qt::SkipEmptyParts);
-                qDebug() << "Partes da mensagem:" << parts;
+                // qDebug() << "Partes da mensagem:" << parts;
                 if (parts.size() == 2 && handlers.contains(parts[0])) {
-                    qDebug() << "Chamando handler para tópico:" << parts[0] << "com valor:" << parts[1];
+                    // qDebug() << "Chamando handler para tópico:" << parts[0] << "com valor:" << parts[1];
                     handlers[parts[0]](parts[1]);
                 } else {
                     qWarning() << "Formato inválido ou tópico desconhecido:" << receivedValue;

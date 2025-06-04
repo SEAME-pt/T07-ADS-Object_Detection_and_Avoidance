@@ -12,7 +12,7 @@ Rectangle {
     }
 
     // radius: 30 // Define o raio dos cantos arredondados
-    clip: true // Garante que o conteúdo do mapa respeite os cantos arredondados
+    // clip: true // Garante que o conteúdo do mapa respeite os cantos arredondados
     // border.color: "red"
     // border.width: 8
 

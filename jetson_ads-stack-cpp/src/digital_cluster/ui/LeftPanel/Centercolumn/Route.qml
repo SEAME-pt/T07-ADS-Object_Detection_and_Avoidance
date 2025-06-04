@@ -20,14 +20,13 @@ Rectangle {
             default: return "#0000FF"       // Padrão (azul)
         }
     }
-    property color trapezoidBorderColor: "#2E2E2E"             // Cor do contorno da barra
     property bool isPressingSpace: false                       // Estado da tecla de espaço
 
     // Propriedades para a animação da linha tracejada
     property real offset: 0                                    // Deslocamento animado da linha tracejada
 
     // Propriedades para as linhas laterais e velocidade
-    property int lateralLineWidth: 8                           // Espessura das linhas laterais
+    property int lateralLineWidth: 3                           // Espessura das linhas laterais
     property real maxSpeed: 100                                // Velocidade máxima
     property real smoothingFactor: 0.5                         // Fator de suavização para transições
     property real simulatedSpeed: 0                            // Velocidade simulada do carro
@@ -39,101 +38,10 @@ Rectangle {
     property int startDelay: 150                               // Delay inicial para ativação (ms)
 
     // Coordenadas para a estrada central
-    property int leftMarginUpRight: width * 0.45               // Margem superior direita
-    property int rightMarginUpLeft: width * 0.55               // Margem superior esquerda
+    property int leftMarginUpRight: width * 0.40               // Margem superior direita
+    property int rightMarginUpLeft: width * 0.60               // Margem superior esquerda
     property int leftMarginDownRight: width * 0.30             // Margem inferior direita
     property int rightMarginDownLeft: width * 0.70             // Margem inferior esquerda
-
-    // Temporizador para simular variação da velocidade
-    // Timer {
-    //     id: speedSimulationTimer
-    //     interval: 1                                           // Intervalo de atualização (ms)
-    //     repeat: true                                          // Repetição contínua
-    //     running: isSimulatingRunning                          // Ativo quando simulação está em execução
-    //     property int phase: 0                                 // Fase atual da simulação
-    //     property real targetSpeed: 0                          // Velocidade alvo
-    //     property int holdCounter: 0                           // Contador para pausas
-
-    //     onTriggered: {
-    //         if (phase === 0) { // Fase 0: Acelera até 60
-    //             targetSpeed = 60
-    //             simulatedSpeed += 1
-    //             if (simulatedSpeed >= targetSpeed) {
-    //                 simulatedSpeed = targetSpeed
-    //                 phase = 1
-    //                 holdCounter = 0
-    //             }
-    //         } else if (phase === 1) { // Fase 1: Desacelera até 40
-    //             targetSpeed = 40
-    //             simulatedSpeed -= 1
-    //             if (simulatedSpeed <= targetSpeed) {
-    //                 simulatedSpeed = targetSpeed
-    //                 phase = 2
-    //                 holdCounter = 0
-    //             }
-    //         } else if (phase === 2) { // Fase 2: Acelera até 80
-    //             targetSpeed = 80
-    //             simulatedSpeed += 1
-    //             if (simulatedSpeed >= targetSpeed) {
-    //                 simulatedSpeed = targetSpeed
-    //                 phase = 3
-    //                 holdCounter = 0
-    //             }
-    //         } else if (phase === 3) { // Fase 3: Mantém 80 por 1 segundo
-    //             holdCounter++
-    //             if (holdCounter >= 10) { // 10 * 100ms = 1s
-    //                 phase = 4
-    //                 holdCounter = 0
-    //             }
-    //         } else if (phase === 4) { // Fase 4: Desacelera até 60
-    //             targetSpeed = 60
-    //             simulatedSpeed -= 1
-    //             if (simulatedSpeed <= targetSpeed) {
-    //                 simulatedSpeed = targetSpeed
-    //                 phase = 5
-    //                 holdCounter = 0
-    //             }
-    //         } else if (phase === 5) { // Fase 5: Desacelera até 30
-    //             targetSpeed = 30
-    //             simulatedSpeed -= 1
-    //             if (simulatedSpeed <= targetSpeed) {
-    //                 simulatedSpeed = targetSpeed
-    //                 phase = 6
-    //                 holdCounter = 0
-    //             }
-    //         } else if (phase === 6) { // Fase 6: Acelera até 40
-    //             targetSpeed = 40
-    //             simulatedSpeed += 1
-    //             if (simulatedSpeed >= targetSpeed) {
-    //                 simulatedSpeed = targetSpeed
-    //                 phase = 7
-    //                 holdCounter = 0
-    //             }
-    //         } else if (phase === 7) { // Fase 7: Desacelera até 0
-    //             targetSpeed = 0
-    //             simulatedSpeed -= 1
-    //             if (simulatedSpeed <= targetSpeed) {
-    //                 simulatedSpeed = targetSpeed
-    //                 phase = 8
-    //                 holdCounter = 0
-    //             }
-    //         } else if (phase === 8) { // Fase 8: Acelera até 50
-    //             targetSpeed = 50
-    //             simulatedSpeed += 1
-    //             if (simulatedSpeed >= targetSpeed) {
-    //                 simulatedSpeed = targetSpeed
-    //                 phase = 9
-    //                 holdCounter = 0
-    //             }
-    //         } else if (phase === 9) { // Fase 9: Mantém 50 por 1 segundo
-    //             holdCounter++
-    //             if (holdCounter >= 10) { // 10 * 100ms = 1s
-    //                 phase = 0
-    //                 holdCounter = 0
-    //             }
-    //         }
-    //     }
-    // }
 
     Timer {
         interval: 16
@@ -143,7 +51,7 @@ Rectangle {
             var speedValue = Number(systemHandler.speed);
             var targetProgress = Math.min(1, Math.max(0, speedValue / maxSpeed));
             accelerationProgress += (targetProgress - accelerationProgress) * smoothingFactor;
-            console.log("Velocidade:", speedValue, "Progresso:", accelerationProgress);
+            //console.log("Velocidade:", speedValue, "Progresso:", accelerationProgress);
             routeCanvas.requestPaint();
         }
     }
@@ -271,7 +179,7 @@ Rectangle {
             // Desenha o trapézio esquerdo (aceleração)
             ctx.save()
             var trapezoidHeight = height * 0.67              // Altura do trapézio
-            var baseWidth = width * 0.1                      // Largura da base
+            var baseWidth = width * 0.075                      // Largura da base
             var topWidth = baseWidth * 0.6                   // Largura do topo
             var barX = leftMarginDownRight - baseWidth       // Posição X da base
             var barY = height / 3                            // Posição Y do topo
@@ -281,25 +189,17 @@ Rectangle {
             var topLeftX = leftMarginUpRight - topWidth
             var topRightX = leftMarginUpRight
 
-            // Contorno do trapézio esquerdo
-            ctx.strokeStyle = trapezoidBorderColor
-            ctx.lineWidth = 1
-            ctx.beginPath()
-            ctx.moveTo(baseLeftX, height)
-            ctx.lineTo(baseRightX, height)
-            ctx.lineTo(topRightX, barY)
-            ctx.lineTo(topLeftX, barY)
-            ctx.closePath()
-            ctx.stroke()
-
-            // Preenchimento do trapézio esquerdo
+            // Preenchimento do trapézio esquerdo com gradiente
             var fillHeight = trapezoidHeight * accelerationProgress
-            var fillBaseY = height
+            var fillBaseY = height-1
             var fillTopY = fillBaseY - fillHeight
             var fillTopLeftX = topLeftX + ((baseLeftX - topLeftX) * (1 - accelerationProgress))
             var fillTopRightX = topRightX + ((baseRightX - topRightX) * (1 - accelerationProgress))
 
-            ctx.fillStyle = accelerationColor
+            var gradientLeftTrapezoid = ctx.createLinearGradient(barX + baseWidth / 2, fillTopY, barX + baseWidth / 2, fillBaseY)
+            gradientLeftTrapezoid.addColorStop(0, "transparent") // Preto no topo
+            gradientLeftTrapezoid.addColorStop(1, accelerationColor) // Cor atual na base
+            ctx.fillStyle = gradientLeftTrapezoid
             ctx.beginPath()
             ctx.moveTo(baseLeftX, fillBaseY)
             ctx.lineTo(baseRightX, fillBaseY)
@@ -309,10 +209,10 @@ Rectangle {
             ctx.fill()
             ctx.restore()
 
-            // Desenha o trapézio direito (inverso)
+            // Desenha o trapézio direito (aceleração)
             ctx.save()
             var invertedTrapezoidHeight = height * 0.67
-            var invertedBaseWidth = width * 0.1
+            var invertedBaseWidth = width * 0.075
             var invertedTopWidth = invertedBaseWidth * 0.6
             var invertedBarX = rightMarginDownLeft
             var invertedBarY = height / 3
@@ -322,25 +222,17 @@ Rectangle {
             var invertedTopLeftX = rightMarginUpLeft
             var invertedTopRightX = rightMarginUpLeft + invertedTopWidth
 
-            // Contorno do trapézio direito
-            ctx.strokeStyle = trapezoidBorderColor
-            ctx.lineWidth = 1
-            ctx.beginPath()
-            ctx.moveTo(invertedBaseLeftX, height)
-            ctx.lineTo(invertedBaseRightX, height)
-            ctx.lineTo(invertedTopRightX, invertedBarY)
-            ctx.lineTo(invertedTopLeftX, invertedBarY)
-            ctx.closePath()
-            ctx.stroke()
-
-            // Preenchimento do trapézio direito
+            // Preenchimento do trapézio direito com gradiente
             var invertedFillHeight = invertedTrapezoidHeight * accelerationProgress
-            var invertedFillBaseY = height
+            var invertedFillBaseY = height-1
             var invertedFillTopY = invertedFillBaseY - invertedFillHeight
             var invertedFillTopLeftX = invertedTopLeftX + ((invertedBaseLeftX - invertedTopLeftX) * (1 - accelerationProgress))
             var invertedFillTopRightX = invertedTopRightX + ((invertedBaseRightX - invertedTopRightX) * (1 - accelerationProgress))
 
-            ctx.fillStyle = accelerationColor
+            var gradientRightTrapezoid = ctx.createLinearGradient(invertedBarX + invertedBaseWidth / 2, invertedFillTopY, invertedBarX + invertedBaseWidth / 2, invertedFillBaseY)
+            gradientRightTrapezoid.addColorStop(0, "transparent") // Preto no topo
+            gradientRightTrapezoid.addColorStop(1, accelerationColor) // Cor atual na base
+            ctx.fillStyle = gradientRightTrapezoid
             ctx.beginPath()
             ctx.moveTo(invertedBaseLeftX, invertedFillBaseY)
             ctx.lineTo(invertedBaseRightX, invertedFillBaseY)
@@ -350,12 +242,15 @@ Rectangle {
             ctx.fill()
             ctx.restore()
 
-            // Desenha a estrada central (trapézio preto)
+            // Desenha a estrada central (trapézio com gradiente)
             ctx.save()
-            ctx.fillStyle = "#2F2F2F"
+            var gradientRoad = ctx.createLinearGradient(width * 0.5, height / 3, width * 0.5, height)
+            gradientRoad.addColorStop(0, "#262626")          // Preto no topo
+            gradientRoad.addColorStop(1, "#000000")          // Cor atual na base
+            ctx.fillStyle = gradientRoad
             ctx.beginPath()
-            ctx.moveTo(leftMarginDownRight, height)
-            ctx.lineTo(rightMarginDownLeft, height)
+            ctx.moveTo(leftMarginDownRight, height-1)
+            ctx.lineTo(rightMarginDownLeft, height-1)
             ctx.lineTo(rightMarginUpLeft, height / 3)
             ctx.lineTo(leftMarginUpRight, height / 3)
             ctx.closePath()

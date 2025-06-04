@@ -5,7 +5,7 @@ import Qt5Compat.GraphicalEffects
 
 Rectangle {
     id: media
-    color: "#1E1E1E"
+    color: "transparent"
     radius: 10
 
     Column {

@@ -1,14 +1,24 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import Qt5Compat.GraphicalEffects
+
 
 Rectangle {
     id: centerColumn
 
-    // width: parent.width * 0.5 // 60% da largura do container
-    width: parent.width - leftColumn.width - rightColumn.width - 20
-    color: "#3A3A3A"
-    // color: "blue"
+    width: parent.width - leftColumn.width - rightColumn.width - 10
     radius: 8
+
+    gradient: Gradient {
+        GradientStop { position: 0.0; color: "#252525" }
+        GradientStop { position: 0.15; color: "#000000" }
+        GradientStop { position: 0.5; color: "#505050" }
+        GradientStop { position: 0.85; color: "#000000" }
+        GradientStop { position: 1.0; color: "#3A3A3A" }
+    }
+    border.width: 1
+    border.color: "#404040"
+
     anchors {
         top: parent.top
         bottom: parent.bottom
@@ -91,7 +101,7 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 10
         anchors.horizontalCenter: parent.horizontalCenter
-        width: parent.width * 0.275
+        width: parent.width * 0.175
         fillMode: Image.PreserveAspectFit
 
         // Deslocação horizontal do carro

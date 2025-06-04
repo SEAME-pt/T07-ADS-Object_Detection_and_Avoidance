@@ -10,9 +10,17 @@ Rectangle {
         bottom: parent.bottom
     }
     clip: true
-    color: "#3A3A3A"
+    // color: "#3A3A3A"
     // color: "white"
     radius: 8
+    gradient: Gradient {
+        GradientStop { position: 0.0; color: "#3A3A3A" }
+        GradientStop { position: 0.5; color: "#000000" }
+        GradientStop { position: 0.85; color: "#505050" }
+        GradientStop { position: 1.0; color: "#252525" }
+    }
+    border.width: 1
+    border.color: "#202020"
 
     signal startNavigation(bool start)
 
@@ -24,14 +32,14 @@ Rectangle {
         id: stackViewLoader
         anchors {
            fill: parent
-           margins: 10
+           margins: 0
         }
         // color: "transparent" // o Item não precisa de color porque não tem background
 
         StackView {
             id: stackviewRightColumn
             anchors.fill: parent
-            anchors.margins: 10
+            anchors.margins: 0
             initialItem: "List.qml"
 
             // destroyOnPop: false // não funciona

@@ -99,7 +99,7 @@ import QtQuick.Controls 2.15
 
 Rectangle {
     id: navigationMenu
-    color: "#1E1E1E"
+    color: "transparent"
     radius: 10
 
     // signal startNavigation(bool start)

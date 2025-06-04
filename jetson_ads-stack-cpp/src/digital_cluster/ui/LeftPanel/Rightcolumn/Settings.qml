@@ -3,7 +3,7 @@ import QtQuick.Controls 2.15
 
 Rectangle {
     id: settings
-    color: "#1E1E1E"
+    color: "transparent"
     radius: 10
 
     property ListModel model

@@ -5,7 +5,7 @@ Rectangle {
     id: menuRight
     // anchors.fill: parent
     // clip: true
-    color: "#3A3A3A"
+    color: "transparent"
     radius: 10
 
     Column {
