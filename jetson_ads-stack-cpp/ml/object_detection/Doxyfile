@@ -1,0 +1,44 @@
+# Doxyfile 1.8.17
+
+# Configuração do projeto
+PROJECT_NAME           = "YOLO Object and Lane Detection"
+PROJECT_NUMBER         = 1.0
+PROJECT_BRIEF          = "Projeto para treinamento de modelo YOLO para detecção de objetos e pistas"
+OUTPUT_DIRECTORY       = ./docs
+CREATE_SUBDIRS         = YES
+
+# Configuração de idiomas
+OUTPUT_LANGUAGE        = Portuguese
+
+# Configuração de arquivos de entrada
+INPUT                  = ./train_yolo.py ./augment_dataset.py
+FILE_PATTERNS          = *.py
+RECURSIVE              = YES
+
+# Configuração de formatos de saída
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+GENERATE_XML           = NO
+
+# Configuração para documentação de código Python
+OPTIMIZE_OUTPUT_FOR_C  = NO
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+
+# Configuração para incluir comentários no estilo Doxygen
+JAVADOC_AUTOBRIEF      = YES
+QT_AUTOBRIEF           = YES
+
+# Configuração de referências
+GENERATE_TAGFILE       = 
+ALIASES                = 
+
+# Configuração de busca
+SEARCHENGINE           = YES
+SERVER_BASED_SEARCH    = NO
+
+# Configuração de detalhes
+SHOW_FILES             = YES
+SHOW_NAMESPACES        = YES
+SHOW_DIRECTORIES       = YES

@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 10
+names: ['STOP', 'car', 'crosswalk', 'danger', 'prioridade', 'sinalGreen', 'sinalRed', 'sinalYellow', 'speed50', 'speed80']
+
+roboflow:
+  workspace: objectdetection-ear2c
+  project: object_1-zoskg
+  version: 2
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/objectdetection-ear2c/object_1-zoskg/dataset/2
