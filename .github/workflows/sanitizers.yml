@@ -1,0 +1,141 @@
+# yamllint disable rule:line-length
+---
+name: Sanitizers
+on:  # yamllint disable-line rule:truthy
+  pull_request:
+    branches: ['*']
+
+jobs:
+  asan_ubsan_tsan:
+    runs-on: ubuntu-latest
+    container:
+      image: t7seame/app:latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full history for rebase
+
+      - name: Configure Git Safe Directory
+        run: |
+          git config --global --add safe.directory $(pwd)
+
+      - name: Set Git user identity
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions"
+
+      - name: Fetch main branch
+        run: |
+          git fetch origin main
+
+      - name: Rebase PR branch onto main
+        run: |
+          git rebase origin/main || (git rebase --abort && exit 1)
+
+      - name: Find affected files
+        id: affected_files
+        run: |
+          git fetch origin ${{ github.base_ref }} --depth=1
+          git diff --diff-filter=ACM --name-only origin/${{ github.base_ref }} > affected_files.txt
+          echo "Affected files:"
+          cat affected_files.txt
+
+      - name: Find affected Bazel targets
+        id: bazel_targets
+        run: |
+          > affected_targets.txt
+
+          while read file; do
+            if [[ ("$file" == *.c || "$file" == *.cc || "$file" == *.cpp || "$file" == *.cxx || "$file" == *.h || "$file" == *.hpp || "$file" == *.hxx) && "$file" != *test* ]]; then
+              echo "Finding targets for: $file"
+              targets=$(bazelisk query --output=package "$file")/...
+              if [[ "$targets" != *test* ]]; then
+                echo "$targets" >> affected_targets.txt
+              fi
+            fi
+          done < affected_files.txt
+
+          sort -u affected_targets.txt -o affected_targets.txt
+          echo "Affected targets:"
+          cat affected_targets.txt
+
+          echo "targets=$(cat affected_targets.txt | tr -s '\n' ' ' | sed 's/^[ \t]*//;s/[ \t]*$//')" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Find tests target of affected targets
+        if: env.targets != ''
+        run: |
+          test_targets=""
+
+          for target in $targets; do
+            result=$(bazelisk query "kind('cc_test', deps('$target'))") || exit 1
+
+            if [[ -n "$result" ]]; then
+              # Prefix each line of the result with a `-`
+              formatted_result=$(echo "$result" | sed 's/^/-/')
+
+              test_targets+="$formatted_result"$'\n'
+            fi
+          done
+
+          echo "$test_targets" > test_targets.txt
+          single_line_test_targets=$(echo "$test_targets" | tr '\n' ' ' | sed 's/ $//')
+
+          echo "test_targets=-- $single_line_test_targets" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Setup bazel cache
+        if: env.targets != ''
+        uses: actions/cache@v4
+        env:
+          cache-name: bazel-cache
+        with:
+          path: |
+            ~/.cache/bazelisk
+            ~/.cache/bazel
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ github.ref }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.cache-name }}-development
+
+      - name: Run ASAN
+        if: env.targets != ''
+        run: |
+          echo -e "Running ASAN on:
+            Targets: $targets
+            Excluded targets: $test_targets"
+          bazelisk build $targets --features=asan $test_targets
+        shell: bash
+
+      - name: Run UBSAN
+        if: env.targets != ''
+        run: |
+          echo -e "Running UBSAN on:
+            Targets: $targets
+            Excluded targets: $test_targets"
+          bazelisk build $targets --features=ubsan $test_targets
+        shell: bash
+
+      - name: Run TSAN
+        if: env.targets != ''
+        run: |
+          echo -e "Running TSAN on:
+            Targets: $targets
+            Excluded targets: $test_targets"
+          bazelisk build $targets --features=tsan $test_targets
+        shell: bash
+
+      - name: No targets to build
+        if: env.targets == ''
+        run: echo "No affected Bazel targets found. Skipping build."
+
+      - name: Show failure message
+        if: failure()
+        run: |-
+          echo -e "To run sanitizers locally use the following command:
+          ======================================================================================
+          bazel run <bazel_target> --features=asan
+          bazel run <bazel_target> --features=ubsan
+          bazel run <bazel_target> --features=tsan
+          ======================================================================================"

@@ -1,0 +1,70 @@
+# yamllint disable rule:line-length
+---
+name: Lint
+on:  # yamllint disable-line rule:truthy
+  pull_request:
+    branches: ['*']
+
+jobs:
+  arduino:
+    runs-on: ubuntu-latest
+    container:
+      image: t4seame/app:latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full history for rebase
+
+      - name: Configure Git Safe Directory
+        run: |
+          git config --global --add safe.directory $(pwd)
+
+      - name: Set Git user identity
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions"
+
+      - name: Fetch main branch
+        run: |
+          git fetch origin main
+
+      - name: Rebase PR branch onto main
+        run: |
+          git rebase origin/main || (git rebase --abort && exit 1)
+
+      - name: Find affected files
+        run: |
+          git fetch origin ${{ github.base_ref }} --depth=1
+          git diff --diff-filter=ACM --name-only origin/${{ github.base_ref }} > affected_files.txt
+          echo "Affected files:"
+          cat affected_files.txt
+
+      - name: Find affected ino files
+        run: |
+          > affected_ino_files.txt
+
+          while read file; do
+            if [[ "$file" == *.ino || "$file" == *.pde ]]; then
+              echo "$file" >> affected_ino_files.txt
+            fi
+          done < affected_files.txt
+
+          sort -u affected_ino_files.txt -o affected_ino_files.txt
+          echo "Affected ino files:"
+          cat affected_ino_files.txt
+
+          echo "ino_files=$(cat affected_ino_files.txt | tr -s '\n' ' ' | sed 's/^[ \t]*//;s/[ \t]*$//')" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Run arduino-lint
+        if: env.ino_files != ''
+        run: |
+          echo "Running: arduino-lint"
+          arduino-lint --recursive ./arduino
+        shell: bash
+
+      - name: Skip arduino-lint
+        if: env.ino_files == ''
+        run: echo "No affected ino files found. Skipping arduino-lint."

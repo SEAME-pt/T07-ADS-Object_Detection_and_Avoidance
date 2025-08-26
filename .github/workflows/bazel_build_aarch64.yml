@@ -1,0 +1,106 @@
+# yamllint disable rule:line-length
+---
+name: Bazel
+on:  # yamllint disable-line rule:truthy
+  pull_request:
+    branches: ['*']
+
+jobs:
+  build_aarch64:
+    runs-on: ubuntu-latest
+    container:
+      image: t4seame/app:latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full history for rebase
+
+      - name: Configure Git Safe Directory
+        run: |
+          git config --global --add safe.directory $(pwd)
+
+      - name: Set Git user identity
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions"
+
+      - name: Fetch main branch
+        run: |
+          git fetch origin main
+
+      - name: Rebase PR branch onto main
+        run: |
+          git rebase origin/main || (git rebase --abort && exit 1)
+
+      - name: Find affected files
+        id: affected_files
+        run: |
+          git fetch origin ${{ github.base_ref }} --depth=1
+          git diff --diff-filter=ACM --name-only origin/${{ github.base_ref }} > affected_files.txt
+          echo "Affected files:"
+          cat affected_files.txt
+
+      - name: Find affected Bazel files
+        run: |
+          > affected_bazel_files.txt
+
+          while read file; do
+            if [[ "$file" == *BUILD || "$file" == *WORKSPACE || "$file" == *MODULE.bazel || "$file" == *.bazelrc ]]; then
+              echo "$file" >> affected_bazel_files.txt
+            fi
+          done < affected_files.txt
+
+          sort -u affected_bazel_files.txt -o affected_bazel_files.txt
+          echo "Affected Bazel files:"
+          cat affected_bazel_files.txt
+
+          echo "bazel_files=$(cat affected_bazel_files.txt | tr -s '\n' ' ' | sed 's/^[ \t]*//;s/[ \t]*$//')" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Find affected Bazel targets
+        if: ${{ env.bazel_files == '' }}
+        run: |
+          > affected_targets.txt
+
+          while read file; do
+            if [[ "$file" == *.c || "$file" == *.cc || "$file" == *.cpp || "$file" == *.cxx || "$file" == *.h || "$file" == *.hpp || "$file" == *.hxx ]]; then
+              echo "Finding targets for: $file"
+              targets=$(bazelisk query --output=package "$file")/...
+              echo "$targets" >> affected_targets.txt
+            fi
+          done < affected_files.txt
+
+          sort -u affected_targets.txt -o affected_targets.txt
+          echo "Affected targets:"
+          cat affected_targets.txt
+
+          echo "targets=$(cat affected_targets.txt | tr -s '\n' ' ' | sed 's/^[ \t]*//;s/[ \t]*$//')" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Build affected targets
+        run: |
+          if [ -n "$bazel_files" ]; then
+            echo "Building all targets for aarch64"
+            bazelisk build //... --platforms=//bazel/platforms:aarch64_linux
+          elif [ -n "$targets" ]; then
+            echo "Building targets for aarch64: $targets"
+            bazelisk build $targets --platforms=//bazel/platforms:aarch64_linux
+          else
+            echo "No targets to build"
+          fi
+        shell: bash
+
+      - name: Setup bazel cache
+        if: env.targets != ''
+        uses: actions/cache@v4
+        env:
+          cache-name: bazel-cache
+        with:
+          path: |
+            ~/.cache/bazelisk
+            ~/.cache/bazel
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ github.ref }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.cache-name }}-development

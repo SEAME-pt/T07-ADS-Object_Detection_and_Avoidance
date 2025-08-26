@@ -1,0 +1,35 @@
+# yamllint disable rule:line-length
+---
+name: Lint
+on:  # yamllint disable-line rule:truthy
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  pr-description:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check PR description for issue link
+        id: contains_issue
+        run: |
+          PR_BODY=$(curl -s https://api.github.com/repos/${{
+            github.repository }}/pulls/${{ github.event.pull_request.number }} | jq -r .body)
+          echo "$PR_BODY"
+          pattern_1="https://github\.com/([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)/issues/([0-9]+)"
+          pattern_2="#([0-9]+)"
+          pattern_3="[#([0-9]+)]"
+          if [[ ! "$PR_BODY" =~ $pattern_1 ]] && [[ ! "$PR_BODY" =~ $pattern_2 ]] && [[ ! "$PR_BODY" =~ $pattern_3 ]]; then
+            echo "Error: PR description must include an issue link in the format '#123' or 'https://github.com/owner/repo/issues/123'." >&2
+            exit 1
+          else
+            echo "PR description contains a valid issue link."
+          fi
+
+      - name: Fail PR if no issue link found
+        if: failure()
+        run: |-
+          echo "Please add an issue link in the format '#123' or 'https://github.com/owner/repo/issues/123' in the PR description."

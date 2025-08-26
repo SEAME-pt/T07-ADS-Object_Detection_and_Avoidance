@@ -1,0 +1,134 @@
+# yamllint disable rule:line-length
+---
+name: Clang
+on:  # yamllint disable-line rule:truthy
+  pull_request:
+    branches: ['*']
+
+jobs:
+  tidy:
+    runs-on: ubuntu-latest
+    container:
+      image: t4seame/app:latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full history for rebase
+
+      - name: Configure Git Safe Directory
+        run: |
+          git config --global --add safe.directory $(pwd)
+
+      - name: Set Git user identity
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions"
+
+      - name: Fetch main branch
+        run: |
+          git fetch origin main
+
+      - name: Rebase PR branch onto main
+        run: |
+          git rebase origin/main || (git rebase --abort && exit 1)
+
+      - name: Find affected files
+        run: |
+          git fetch origin ${{ github.base_ref }} --depth=1
+          git diff --diff-filter=ACM --name-only origin/${{ github.base_ref }} > affected_files.txt
+          echo "Affected files:"
+          cat affected_files.txt
+
+      - name: Find affected cpp files
+        run: |
+          > affected_cpp_files.txt
+
+          while read file; do
+            if [[ "$file" == *.c || "$file" == *.cc || "$file" == *.cpp || "$file" == *.cxx || "$file" == *.h || "$file" == *.hpp || "$file" == *.hxx ]]; then
+              echo "$file" >> affected_cpp_files.txt
+            fi
+          done < affected_files.txt
+
+          sort -u affected_cpp_files.txt -o affected_cpp_files.txt
+          echo "Affected cpp files:"
+          cat affected_cpp_files.txt
+
+          echo "cpp_files=$(cat affected_cpp_files.txt | tr -s '\n' ' ' | sed 's/^[ \t]*//;s/[ \t]*$//')" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Find affected Bazel targets
+        id: bazel_targets
+        run: |
+          > affected_targets.txt
+
+          while read file; do
+            if [[ "$file" == *.c || "$file" == *.cc || "$file" == *.cpp || "$file" == *.cxx || "$file" == *.h || "$file" == *.hpp || "$file" == *.hxx ]]; then
+              echo "Finding targets for: $file"
+              targets=$(bazelisk query --output=package "$file")/...
+              echo "$targets" >> affected_targets.txt
+            fi
+          done < affected_files.txt
+
+          sort -u affected_targets.txt -o affected_targets.txt
+          echo "Affected targets:"
+          cat affected_targets.txt
+
+          echo "targets=$(cat affected_targets.txt | tr -s '\n' ' ' | sed 's/^[ \t]*//;s/[ \t]*$//')" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Setup bazel cache
+        if: env.targets != ''
+        uses: actions/cache@v4
+        env:
+          cache-name: bazel-cache
+        with:
+          path: |
+            ~/.cache/bazelisk
+            ~/.cache/bazel
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ github.ref }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.cache-name }}-development
+
+      - name: Build affected targets
+        if: env.targets != ''
+        run: |
+          echo "Building targets: $targets"
+          bazelisk build $targets
+        shell: bash
+
+      - name: No targets to build
+        if: env.targets == ''
+        run: echo "No affected Bazel targets found. Skipping build."
+
+      - name: Generate Compile Commands
+        if: env.cpp_files != ''
+        run: |
+          echo "Generating compile commands"
+          bazelisk run @hedron_compile_commands//:refresh_all
+        shell: bash
+
+      - name: Run Clang-Tidy
+        if: env.cpp_files != ''
+        run: |
+          echo "Running: clang-tidy ${cpp_files} -p ./compile_commands.json"
+          clang-tidy $cpp_files -p ./compile_commands.json
+        shell: bash
+
+      - name: Skip Clang-Tidy
+        if: env.cpp_files == ''
+        run: echo "No affected cpp files found. Skipping Clang-Tidy."
+
+      - name: Show failure message
+        if: failure()
+        run: |-
+          echo -e "To automatically apply suggested fixes, run the following command:
+          ======================================================================================
+          1. Generate compile commands:
+          bazel run @hedron_compile_commands//:refresh_all
+          2. Run clang-tidy:
+          find . -iname \"*.c\" -o -iname \"*.cc\" -o -iname \"*.cpp\" -o -iname \"*.cxx\" -o -iname \"*.h\" -o -iname \"*.hpp\" -o -iname \"*.hxx\" | xargs clang-tidy -p ./compile_commands.json
+          3. Run clang-tidy:
+          find . -iname \"*.c\" -o -iname \"*.cc\" -o -iname \"*.cpp\" -o -iname \"*.cxx\" -o -iname \"*.h\" -o -iname \"*.hpp\" -o -iname \"*.hxx\" | xargs clang-tidy -p ./compile_commands.json -fix --fix-errors
+          ======================================================================================"

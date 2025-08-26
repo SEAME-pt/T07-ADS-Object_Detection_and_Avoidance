@@ -1,8 +1,6 @@
 # Ignore IDE files and project-specific settings
 .idea/            # JetBrains IDE (e.g., IntelliJ, PyCharm)
-.idea
-.vscode/*
-!.vscode/settings.json
+.vscode/          # Visual Studio Code settings
 *.sublime-workspace
 *.sublime-project
 *.kate-swp
@@ -14,6 +12,7 @@ Makefile
 *.cmake
 _deps/
 CMakeFiles*/
+build/
 
 # Ignore OS-specific files
 .DS_Store         # macOS system file
@@ -43,9 +42,6 @@ __pycache__/
 *.swp              # Vim swap files
 *.swo              # Vim temporary files
 *~                 # General editor backup files
-
-# Ignore coverage report files
-genhtml/
 
 # Ignore compile commands
 compile_commands.json

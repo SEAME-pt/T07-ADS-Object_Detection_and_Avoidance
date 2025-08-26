@@ -1,0 +1,85 @@
+# yamllint disable rule:line-length
+---
+name: Coverage
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    container:
+      image: t4seame/app:latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full history for rebase
+
+      - name: Configure Git Safe Directory
+        run: |
+          git config --global --add safe.directory $(pwd)
+
+      - name: Set Git user identity
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions"
+
+      - name: Fetch main branch
+        run: |
+          git fetch origin main
+
+      - name: Rebase PR branch onto main
+        run: |
+          git rebase origin/main || (git rebase --abort && exit 1)
+
+      - name: Create coverage directory
+        run: |
+          mkdir -p "./lcov_report/gcno_gcda"
+
+      - name: Generate coverage report
+        run: |
+          TARGETS=$(bazel query 'kind("(cc_binary|cc_library)", deps(//:release_bins_filegroup)) except kind(".*test", deps(//:release_bins_filegroup)) intersect filter("^//", deps(//:release_bins_filegroup))')
+          TARGETS_STR=$(echo "$TARGETS" | tr '\n' ' ')
+          echo "Targets used for coverage baseline: $TARGETS_STR"
+
+          BAZEL_BIN=$(bazel info bazel-bin)
+          TEST_LOGS=$(bazel info bazel-testlogs)
+
+          echo "Bazel bin directory: $BAZEL_BIN"
+          echo "Test logs directory: $TEST_LOGS"
+
+          bazelisk run //tools/coverage:lcov \
+            --platforms=//bazel/platforms:x86_64_linux -- \
+            -b "$TARGETS_STR" \
+            -t //:unit_tests \
+            -c "$BAZEL_BIN" \
+            -d "$TEST_LOGS" \
+            -o "./lcov_report"
+        shell: bash
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './lcov_report'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
