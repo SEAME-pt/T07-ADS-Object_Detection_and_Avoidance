@@ -7,33 +7,36 @@
 
 // Error dynamics
 Eigen::Vector3d dynamics(const Eigen::Vector3d& state, const Eigen::Vector2d& input) {
-    const double L = 0.2;  // Wheelbase (m)
-    const double DT = 0.02; // Time step (s)
+    const double l = 0.2;  // Wheelbase (m)
+    const double dt = 0.02; // Time step (s)
 
-    double ey = state(0), psi_err = state(1), v = state(2);
-    double delta = input(0), a = input(1);
+    double ey = state(0);
+    double psi_err = state(1);
+    double v = state(2);
+    double delta = input(0);
+    double a = input(1);
     Eigen::Vector3d next_state;
-    next_state << ey + v * sin(psi_err) * DT,
-                  psi_err + (v / L) * tan(delta) * DT,
-                  v + a * DT;
+    next_state << ey + v * sin(psi_err) * dt,
+                  psi_err + (v / l) * tan(delta) * dt,
+                  v + a * dt;
     return next_state;
 }
 
 // Solver function
-Eigen::Vector2d solve_mpc(const Eigen::Vector3d& current_state, double prev_delta) {
-    const int N = 10;              // Prediction horizon
-    const double V_MAX = 2.0;      // Max velocity (m/s)
-    const double DELTA_MAX = 0.523; // Max steering angle (rad)
-    const double A_MAX = 2.0;      // Max acceleration (m/s^2)
-    const double DELTA_RATE_MAX = 0.1; // Max steering rate (rad/step)
+Eigen::Vector2d solveMpc(const Eigen::Vector3d& current_state, double prev_delta) {
+    const int n = 10;              // Prediction horizon
+    const double v_max = 2.0;      // Max velocity (m/s)
+    const double delta_max = 0.523; // Max steering angle (rad)
+    const double a_max = 2.0;      // Max acceleration (m/s^2)
+    const double delta_rate_max = 0.1; // Max steering rate (rad/step)
 
-    size_t n_vars = 3 * (N + 1) + 2 * N;
-    size_t n_constraints = 3 * N + 2 * N;
+    size_t n_vars = 3 * (n + 1) + 2 * n;
+    size_t n_constraints = 3 * n + 2 * n;
     CppAD::vector<double> vars(n_vars);
     CppAD::vector<double> vars_lower(n_vars), vars_upper(n_vars);
     CppAD::vector<double> constraints_lower(n_constraints), constraints_upper(n_constraints);
 
-    for (int k = 0; k <= N; ++k) {
+    for (int k = 0; k <= n; ++k) {
         if (k == 0) {
             vars[k * 3] = current_state(0);
             vars[k * 3 + 1] = current_state(1);
@@ -48,7 +51,7 @@ Eigen::Vector2d solve_mpc(const Eigen::Vector3d& current_state, double prev_delt
         vars_lower[k * 3 + 2] = 0.0; vars_upper[k * 3 + 2] = V_MAX;
     }
 
-    for (int k = 0; k < N; ++k) {
+    for (int k = 0; k < n; ++k) {
         vars[3 * (N + 1) + k * 2] = prev_delta;
         vars[3 * (N + 1) + k * 2 + 1] = 0.0;
         vars_lower[3 * (N + 1) + k * 2] = -DELTA_MAX;
@@ -57,11 +60,11 @@ Eigen::Vector2d solve_mpc(const Eigen::Vector3d& current_state, double prev_delt
         vars_upper[3 * (N + 1) + k * 2 + 1] = A_MAX;
     }
 
-    for (int k = 0; k < 3 * N; ++k) {
+    for (int k = 0; k < 3 * n; ++k) {
         constraints_lower[k] = 0.0;
         constraints_upper[k] = 0.0;
     }
-    for (int k = 3 * N; k < 3 * N + 2 * N; ++k) {
+    for (int k = 3 * n; k < 3 * n + 2 * n; ++k) {
         constraints_lower[k] = -1e19;
         constraints_upper[k] = 0.0;
     }
@@ -85,7 +88,7 @@ Eigen::Vector2d solve_mpc(const Eigen::Vector3d& current_state, double prev_delt
     return control;
 }
 
-int main() {
+auto main() -> int {
     Eigen::Vector3d state(0.1, 0.05, 1.0); // Initial [ey, psi_err, v]
     double prev_delta = 0.0;
 
@@ -94,7 +97,10 @@ int main() {
     for (int i = 0; i < 100; ++i) {
         client.send_state(state);
 
-        double ey, psi_err, v, delta;
+        double ey;
+        double psi_err;
+        double v;
+        double delta;
         try {
             std::tie(ey, psi_err, v, delta) = client.receive_ml_data(); // Assuming this function returns ey, psi_err, v, delta
 			std::cout << "Received: ey = " << ey << ", psi_err = " << psi_err << ", v = " << v << ", delta = " << delta << std::endl;

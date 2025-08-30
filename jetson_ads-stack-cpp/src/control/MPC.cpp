@@ -1,21 +1,21 @@
 #include "MPC.hpp"
 
 // JetRacer parameters
-const double L = 0.2;          // Wheelbase (m)
-const double DT = 0.02;        // Time step (s)
-const int N = 10;              // Prediction horizon
-const double V_MAX = 2.0;      // Max velocity (m/s)
-const double DELTA_MAX = 0.523; // Max steering angle (rad, 30 deg)
-const double A_MAX = 2.0;      // Max acceleration (m/s^2)
-const double DELTA_RATE_MAX = 0.1; // Max steering rate (rad/step)
-const double V_REF = 1.0;      // Reference velocity (m/s)
+const double l = 0.2;          // Wheelbase (m)
+const double dt = 0.02;        // Time step (s)
+const int n = 10;              // Prediction horizon
+const double v_max = 2.0;      // Max velocity (m/s)
+const double delta_max = 0.523; // Max steering angle (rad, 30 deg)
+const double a_max = 2.0;      // Max acceleration (m/s^2)
+const double delta_rate_max = 0.1; // Max steering rate (rad/step)
+const double v_ref = 1.0;      // Reference velocity (m/s)
 
 // MPC weights
-const double Q_EY = 100.0;     // Weight for cross-track error
-const double Q_PSI_ERR = 10.0; // Weight for heading error
-const double Q_V = 1.0;        // Weight for velocity error
-const double R_DELTA = 1.0;    // Weight for steering effort
-const double R_A = 1.0;        // Weight for acceleration effort
+const double q_ey = 100.0;     // Weight for cross-track error
+const double q_psi_err = 10.0; // Weight for heading error
+const double q_v = 1.0;        // Weight for velocity error
+const double r_delta = 1.0;    // Weight for steering effort
+const double r_a = 1.0;        // Weight for acceleration effort
 
 MPC::MPC(double delta) : prev_delta(delta) {}
 

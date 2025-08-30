@@ -13,9 +13,9 @@ private:
 
 public:
     // Canonical form
-    MPC(double delta = 0.0);
+    explicit MPC(double delta = 0.0);
     MPC(const MPC& other);
-    MPC& operator=(const MPC& other);
+    auto operator=(const MPC& other) -> MPC&;
     virtual ~MPC();
 
     // Optimization operator

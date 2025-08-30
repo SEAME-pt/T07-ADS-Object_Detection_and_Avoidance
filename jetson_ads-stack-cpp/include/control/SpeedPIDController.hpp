@@ -5,7 +5,7 @@ class SpeedPIDController {
 public:
     SpeedPIDController(float kp, float ki, float kd, float pwm_min, float pwm_max);
 
-    float update(float v_current, float v_target, float dt);
+    auto update(float v_current, float v_target, float dt) -> float;
     void reset();
 
 private:
